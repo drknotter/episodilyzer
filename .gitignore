@@ -1,5 +1,8 @@
 # Ignore generated files.
 gen/*
+.classpath
+.project
+.settings/
 
 # Ignore binaries.
 bin/*

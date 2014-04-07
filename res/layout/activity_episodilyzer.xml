@@ -6,7 +6,7 @@
 
     <fragment android:id="@+id/leftpane"
               android:name="com.drknotter.episodilyzer.ShowListFragment"
-              android:layout_width="300dp"
+              android:layout_width="@dimen/show_list_width"
               android:layout_height="match_parent"
               android:layout_gravity="left" />
 

@@ -1,101 +1,205 @@
 package com.drknotter.episodilyzer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Fragment;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.support.v4.widget.SlidingPaneLayout;
 
-public class ShowListFragment extends Fragment {
-	
+public class ShowListFragment extends Fragment
+{
 	private static final String TAG = "ShowListFragment";
-	
-	private String[] mShowTitles = 
-		{
-			"Doctor Who",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Star Trek: The Next Generation",
-			"Adventure Time"
-		};
+	ArrayList<Show> mShowList = new ArrayList<Show>();
+
+	private ShowListAdapter mAdapter;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+
 		View rootView = inflater.inflate(R.layout.show_list_container, container, true);
+
 		ListView listView = (ListView) rootView.findViewById(R.id.showlist);
-		listView.setAdapter(new ShowListAdapter());
-		
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		mAdapter = new ShowListAdapter(getActivity(), R.layout.show_list_item_container, mShowList);
+		listView.setAdapter(mAdapter);
+		listView.setDivider(null);
+
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+		{
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				((ShowListener) getActivity()).onChangeShow(mShowTitles[position]);
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+			{
+				((ShowListener) getActivity()).onChangeShow(mAdapter.getItem(position));
+				SlidingPaneLayout pane = (SlidingPaneLayout) getActivity().findViewById(R.id.sp);
+				pane.closePane();
 			}
 		});
-		
-		setHasOptionsMenu(true);
+
+		((TextView) rootView.findViewById(R.id.thetvdbInfo)).setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				try
+				{
+					Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thetvdb.com"));
+					startActivity(myIntent);
+				}
+				catch( ActivityNotFoundException e )
+				{
+					Toast.makeText(ShowListFragment.this.getActivity(), 
+							"No application can handle this request, Please install a web browser", 
+							Toast.LENGTH_LONG).show();
+					e.printStackTrace();
+				}
+			}
+		});
+
+		if( !Intent.ACTION_SEARCH.equals(getActivity().getIntent().getAction()) )
+		{
+			populateListFromMyShows();
+		}
+
 		return rootView;
 	}
-	
-	class ShowListAdapter extends BaseAdapter
+
+	private void populateListFromMyShows()
+	{
+		mAdapter.add(new Show("Doctor Who"));
+		mAdapter.add(new Show("Star Trek: The Next Generation"));
+		mAdapter.add(new Show("Adventure Time"));
+		mAdapter.notifyDataSetChanged();
+	}
+
+	public void notifyAdapterDataSetChanged()
+	{
+		mAdapter.notifyDataSetChanged();
+	}
+
+	public void populateListFromSearch(ArrayList<Show> searchResults)
+	{
+		for( Show show : searchResults )
+		{
+			mAdapter.add(show);
+		}
+		mAdapter.notifyDataSetChanged();
+
+		if( mAdapter.getCount() > 0 )
+		{
+			((ShowListener) getActivity()).onChangeShow(mAdapter.getItem(0));
+		}
+	}
+
+	class ShowListAdapter extends ArrayAdapter<Show>
 	{
 		private static final String TAG = "ShowListAdapter";
-		
-		@Override
-		public int getCount() {
-			return mShowTitles.length;
+
+		public ShowListAdapter(Context context, int resource)
+		{
+			super(context, resource);
+		}
+
+		public ShowListAdapter(Context context, int resource, List<Show> list)
+		{
+			super(context, resource, list);
 		}
 
 		@Override
-		public Object getItem(int position) {
-			return mShowTitles[position];
+		public int getCount()
+		{
+			return mShowList.size();
 		}
 
 		@Override
-		public long getItemId(int position) {
+		public Show getItem(int position)
+		{
+			return mShowList.get(position);
+		}
+
+		@Override
+		public long getItemId(int position)
+		{
 			return position;
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			Log.i(TAG, "in getView("+position+", ...)");
-			
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
 			if( convertView == null )
 			{
 				LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				convertView = (View) inflater.inflate(R.layout.show_list_item_container, null);
 			}
 
-			((TextView) convertView.findViewById(R.id.showListItemTitle)).setText(mShowTitles[position]);
+			Show show = mShowList.get(position);
+			TextView titleText = (TextView) convertView.findViewById(R.id.showListItemTitle);
+			ImageView bannerImage = (ImageView) convertView.findViewById(R.id.showListItemBanner);
+			if( show.mBanner != null )
+			{
+				titleText.setVisibility(View.GONE);
+				bannerImage.setVisibility(View.VISIBLE);
+				bannerImage.setImageBitmap(ImageHelper.getRoundedCornerBitmap(show.mBanner,20));
+			}
+			else
+			{
+				bannerImage.setVisibility(View.GONE);
+				titleText.setVisibility(View.VISIBLE);
+				titleText.setText(show.mSeriesName);
+			}
 
 			return convertView;
 		}
 	}
-	
+
 	public interface ShowListener
 	{
-		public void onChangeShow(String show);
+		public void onChangeShow(Show show);
 	}
+
+}
+
+class ImageHelper {
+   public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+       Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+               .getHeight(), Config.ARGB_8888);
+       Canvas canvas = new Canvas(output);
+
+       final int color = 0xff424242;
+       final Paint paint = new Paint();
+       final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+       final RectF rectF = new RectF(rect);
+       final float roundPx = pixels;
+
+       paint.setAntiAlias(true);
+       canvas.drawARGB(0, 0, 0, 0);
+       paint.setColor(color);
+       canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+       paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+       canvas.drawBitmap(bitmap, rect, rect, paint);
+
+       return output;
+   }
 }

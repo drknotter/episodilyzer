@@ -3,6 +3,10 @@
 
     <string name="app_name">Episodilyzer</string>
     <string name="action_settings">Settings</string>
+    <string name="search_title">Find a show…</string>
+    <string name="search_hint">Find a show…</string>
+    <string name="show_list_banner_description">Show Banner</string>
+    <string name="thetvdb_info">Database information provided by thetvdb.com.</string>
 	<string name="api_key">E9C8ADC01AC294C3</string>
 
 </resources>
