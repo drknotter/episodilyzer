@@ -1,6 +1,5 @@
 package com.drknotter.episodilyzer;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.drknotter.episodilyzer.ShowListFragment.ShowListener;
@@ -10,7 +9,6 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.Menu;
 import android.widget.SearchView;
 import android.support.v4.widget.SlidingPaneLayout;
@@ -34,7 +32,13 @@ public class EpisodilyzerActivity extends Activity implements ShowListener
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_episodilyzer);
 		SlidingPaneLayout pane = (SlidingPaneLayout) findViewById(R.id.sp);
+		
 		pane.setPanelSlideListener(new EpisodilyzerPaneListener());
+		pane.setCoveredFadeColor(getResources().getColor(R.color.covered_fade_color));
+		pane.setSliderFadeColor(getResources().getColor(R.color.slider_fade_color));
+		pane.setParallaxDistance(200);
+		pane.setShadowResource(R.drawable.right_pane_shadow);
+		
 		pane.openPane();
 		handleIntent(getIntent());
 	}
