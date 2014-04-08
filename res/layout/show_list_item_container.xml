@@ -8,9 +8,7 @@
         android:layout_width="@dimen/show_list_width"
         android:layout_height="@dimen/show_list_item_height"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="@dimen/show_list_item_margin"
-        android:layout_marginRight="@dimen/show_list_item_margin"
-        android:layout_marginTop="@dimen/show_list_item_margin"
+        android:layout_marginBottom="@dimen/show_list_spacing"
         android:background="@drawable/show_list_item_title_background"
         android:contentDescription="@string/show_list_banner_description"
         android:ellipsize="end"
@@ -23,11 +21,8 @@
         android:layout_width="@dimen/show_list_width"
         android:layout_height="@dimen/show_list_item_height"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="@dimen/show_list_item_margin"
-        android:layout_marginRight="@dimen/show_list_item_margin"
-        android:layout_marginTop="@dimen/show_list_item_margin"
+        android:layout_marginBottom="@dimen/show_list_spacing"
         android:contentDescription="@string/show_list_banner_description"
-        android:gravity="center"
-        android:textSize="@dimen/show_list_item_text_size" />
+        android:gravity="center" />
 
 </RelativeLayout>

@@ -4,9 +4,11 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="show_list_item_text_size">20sp</dimen>
-    <dimen name="show_list_width">300dp</dimen>
-    <dimen name="show_list_item_height">55dp</dimen>
-    <dimen name="show_list_item_margin">5dp</dimen>
+
+    <dimen name="show_list_spacing">7dp</dimen>
+    <dimen name="show_list_width">320dp</dimen>
+    <dimen name="show_list_item_height">56.52dp</dimen> <!-- thetvdb.com banner images are 758x140 -->
+
     <dimen name="show_detail_margin">10dp</dimen>
     <dimen name="show_detail_text_padding">15dp</dimen>
     <dimen name="show_detail_title_text_size">20dp</dimen>
