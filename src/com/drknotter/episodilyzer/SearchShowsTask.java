@@ -3,6 +3,7 @@ package com.drknotter.episodilyzer;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -32,7 +33,7 @@ import android.net.NetworkInfo;
 import android.net.ParseException;
 import android.os.AsyncTask;
 
-class SearchShowsTask extends AsyncTask<String, Integer, ArrayList<Show>>
+class SearchShowsTask extends AsyncTask<String, Integer, LinkedList<Show>>
 {
 	private EpisodilyzerActivity mActivity;
 	private boolean mSuccess = false;
@@ -43,9 +44,9 @@ class SearchShowsTask extends AsyncTask<String, Integer, ArrayList<Show>>
 	}
 
 	@Override
-	protected ArrayList<Show> doInBackground(String... seriesNames)
+	protected LinkedList<Show> doInBackground(String... seriesNames)
 	{
-		ArrayList<Show> showList = new ArrayList<Show>();
+		LinkedList<Show> showList = new LinkedList<Show>();
 
 		ConnectivityManager connManager = (ConnectivityManager) mActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -102,13 +103,24 @@ class SearchShowsTask extends AsyncTask<String, Integer, ArrayList<Show>>
 			Document document = db.parse(inStream);
 
 			NodeList seriesNodes = document.getElementsByTagName("Series");
+			int bannerlessShows = 0;
 			for( int i = 0; i < seriesNodes.getLength(); i++ )
 			{
 				Show s = new Show((Element) seriesNodes.item(i));
-				new ShowBannerDownloadTask(mActivity).execute(s);
-				showList.add(s);
+				if( s.mOverview.length() > 0 )
+				{
+					new ShowBannerDownloadTask(mActivity).execute(s);
+					if( s.mBannerUrl.length() == 0 )
+					{
+						showList.addLast(s);
+						bannerlessShows++;
+					}
+					else
+					{
+						showList.add(showList.size()-bannerlessShows, s);
+					}
+				}
 			}
-
 		}
 		catch( ParserConfigurationException e )
 		{
@@ -127,7 +139,7 @@ class SearchShowsTask extends AsyncTask<String, Integer, ArrayList<Show>>
 		return showList;
 	}
 
-	protected void onPostExecute(ArrayList<Show> searchResults)
+	protected void onPostExecute(LinkedList<Show> searchResults)
 	{
 		if( mSuccess )
 		{
@@ -136,8 +148,8 @@ class SearchShowsTask extends AsyncTask<String, Integer, ArrayList<Show>>
 		else
 		{
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mActivity);
-			alertDialogBuilder.setTitle("Alert")
-					.setMessage("No wi-fi, can't search.")
+			alertDialogBuilder.setTitle("No Wi-Fi!")
+					.setMessage("By default, Episodilyzer doesn't search for shows without a wi-fi connection.")
 					.setCancelable(false)
 					.setPositiveButton("OK", new DialogInterface.OnClickListener()
 					{

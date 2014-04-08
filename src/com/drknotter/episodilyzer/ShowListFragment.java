@@ -1,6 +1,7 @@
 package com.drknotter.episodilyzer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Fragment;
@@ -30,6 +31,7 @@ import android.support.v4.widget.SlidingPaneLayout;
 
 public class ShowListFragment extends Fragment
 {
+	@SuppressWarnings("unused")
 	private static final String TAG = "ShowListFragment";
 	ArrayList<Show> mShowList = new ArrayList<Show>();
 
@@ -98,7 +100,7 @@ public class ShowListFragment extends Fragment
 		mAdapter.notifyDataSetChanged();
 	}
 
-	public void populateListFromSearch(ArrayList<Show> searchResults)
+	public void populateListFromSearch(LinkedList<Show> searchResults)
 	{
 		for( Show show : searchResults )
 		{
@@ -114,6 +116,7 @@ public class ShowListFragment extends Fragment
 
 	class ShowListAdapter extends ArrayAdapter<Show>
 	{
+		@SuppressWarnings("unused")
 		private static final String TAG = "ShowListAdapter";
 
 		public ShowListAdapter(Context context, int resource)

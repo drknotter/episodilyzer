@@ -1,6 +1,8 @@
 package com.drknotter.episodilyzer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+
 import com.drknotter.episodilyzer.ShowListFragment.ShowListener;
 
 import android.os.Bundle;
@@ -8,17 +10,27 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.SearchView;
 import android.support.v4.widget.SlidingPaneLayout;
 
 public class EpisodilyzerActivity extends Activity implements ShowListener
 {
-	public String mMode = "";
+	public static final String TAG = "EpisodilyzerActivity";
+	
+	static final int MODE_DEFAULT = 0;
+	static final int MODE_SEARCH = 1;
+	private int mMode = 0;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
+		if( Intent.ACTION_SEARCH.equals(getIntent().getAction()) )
+		{
+			mMode = MODE_SEARCH;
+		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_episodilyzer);
 		SlidingPaneLayout pane = (SlidingPaneLayout) findViewById(R.id.sp);
@@ -35,20 +47,15 @@ public class EpisodilyzerActivity extends Activity implements ShowListener
 
 	private void handleIntent(Intent intent)
 	{
-		if( Intent.ACTION_SEARCH.equals(intent.getAction()) )
+		if( mMode == MODE_SEARCH )
 		{
 			getActionBar().setTitle("Search Results");
 			String seriesName = intent.getStringExtra(SearchManager.QUERY);
 			new SearchShowsTask(this).execute(seriesName);
-			mMode = "search";
-		}
-		else
-		{
-			mMode = "default";
 		}
 	}
 
-	void presentSearchResults(ArrayList<Show> searchResults)
+	void presentSearchResults(LinkedList<Show> searchResults)
 	{
 		ShowListFragment leftPane = (ShowListFragment) getFragmentManager().findFragmentById(R.id.leftpane);
 		leftPane.populateListFromSearch(searchResults);
@@ -57,7 +64,7 @@ public class EpisodilyzerActivity extends Activity implements ShowListener
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		if( !Intent.ACTION_SEARCH.equals(getIntent().getAction()) )
+		if( mMode != MODE_SEARCH )
 		{
 			// Inflate the menu; this adds items to the action bar if it is present.
 			getMenuInflater().inflate(R.menu.episodilyzer, menu);
@@ -71,10 +78,14 @@ public class EpisodilyzerActivity extends Activity implements ShowListener
 		return true;
 	}
 
-	@Override
 	public void onChangeShow(Show show)
 	{
 		ShowDetailFragment rightPane = (ShowDetailFragment) getFragmentManager().findFragmentById(R.id.rightpane);
 		rightPane.setShow(show);
+	}
+	
+	public int getMode()
+	{
+		return mMode;
 	}
 }
