@@ -67,7 +67,7 @@ public class ShowDetailFragment extends Fragment
 								@Override
 								public void onClick(DialogInterface dialog, int which)
 								{
-									// TODO: Add show to show list.
+									new ShowDetailDownloadTask(mActivity).execute(mShow);
 								}
 							})
 							.setNegativeButton(mActivity.getString(android.R.string.no), null)
