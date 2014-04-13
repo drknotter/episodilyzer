@@ -2,6 +2,7 @@ package com.drknotter.episodilyzer;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -27,27 +30,17 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 public class ShowDetailDownloadTask extends AsyncTask<Show, Integer, Void>
 {
 	private static final String TAG = "ShowDetailDownloadTask";
 
 	private EpisodilyzerActivity mActivity;
-	private ProgressDialog mProgressDialog;
 
 	public ShowDetailDownloadTask(EpisodilyzerActivity activity)
 	{
 		mActivity = activity;
-	}
-
-	@Override
-	protected void onPreExecute()
-	{
-		mProgressDialog = new ProgressDialog(mActivity);
-		mProgressDialog.setMessage("Downloading show details...");
-		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		mProgressDialog.setCancelable(true);
-		mProgressDialog.show();
 	}
 
 	@Override
@@ -68,59 +61,133 @@ public class ShowDetailDownloadTask extends AsyncTask<Show, Integer, Void>
 				"/series/" + show.mSeriesId +
 				"/all/en.zip";
 
-		URL url;
+		// Download the .zip file.
+		String zipFileDirectory = null;
+		String zipFileString = null;
 		try
 		{
-			url = new URL(urlString);
+			URL url = new URL(urlString);
 			URLConnection connection = url.openConnection();
 
 			int contentLength = connection.getContentLength();
 			Log.v(TAG, "Content length: " + contentLength);
 
-			InputStream input = new BufferedInputStream(url.openStream());
-			File outFile = new File(mActivity.getFilesDir(), show.mSeriesId + ".zip");
-			Log.v(TAG, "Absolute outFile path: " + outFile.getAbsolutePath());
-			OutputStream output = new FileOutputStream(outFile);
+			InputStream downloadStream = new BufferedInputStream(url.openStream());
+
+			zipFileDirectory = mActivity.getFilesDir().getAbsolutePath() + "/" + Integer.toString(show.mSeriesId);
+			zipFileString = zipFileDirectory + "/en.zip";
+
+			// Create the show directory.
+			new File(zipFileDirectory).mkdirs();
+
+			OutputStream zipFileOutputStream = new FileOutputStream(zipFileString);
 			byte[] buffer = new byte[1024];
 
-			long total = 0;
-			int count;
-			while( (count = input.read(buffer)) != -1 )
+			mActivity.runOnUiThread(new Runnable()
 			{
-				total += count;
-				publishProgress((int) (100 * total / contentLength));
-				output.write(buffer, 0, count);
+				@Override
+				public void run()
+				{
+					Toast.makeText(mActivity, "Downloading show zipfile...", Toast.LENGTH_SHORT).show();
+				}
+			});
+
+			int count;
+			while( (count = downloadStream.read(buffer)) != -1 )
+			{
+				zipFileOutputStream.write(buffer, 0, count);
 			}
 
-			output.flush();
-			output.close();
-			input.close();
+			zipFileOutputStream.flush();
+			zipFileOutputStream.close();
+			downloadStream.close();
 		}
 		catch( MalformedURLException e )
 		{
-			Log.e(TAG, "Malformed URL in show detail download task.");
-			e.printStackTrace();
+			Log.e(TAG, "Malformed URL: " + urlString, e);
+			return null;
 		}
 		catch( IOException e )
 		{
-			Log.e(TAG, "Could not open connection in show detail download task.");
-			e.printStackTrace();
+			Log.e(TAG, "Could not open URL connection.", e);
+			return null;
 		}
+
+		// Unzip the .zip file.
+		unzip(zipFileDirectory, zipFileString);
 
 		return null;
 	}
 
 	@Override
-	protected void onProgressUpdate(Integer... progress)
-	{
-		Log.d(TAG, "Progress: " + progress[0]);
-		mProgressDialog.setProgress(progress[0]);
-	}
-
-	@Override
 	protected void onPostExecute(Void result)
 	{
-		mProgressDialog.dismiss();
+
 	}
 
+	public void unzip(String zipFileDirectory, String zipFileString)
+	{
+		try
+		{
+			ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFileString));
+			ZipEntry zipEntry = null;
+			while( (zipEntry = zipInputStream.getNextEntry()) != null )
+			{
+				Log.v(TAG, "Unzipping " + zipEntry.getName());
+
+				if( zipEntry.isDirectory() )
+				{
+					new File(zipFileDirectory + zipEntry.getName()).mkdir();
+				}
+				else
+				{
+					byte[] buffer = new byte[1024];
+					FileOutputStream fileOutputStream = new FileOutputStream(zipFileDirectory + zipEntry.getName());
+
+					final String unzipTypeString = unzipType(zipEntry.getName());
+					mActivity.runOnUiThread(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							Toast.makeText(mActivity, "Unzipping " + unzipTypeString + "...", Toast.LENGTH_SHORT).show();
+						}
+
+					});
+
+					int count;
+					while( (count = zipInputStream.read(buffer)) != -1 )
+					{
+						fileOutputStream.write(buffer, 0, count);
+					}
+
+					zipInputStream.closeEntry();
+					fileOutputStream.close();
+				}
+
+			}
+			zipInputStream.close();
+		}
+		catch( Exception e )
+		{
+			Log.e(TAG, "Error unzipping file " + zipFileString, e);
+		}
+	}
+
+	public String unzipType(String filename)
+	{
+		if( "en.xml".equals(filename) )
+		{
+			return "show details";
+		}
+		else if( "banners.xml".equals(filename) )
+		{
+			return "banner URLs";
+		}
+		else if( "actors.xml".equals(filename) )
+		{
+			return "actor information";
+		}
+		return "";
+	}
 }
