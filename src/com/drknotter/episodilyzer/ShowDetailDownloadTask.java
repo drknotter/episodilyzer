@@ -1,6 +1,7 @@
 package com.drknotter.episodilyzer;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +39,7 @@ public class ShowDetailDownloadTask extends AsyncTask<Show, Integer, Void>
 	{
 		mActivity = activity;
 	}
-	
+
 	@Override
 	protected void onPreExecute()
 	{
@@ -77,19 +78,22 @@ public class ShowDetailDownloadTask extends AsyncTask<Show, Integer, Void>
 			Log.v(TAG, "Content length: " + contentLength);
 
 			InputStream input = new BufferedInputStream(url.openStream());
-			//OutputStream output = new FileOutputStream("/sdcard/some_photo_from_gdansk_poland.jpg");
+			File outFile = new File(mActivity.getFilesDir(), show.mSeriesId + ".zip");
+			Log.v(TAG, "Absolute outFile path: " + outFile.getAbsolutePath());
+			OutputStream output = new FileOutputStream(outFile);
 			byte[] buffer = new byte[1024];
 
-			long total = 0, count;
+			long total = 0;
+			int count;
 			while( (count = input.read(buffer)) != -1 )
 			{
 				total += count;
 				publishProgress((int) (100 * total / contentLength));
-				//output.write(buffer, 0, count);
+				output.write(buffer, 0, count);
 			}
-			
-			//output.flush();
-			//output.close();
+
+			output.flush();
+			output.close();
 			input.close();
 		}
 		catch( MalformedURLException e )
@@ -105,14 +109,14 @@ public class ShowDetailDownloadTask extends AsyncTask<Show, Integer, Void>
 
 		return null;
 	}
-	
+
 	@Override
 	protected void onProgressUpdate(Integer... progress)
 	{
 		Log.d(TAG, "Progress: " + progress[0]);
 		mProgressDialog.setProgress(progress[0]);
 	}
-	
+
 	@Override
 	protected void onPostExecute(Void result)
 	{
