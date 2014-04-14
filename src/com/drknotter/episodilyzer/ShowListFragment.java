@@ -1,5 +1,6 @@
 package com.drknotter.episodilyzer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +18,9 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,10 +92,13 @@ public class ShowListFragment extends Fragment
 
 	private void populateListFromMyShows()
 	{
-		mAdapter.add(new Show("Doctor Who"));
-		mAdapter.add(new Show("Star Trek: The Next Generation"));
-		mAdapter.add(new Show("Adventure Time"));
-		mAdapter.notifyDataSetChanged();
+		File filesDirectory = getActivity().getFilesDir();
+		
+		File[] files = filesDirectory.listFiles();
+		for( File dir : files )
+		{
+			new InitializeShowTask().execute(dir);
+		}
 	}
 
 	public void notifyAdapterDataSetChanged()
@@ -159,17 +165,17 @@ public class ShowListFragment extends Fragment
 			Show show = mShowList.get(position);
 			TextView titleText = (TextView) convertView.findViewById(R.id.showListItemTitle);
 			ImageView bannerImage = (ImageView) convertView.findViewById(R.id.showListItemBanner);
-			if( show.mBanner != null )
+			if( show.mBannerBitmap != null )
 			{
 				titleText.setVisibility(View.GONE);
 				bannerImage.setVisibility(View.VISIBLE);
-				bannerImage.setImageBitmap(ImageHelper.getRoundedCornerBitmap(show.mBanner,20));
+				bannerImage.setImageBitmap(ImageHelper.getRoundedCornerBitmap(show.mBannerBitmap,20));
 			}
 			else
 			{
 				bannerImage.setVisibility(View.GONE);
 				titleText.setVisibility(View.VISIBLE);
-				titleText.setText(show.mSeriesName);
+				titleText.setText(show.get("seriesname"));
 			}
 
 			return convertView;
@@ -181,6 +187,29 @@ public class ShowListFragment extends Fragment
 		public void onChangeShow(Show show);
 	}
 
+	class InitializeShowTask extends AsyncTask<File, Void, Show>
+	{
+		@Override
+		protected Show doInBackground(File... dirs)
+		{
+			File dir = dirs[0];
+			if( dir.isDirectory() )
+			{
+				Log.v(TAG, "series id: " + dir.getName());
+				return new Show(dir);
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Show show)
+		{
+			if( show != null )
+			{
+				mAdapter.add(show);
+			}
+		}
+	}
 }
 
 class ImageHelper {

@@ -33,11 +33,11 @@ class ShowBannerDownloadTask extends AsyncTask<Show, Integer, Bitmap>
 			return bannerBitmap;
 		}
 
-		if( shows[0].mBannerUrl.length() > 0 )
+		if( shows[0].containsKey("banner") )
 		{
 			try
 			{
-				String url = "http://www.thetvdb.com/banners/" + shows[0].mBannerUrl;
+				String url = "http://www.thetvdb.com/banners/" + shows[0].get("banner");
 				InputStream is = (InputStream) new URL(url).getContent();
 				bannerBitmap = BitmapFactory.decodeStream(is);
 				is.close();
@@ -52,7 +52,7 @@ class ShowBannerDownloadTask extends AsyncTask<Show, Integer, Bitmap>
 			}
 		}
 
-		shows[0].mBanner = bannerBitmap;
+		shows[0].mBannerBitmap = bannerBitmap;
 
 		return bannerBitmap;
 	}

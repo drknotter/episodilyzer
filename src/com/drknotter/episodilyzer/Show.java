@@ -1,80 +1,73 @@
 package com.drknotter.episodilyzer;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
-
-import org.w3c.dom.CharacterData;
-import org.w3c.dom.Element;
+import java.util.HashMap;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-public class Show
+@SuppressWarnings("serial")
+public class Show extends HashMap<String, String>
 {
+	@SuppressWarnings("unused")
 	private static final String TAG = "Show";
 
-	public int mSeriesId = -1;
-	public String mSeriesName = "";
-	public Bitmap mBanner = null;
-	public String mOverview = "";
-	public String mFirstAired = "";
-	public String mBannerUrl = "";
-	public ArrayList<String> mAliasNames = new ArrayList<String>();
+	ArrayList<Episode> mEpisodesList;
+	Bitmap mBannerBitmap;
 
 	public Show()
 	{
 	}
 
-	public Show(String seriesName)
+	public Show(File showDir)
 	{
-		mSeriesName = seriesName;
+		File seriesDetailsXmlFile = new File(showDir, "en.xml");
+
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		try
+		{
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			InputSource inStream = new InputSource();
+			inStream.setCharacterStream(new FileReader(seriesDetailsXmlFile));
+			Document document = db.parse(inStream);
+			
+			// Initialize the series information.
+			NodeList seriesNodeList = document.getElementsByTagName("Series");
+			initializeSeriesFromXmlElement(seriesNodeList.item(0));
+		}
+		catch( Exception e )
+		{
+			Log.e(TAG, "Error parsing .xml file in show constructor", e);
+		}
 	}
 
-	public Show(Element element)
+	public Show(Node seriesElement)
 	{
-		try
+		initializeSeriesFromXmlElement(seriesElement);
+	}
+	
+	@SuppressLint("DefaultLocale")
+	public void initializeSeriesFromXmlElement(Node seriesElement)
+	{
+		if( seriesElement.getNodeType() == Node.ELEMENT_NODE && seriesElement.getNodeName().equals("Series") )
 		{
-			mSeriesId = Integer.parseInt(getCharacterDataFromElement((Element) element.getElementsByTagName("seriesid").item(0)));
-		}
-		catch( NullPointerException e )
-		{
-			Log.w(TAG, "No series id found!");
-		}
-		
-		try
-		{
-			mSeriesName = getCharacterDataFromElement((Element) element.getElementsByTagName("SeriesName").item(0));
-		}
-		catch( NullPointerException e )
-		{
-			Log.w(TAG, "No series name found!");
-		}
-		
-		try
-		{
-			mOverview = getCharacterDataFromElement((Element) element.getElementsByTagName("Overview").item(0));
-		}
-		catch( NullPointerException e )
-		{
-			Log.w(TAG, "No overview found!");
-		}
-		
-		try
-		{
-			mFirstAired = getCharacterDataFromElement((Element) element.getElementsByTagName("FirstAired").item(0));
-		}
-		catch( NullPointerException e )
-		{
-			Log.w(TAG, "No first air date found!");
-		}
-		
-		try
-		{
-			mBannerUrl = getCharacterDataFromElement((Element) element.getElementsByTagName("banner").item(0));
-		}
-		catch( NullPointerException e )
-		{
-			Log.w(TAG, "No banner url found!");
+			NodeList childNodes = seriesElement.getChildNodes();
+			for( int i=0; i<childNodes.getLength(); i++ )
+			{
+				Node childNode = childNodes.item(i);
+				if( childNode.getNodeType() == Node.ELEMENT_NODE )
+				{
+					this.put(childNode.getNodeName().toLowerCase(), childNode.getTextContent());
+				}
+			}
 		}
 	}
 
@@ -82,21 +75,11 @@ public class Show
 	{
 		String description = "";
 
-		description += mSeriesName + "\n\n";
-		description += "Overview: " + mOverview + "\n\n";
-		description += "First Aired: " + mFirstAired + "\n\n";
+		description += this.get("seriesid") + "\n\n";
+		description += "Overview: " + this.get("overview") + "\n\n";
+		description += "First Aired: " + this.get("firstaired") + "\n\n";
 
 		return description;
 	}
 
-	private static String getCharacterDataFromElement(Element element)
-	{
-		Node child = element.getFirstChild();
-		if( child instanceof CharacterData )
-		{
-			CharacterData cd = (CharacterData) child;
-			return cd.getData();
-		}
-		return "";
-	}
 }

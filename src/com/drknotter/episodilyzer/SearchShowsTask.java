@@ -20,7 +20,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -106,11 +105,11 @@ class SearchShowsTask extends AsyncTask<String, Integer, LinkedList<Show>>
 			int bannerlessShows = 0;
 			for( int i = 0; i < seriesNodes.getLength(); i++ )
 			{
-				Show s = new Show((Element) seriesNodes.item(i));
-				if( s.mOverview.length() > 0 )
+				Show s = new Show(seriesNodes.item(i));
+				if( s.containsKey("overview") )
 				{
 					new ShowBannerDownloadTask(mActivity).execute(s);
-					if( s.mBannerUrl.length() == 0 )
+					if( !s.containsKey("banner") )
 					{
 						showList.addLast(s);
 						bannerlessShows++;

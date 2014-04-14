@@ -59,7 +59,7 @@ public class ShowDetailFragment extends Fragment
 				public void onClick(View v)
 				{
 					String message = mActivity.getString(R.string.add_show_dialog_message);
-					message = message.replace("@%", mShow.mSeriesName);
+					message = message.replace("@%", mShow.get("seriesname"));
 
 					AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 					builder.setPositiveButton(mActivity.getString(android.R.string.yes), new DialogInterface.OnClickListener()
@@ -88,8 +88,8 @@ public class ShowDetailFragment extends Fragment
 
 	private void updateLayout()
 	{
-		((TextView) mRootView.findViewById(R.id.title_text)).setText(mShow.mSeriesName);
-		((TextView) mRootView.findViewById(R.id.overview_text)).setText(mShow.mOverview);
-		((TextView) mRootView.findViewById(R.id.first_aired_text)).setText("First air date: " + mShow.mFirstAired);
+		((TextView) mRootView.findViewById(R.id.title_text)).setText(mShow.get("seriesname"));
+		((TextView) mRootView.findViewById(R.id.overview_text)).setText(mShow.get("overview"));
+		((TextView) mRootView.findViewById(R.id.first_aired_text)).setText("First air date: " + mShow.get("firstaired"));
 	}
 }
