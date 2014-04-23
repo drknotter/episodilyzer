@@ -2,6 +2,7 @@ package com.drknotter.episodilyzer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,11 +40,22 @@ public class ShowListFragment extends Fragment
 	ArrayList<Show> mShowList = new ArrayList<Show>();
 
 	private ShowListAdapter mAdapter;
+	private boolean mDetailShown = false;
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		if( !Intent.ACTION_SEARCH.equals(getActivity().getIntent().getAction()) )
+		{
+			mAdapter.clear()
+			populateListFromMyShows();
+		}
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-
 		View rootView = inflater.inflate(R.layout.show_list_container, container, true);
 
 		ListView listView = (ListView) rootView.findViewById(R.id.showlist);
@@ -74,18 +86,13 @@ public class ShowListFragment extends Fragment
 				}
 				catch( ActivityNotFoundException e )
 				{
-					Toast.makeText(ShowListFragment.this.getActivity(), 
-							"No application can handle this request, Please install a web browser", 
+					Toast.makeText(ShowListFragment.this.getActivity(),
+							"No application can handle this request, Please install a web browser",
 							Toast.LENGTH_LONG).show();
 					e.printStackTrace();
 				}
 			}
 		});
-
-		if( !Intent.ACTION_SEARCH.equals(getActivity().getIntent().getAction()) )
-		{
-			populateListFromMyShows();
-		}
 
 		return rootView;
 	}
@@ -93,11 +100,18 @@ public class ShowListFragment extends Fragment
 	private void populateListFromMyShows()
 	{
 		File filesDirectory = getActivity().getFilesDir();
-		
+
 		File[] files = filesDirectory.listFiles();
+		Log.v(TAG, "files.length: " + files.length);
 		for( File dir : files )
 		{
+			Log.v(TAG, "dir.getName(): " + dir.getName());
 			new InitializeShowTask().execute(dir);
+		}
+
+		if( mAdapter.getCount() > 0 )
+		{
+			((ShowListener) getActivity()).onChangeShow(mAdapter.getItem(0));
 		}
 	}
 
@@ -113,11 +127,6 @@ public class ShowListFragment extends Fragment
 			mAdapter.add(show);
 		}
 		mAdapter.notifyDataSetChanged();
-
-		if( mAdapter.getCount() > 0 )
-		{
-			((ShowListener) getActivity()).onChangeShow(mAdapter.getItem(0));
-		}
 	}
 
 	class ShowListAdapter extends ArrayAdapter<Show>
@@ -169,7 +178,7 @@ public class ShowListFragment extends Fragment
 			{
 				titleText.setVisibility(View.GONE);
 				bannerImage.setVisibility(View.VISIBLE);
-				bannerImage.setImageBitmap(ImageHelper.getRoundedCornerBitmap(show.mBannerBitmap,20));
+				bannerImage.setImageBitmap(show.mBannerBitmap);
 			}
 			else
 			{
@@ -180,6 +189,28 @@ public class ShowListFragment extends Fragment
 
 			return convertView;
 		}
+	}
+	
+	public synchronized Show loadShow(File dir)
+	{
+		Show theShow = null;
+		HashSet<String> seriesIds = new HashSet<String>();
+		
+		for( Show show : mShowList )
+		{
+			seriesIds.add(show.get(Show.SERIESID));
+		}
+		
+		if( dir.isDirectory() )
+		{
+			if( !seriesIds.contains(dir.getName()) )
+			{
+				Log.v(TAG, "series id: " + dir.getName());
+				theShow = new Show(dir);
+			}
+		}
+
+		return theShow;
 	}
 
 	public interface ShowListener
@@ -192,46 +223,47 @@ public class ShowListFragment extends Fragment
 		@Override
 		protected Show doInBackground(File... dirs)
 		{
-			File dir = dirs[0];
-			if( dir.isDirectory() )
-			{
-				Log.v(TAG, "series id: " + dir.getName());
-				return new Show(dir);
-			}
-			return null;
+			return loadShow(dirs[0]);	
 		}
-		
+
 		@Override
 		protected void onPostExecute(Show show)
 		{
 			if( show != null )
 			{
 				mAdapter.add(show);
+				if( !mDetailShown )
+				{
+					((ShowListener) getActivity()).onChangeShow(mAdapter.getItem(0));
+					mDetailShown = true;
+				}
 			}
 		}
 	}
 }
 
-class ImageHelper {
-   public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
-       Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
-               .getHeight(), Config.ARGB_8888);
-       Canvas canvas = new Canvas(output);
+class ImageHelper
+{
+	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels)
+	{
+		Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+				.getHeight(), Config.ARGB_8888);
+		Canvas canvas = new Canvas(output);
 
-       final int color = 0xff424242;
-       final Paint paint = new Paint();
-       final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-       final RectF rectF = new RectF(rect);
-       final float roundPx = pixels;
+		final int color = 0xff424242;
+		final Paint paint = new Paint();
+		final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+		final RectF rectF = new RectF(rect);
+		final float roundPx = pixels;
 
-       paint.setAntiAlias(true);
-       canvas.drawARGB(0, 0, 0, 0);
-       paint.setColor(color);
-       canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+		paint.setAntiAlias(true);
+		canvas.drawARGB(0, 0, 0, 0);
+		paint.setColor(color);
+		canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
 
-       paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
-       canvas.drawBitmap(bitmap, rect, rect, paint);
+		paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+		canvas.drawBitmap(bitmap, rect, rect, paint);
 
-       return output;
-   }
+		return output;
+	}
 }

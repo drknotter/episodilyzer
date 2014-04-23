@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.SearchView;
 import android.support.v4.widget.SlidingPaneLayout;
@@ -20,7 +21,6 @@ public class EpisodilyzerActivity extends Activity implements ShowListener
 	static final int MODE_DEFAULT = 0;
 	static final int MODE_SEARCH = 1;
 	private int mMode = 0;
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
