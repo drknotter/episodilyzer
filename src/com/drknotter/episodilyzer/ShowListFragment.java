@@ -48,7 +48,7 @@ public class ShowListFragment extends Fragment
 		super.onResume();
 		if( !Intent.ACTION_SEARCH.equals(getActivity().getIntent().getAction()) )
 		{
-			mAdapter.clear()
+			mAdapter.clear();
 			populateListFromMyShows();
 		}
 	}
