@@ -9,6 +9,7 @@
     <string name="thetvdb_info">Database information provided by thetvdb.com.</string>
     <string name="add_show_content_desc">Add this show to your show list.</string>
     <string name="add_show_dialog_message">Add \'@%\' to your list of shows?</string>
-	<string name="api_key">E9C8ADC01AC294C3</string>
+    <string name="remove_show_dialog_message">Remove \'@%\' from your list of shows?</string>
+    <string name="api_key">E9C8ADC01AC294C3</string>
 
 </resources>

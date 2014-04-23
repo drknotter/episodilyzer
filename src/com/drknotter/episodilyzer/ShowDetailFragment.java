@@ -1,5 +1,7 @@
 package com.drknotter.episodilyzer;
 
+import java.io.File;
+
 import com.drknotter.episodilyzer.R;
 
 import android.app.Activity;
@@ -81,8 +83,8 @@ public class ShowDetailFragment extends Fragment
 				@Override
 				public void onClick(View v)
 				{
-					String message = mActivity.getString(R.string.add_show_dialog_message);
-					message = message.replace("@%", mShow.get("seriesname"));
+					String message = mActivity.getString(R.string.remove_show_dialog_message);
+					message = message.replace("@%", mShow.get(Show.SERIESNAME));
 
 					AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 					builder.setPositiveButton(mActivity.getString(android.R.string.yes), new DialogInterface.OnClickListener()
@@ -90,7 +92,15 @@ public class ShowDetailFragment extends Fragment
 						@Override
 						public void onClick(DialogInterface dialog, int which)
 						{
-							new ShowDetailDownloadTask(mActivity).execute(mShow);
+							Log.v(TAG, mShow.toString());
+							String directoryString = mActivity.getFilesDir().getAbsolutePath() + "/" + mShow.get(Show.ID);
+							Log.v(TAG, "directoryString: " + directoryString);
+							File directory = new File(directoryString);
+							if( directory.isDirectory() )
+							{
+								Log.v(TAG, "deleting directory " + directory);
+								deleteRecursive(directory);
+							}
 						}
 					})
 							.setNegativeButton(mActivity.getString(android.R.string.no), null)
@@ -101,6 +111,14 @@ public class ShowDetailFragment extends Fragment
 		}
 
 		return mRootView;
+	}
+	
+	private void deleteRecursive(File fileOrDirectory) {
+	    if (fileOrDirectory.isDirectory())
+	        for (File child : fileOrDirectory.listFiles())
+	            deleteRecursive(child);
+
+	    fileOrDirectory.delete();
 	}
 
 	public void setShow(Show show)

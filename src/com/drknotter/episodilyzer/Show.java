@@ -21,6 +21,7 @@ public class Show extends HashMap<String, String>
 	private static final String TAG = "Show";
 	
 	public static final String SERIESID = "seriesid";
+	public static final String ID = "id";
 	public static final String SERIESNAME = "seriesname";
 	public static final String OVERVIEW = "overview";
 	public static final String FIRSTAIRED = "firstaired";
