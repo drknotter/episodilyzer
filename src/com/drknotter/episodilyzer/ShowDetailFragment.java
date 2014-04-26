@@ -1,6 +1,5 @@
 package com.drknotter.episodilyzer;
 
-import java.io.File;
 import com.drknotter.episodilyzer.R;
 
 import android.app.Fragment;
@@ -10,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ShowDetailFragment extends Fragment
@@ -79,6 +79,19 @@ public class ShowDetailFragment extends Fragment
 
 	protected void updateLayout()
 	{
-		((TextView) mRootView.findViewById(R.id.title_text)).setText(mShow.get(Show.SERIESNAME));
+		TextView titleText = (TextView) mRootView.findViewById(R.id.title_text);
+		ImageView bannerImage = (ImageView) mRootView.findViewById(R.id.title_image);
+		if( mShow.mBannerBitmap != null )
+		{
+			titleText.setVisibility(View.GONE);
+			bannerImage.setVisibility(View.VISIBLE);
+			bannerImage.setImageBitmap(mShow.mBannerBitmap);
+		}
+		else
+		{
+			bannerImage.setVisibility(View.GONE);
+			titleText.setVisibility(View.VISIBLE);
+			titleText.setText(mShow.get(Show.SERIESNAME));
+		}
 	}
 }

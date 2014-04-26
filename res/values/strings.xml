@@ -6,6 +6,7 @@
     <string name="search_title">Find a show…</string>
     <string name="search_hint">Find a show…</string>
     <string name="show_list_banner_description">Show Banner</string>
+    <string name="title_image_description">Show Banner</string>
     <string name="thetvdb_info">Database information provided by thetvdb.com.</string>
     <string name="add_show_content_desc">Add this show to your show list.</string>
     <string name="add_show_dialog_message">Add \'@%\' to your list of shows?</string>

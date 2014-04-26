@@ -11,52 +11,26 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/title_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_height="@dimen/show_detail_title_height"
+            android:layout_gravity="center"
+            android:background="@color/detail_text_background"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:maxLines="1"
+            android:padding="@dimen/show_detail_text_padding"
+            android:textSize="@dimen/show_detail_title_text_size" />
 
-            <RelativeLayout
-                android:layout_width="@dimen/show_detail_title_height"
-                android:layout_height="@dimen/show_detail_title_height"
-                android:layout_gravity="center" >
-
-                <Button
-                    android:id="@+id/add_show_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:layout_margin="5dp" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/minus_sign"
-                    android:contentDescription="@string/add_show_content_desc" />
-
-                <ImageView
-                    android:id="@+id/anti_minus_sign"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/anti_minus_sign"
-                    android:contentDescription="@string/add_show_content_desc" />
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/title_text"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/show_detail_title_height"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/show_detail_margin"
-                android:background="@color/detail_text_background"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:maxLines="1"
-                android:padding="@dimen/show_detail_text_padding"
-                android:textSize="@dimen/show_detail_title_text_size" />
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/title_image"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/show_detail_title_height"
+            android:contentDescription="@string/title_image_description"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center" />
     </LinearLayout>
 
 </ScrollView>

@@ -6,10 +6,8 @@ import com.drknotter.episodilyzer.ShowListFragment.ShowListener;
 
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SlidingPaneLayout;
-import android.util.Log;
 
 public class SearchResultsActivity extends Activity implements ShowListener
 {
@@ -36,10 +34,6 @@ public class SearchResultsActivity extends Activity implements ShowListener
 		
 		String seriesName = getIntent().getStringExtra(SearchManager.QUERY);
 		new SearchShowsTask(this).execute(seriesName);
-	}
-
-	private void handleIntent(Intent intent)
-	{
 	}
 
 	void presentSearchResults(LinkedList<Show> searchResults)

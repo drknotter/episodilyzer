@@ -184,7 +184,7 @@ public class ShowListFragment extends Fragment
 			{
 				bannerImage.setVisibility(View.GONE);
 				titleText.setVisibility(View.VISIBLE);
-				titleText.setText(show.get("seriesname"));
+				titleText.setText(show.get(Show.SERIESNAME));
 			}
 
 			return convertView;

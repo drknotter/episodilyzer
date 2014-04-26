@@ -1,14 +1,11 @@
 package com.drknotter.episodilyzer;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 public class ShowSearchDetailFragment extends ShowDetailFragment
@@ -30,30 +27,30 @@ public class ShowSearchDetailFragment extends ShowDetailFragment
 		Log.v(TAG, "onCreateView");
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		Button addShowButton = (Button) mRootView.findViewById(R.id.add_show_button);
-		addShowButton.setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				String message = mActivity.getString(R.string.add_show_dialog_message);
-				message = message.replace("@%", mShow.get("seriesname"));
-
-				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-				builder.setPositiveButton(mActivity.getString(android.R.string.yes), new DialogInterface.OnClickListener()
-				{
-					@Override
-					public void onClick(DialogInterface dialog, int which)
-					{
-						new ShowDetailDownloadTask(mActivity).execute(mShow);
-
-					}
-				})
-						.setNegativeButton(mActivity.getString(android.R.string.no), null)
-						.setMessage(message)
-						.show();
-			}
-		});
+//		Button addShowButton = (Button) mRootView.findViewById(R.id.add_show_button);
+//		addShowButton.setOnClickListener(new View.OnClickListener()
+//		{
+//			@Override
+//			public void onClick(View v)
+//			{
+//				String message = mActivity.getString(R.string.add_show_dialog_message);
+//				message = message.replace("@%", mShow.get("seriesname"));
+//
+//				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+//				builder.setPositiveButton(mActivity.getString(android.R.string.yes), new DialogInterface.OnClickListener()
+//				{
+//					@Override
+//					public void onClick(DialogInterface dialog, int which)
+//					{
+//						new ShowDetailDownloadTask(mActivity).execute(mShow);
+//
+//					}
+//				})
+//						.setNegativeButton(mActivity.getString(android.R.string.no), null)
+//						.setMessage(message)
+//						.show();
+//			}
+//		});
 
 		return mRootView;
 	}
@@ -68,10 +65,10 @@ public class ShowSearchDetailFragment extends ShowDetailFragment
 				.setTitle("Overview")
 				.setContent(mShow.get(Show.OVERVIEW))
 				.build();
-		if( rootDetailContainer.getChildCount() > 1 )
+		if( rootDetailContainer.getChildCount() > 2 )
 		{
-			rootDetailContainer.removeViewAt(1);
+			rootDetailContainer.removeViewAt(2);
 		}
-		rootDetailContainer.addView(layout, 1);
+		rootDetailContainer.addView(layout, 2);
 	}
 }

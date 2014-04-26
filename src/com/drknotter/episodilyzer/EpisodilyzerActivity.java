@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.Menu;
 import android.widget.SearchView;
 import android.support.v4.widget.SlidingPaneLayout;
