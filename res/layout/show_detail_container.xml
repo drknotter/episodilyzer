@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ScrollView1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/show_detail_margin"
-    android:background="#fff" >
+    android:background="#fff"
+    android:padding="@dimen/show_detail_margin" >
 
     <LinearLayout
+        android:id="@+id/root_detail_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
@@ -14,8 +14,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/show_detail_margin"
-            android:baselineAligned="false"
             android:orientation="horizontal" >
 
             <RelativeLayout
@@ -59,22 +57,6 @@
                 android:padding="@dimen/show_detail_text_padding"
                 android:textSize="@dimen/show_detail_title_text_size" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/overview_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/show_detail_margin"
-            android:background="@color/detail_text_background"
-            android:padding="@dimen/show_detail_text_padding" />
-
-        <TextView
-            android:id="@+id/first_aired_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/detail_text_background"
-            android:gravity="center"
-            android:padding="@dimen/show_detail_text_padding" />
     </LinearLayout>
 
 </ScrollView>

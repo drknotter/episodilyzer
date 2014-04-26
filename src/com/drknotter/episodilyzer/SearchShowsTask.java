@@ -34,12 +34,12 @@ import android.os.AsyncTask;
 
 class SearchShowsTask extends AsyncTask<String, Integer, LinkedList<Show>>
 {
-	private EpisodilyzerActivity mActivity;
+	private SearchResultsActivity mActivity;
 	private boolean mSuccess = false;
 
-	public SearchShowsTask(EpisodilyzerActivity activity)
+	public SearchShowsTask(SearchResultsActivity searchResultsActivity)
 	{
-		mActivity = activity;
+		mActivity = searchResultsActivity;
 	}
 
 	@Override

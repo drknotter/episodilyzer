@@ -23,9 +23,9 @@ public class ShowDetailDownloadTask extends AsyncTask<Show, Integer, Void>
 {
 	private static final String TAG = "ShowDetailDownloadTask";
 
-	private EpisodilyzerActivity mActivity;
+	private SearchResultsActivity mActivity;
 
-	public ShowDetailDownloadTask(EpisodilyzerActivity activity)
+	public ShowDetailDownloadTask(SearchResultsActivity activity)
 	{
 		mActivity = activity;
 	}

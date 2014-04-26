@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.drknotter.episodilyzer.ExpandableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/show_detail_margin"
+        android:padding="@dimen/show_detail_margin"
+        android:background="@color/detail_text_background"
+        android:textSize="@dimen/show_detail_title_text_size" />
+
+    <TextView
+        android:id="@+id/item_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:padding="@dimen/show_detail_margin" />
+
+</com.drknotter.episodilyzer.ExpandableLayout>

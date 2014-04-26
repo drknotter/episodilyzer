@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,9 +15,9 @@ import android.os.AsyncTask;
 
 class ShowBannerDownloadTask extends AsyncTask<Show, Integer, Bitmap>
 {
-	private EpisodilyzerActivity mActivity;
+	private Activity mActivity;
 
-	public ShowBannerDownloadTask(EpisodilyzerActivity activity)
+	public ShowBannerDownloadTask(Activity activity)
 	{
 		mActivity = activity;
 	}
