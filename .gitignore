@@ -6,3 +6,6 @@ gen/*
 
 # Ignore binaries.
 bin/*
+
+#ignore .svgs
+res/drawable/*.svg
