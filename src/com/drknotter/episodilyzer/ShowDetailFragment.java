@@ -24,7 +24,10 @@ public class ShowDetailFragment extends Fragment
 	{
 		Log.v(TAG, "onCreateView");
 
-		mRootView = (ViewGroup) inflater.inflate(R.layout.show_detail_container, container, false);
+		if( mRootView == null )
+		{
+			mRootView = (ViewGroup) inflater.inflate(R.layout.show_detail_container, container, false);
+		}
 		mRootView.setOnClickListener(new View.OnClickListener()
 		{
 			@Override
@@ -93,5 +96,7 @@ public class ShowDetailFragment extends Fragment
 			titleText.setVisibility(View.VISIBLE);
 			titleText.setText(mShow.get(Show.SERIESNAME));
 		}
+		TextView firstAiredText = (TextView) mRootView.findViewById(R.id.first_aired);
+		firstAiredText.setText("First aired: " + mShow.get(Show.FIRSTAIRED));
 	}
 }

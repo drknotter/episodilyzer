@@ -8,7 +8,6 @@
         android:id="@+id/item_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/expandable_item_height"
-        android:layout_marginTop="@dimen/show_detail_margin"
         android:padding="@dimen/show_detail_margin"
         android:background="@color/detail_text_background"
         android:textSize="@dimen/show_detail_title_text_size" />
