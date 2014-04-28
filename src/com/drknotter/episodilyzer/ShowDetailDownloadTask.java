@@ -13,6 +13,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -97,7 +98,10 @@ public class ShowDetailDownloadTask extends AsyncTask<Show, Integer, Void>
 
 		// Unzip the .zip file.
 		unzip(zipFileDirectory, zipFileString);
-		
+
+		// Save the banner image.
+		saveBanner(zipFileDirectory, show);
+
 		// Delete the .zip file.
 		new File(zipFileString).delete();
 
@@ -152,7 +156,25 @@ public class ShowDetailDownloadTask extends AsyncTask<Show, Integer, Void>
 		}
 	}
 
-	public String unzipType(String filename)
+	private void saveBanner(String directoryString, Show show)
+	{
+		if( show.mBannerBitmap != null )
+		{
+			FileOutputStream out;
+			try
+			{
+				out = new FileOutputStream(directoryString + "banner.png");
+				show.mBannerBitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+				out.close();
+			}
+			catch( Exception e )
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private String unzipType(String filename)
 	{
 		if( "en.xml".equals(filename) )
 		{

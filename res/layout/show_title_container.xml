@@ -22,13 +22,4 @@
         android:contentDescription="@string/title_image_description"
         android:scaleType="fitCenter" />
 
-    <TextView
-        android:id="@+id/first_aired"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center"
-        android:padding="@dimen/show_detail_first_aired_padding"
-        android:textSize="@dimen/show_detail_first_aired_text_size" />
-
 </merge>

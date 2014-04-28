@@ -1,7 +1,5 @@
 package com.drknotter.episodilyzer;
 
-import java.util.LinkedList;
-
 import com.drknotter.episodilyzer.ShowListFragment.ShowListener;
 
 import android.os.Bundle;
@@ -30,12 +28,6 @@ public class EpisodilyzerActivity extends Activity implements ShowListener
 		pane.setShadowResource(R.drawable.right_pane_shadow);
 
 		pane.openPane();
-	}
-	
-	void presentSearchResults(LinkedList<Show> searchResults)
-	{
-		ShowListFragment leftPane = (ShowListFragment) getFragmentManager().findFragmentById(R.id.leftpane);
-		leftPane.populateListFromSearch(searchResults);
 	}
 
 	@Override

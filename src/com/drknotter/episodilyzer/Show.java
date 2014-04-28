@@ -1,6 +1,7 @@
 package com.drknotter.episodilyzer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 @SuppressWarnings("serial")
@@ -48,6 +50,13 @@ public class Show extends HashMap<String, String>
 			// Initialize the series information.
 			NodeList seriesNodeList = document.getElementsByTagName("Series");
 			initializeSeriesFromXmlElement(seriesNodeList.item(0));
+			
+			// Load the banner image, if it exists.
+			File bannerFile = new File(showDir, "banner.png");
+			if( bannerFile.exists() )
+			{
+				mBannerBitmap = BitmapFactory.decodeStream(new FileInputStream(bannerFile));
+			}
 		}
 		catch( Exception e )
 		{

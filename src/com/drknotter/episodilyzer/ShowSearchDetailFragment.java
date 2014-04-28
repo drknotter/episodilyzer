@@ -1,5 +1,10 @@
 package com.drknotter.episodilyzer;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class ShowSearchDetailFragment extends ShowDetailFragment
 {
@@ -64,6 +70,19 @@ public class ShowSearchDetailFragment extends ShowDetailFragment
 	protected void updateLayout()
 	{
 		super.updateLayout();
+		
+		TextView firstAiredText = (TextView) mRootView.findViewById(R.id.first_aired);
+		try
+		{
+			Date firstAirDate = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(mShow.get(Show.FIRSTAIRED));
+			firstAiredText.setText("First air date: " + new SimpleDateFormat("MMMM d, yyyy", Locale.US).format(firstAirDate));
+		}
+		catch( ParseException e )
+		{
+			firstAiredText.setVisibility(View.GONE);
+			Log.e(TAG, "Error parsing first air date: " + mShow.get(Show.FIRSTAIRED), e);
+		}
+		
 		LinearLayout rootDetailContainer = (LinearLayout) mRootView.findViewById(R.id.root_detail_container);
 		ExpandableLayout layout = new ExpandableLayoutBuilder()
 				.setContext(mActivity)

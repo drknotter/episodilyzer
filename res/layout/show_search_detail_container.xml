@@ -20,6 +20,15 @@
             android:orientation="vertical" >
 
             <include layout="@layout/show_title_container" />
+
+            <TextView
+                android:id="@+id/first_aired"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:padding="@dimen/show_detail_first_aired_padding"
+                android:textSize="@dimen/show_detail_first_aired_text_size" />
         </LinearLayout>
     </ScrollView>
 
