@@ -80,7 +80,12 @@ public class ShowSearchDetailFragment extends ShowDetailFragment
 		catch( ParseException e )
 		{
 			firstAiredText.setVisibility(View.GONE);
-			Log.e(TAG, "Error parsing first air date: " + mShow.get(Show.FIRSTAIRED), e);
+			Log.w(TAG, "Error parsing first air date: " + mShow.get(Show.FIRSTAIRED), e);
+		}
+		catch( NullPointerException e )
+		{
+			firstAiredText.setVisibility(View.GONE);
+			Log.w(TAG, "No first air date found.", e);
 		}
 		
 		LinearLayout rootDetailContainer = (LinearLayout) mRootView.findViewById(R.id.root_detail_container);

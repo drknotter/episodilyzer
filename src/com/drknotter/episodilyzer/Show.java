@@ -5,13 +5,14 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -21,7 +22,7 @@ public class Show extends HashMap<String, String>
 {
 	@SuppressWarnings("unused")
 	private static final String TAG = "Show";
-	
+
 	public static final String SERIESID = "seriesid";
 	public static final String ID = "id";
 	public static final String SERIESNAME = "seriesname";
@@ -46,11 +47,14 @@ public class Show extends HashMap<String, String>
 			InputSource inStream = new InputSource();
 			inStream.setCharacterStream(new FileReader(seriesDetailsXmlFile));
 			Document document = db.parse(inStream);
-			
+
 			// Initialize the series information.
-			NodeList seriesNodeList = document.getElementsByTagName("Series");
-			initializeSeriesFromXmlElement(seriesNodeList.item(0));
-			
+			Node seriesNode = document.getElementsByTagName("Series").item(0);
+			if( seriesNode != null )
+			{
+				initializeSeriesFromXmlNode(seriesNode);
+			}
+
 			// Load the banner image, if it exists.
 			File bannerFile = new File(showDir, "banner.png");
 			if( bannerFile.exists() )
@@ -64,37 +68,24 @@ public class Show extends HashMap<String, String>
 		}
 	}
 
-	public Show(Node seriesElement)
+	public Show(Node seriesNode)
 	{
-		initializeSeriesFromXmlElement(seriesElement);
+		initializeSeriesFromXmlNode(seriesNode);
 	}
-	
-	@SuppressLint("DefaultLocale")
-	public void initializeSeriesFromXmlElement(Node seriesElement)
+
+	public void initializeSeriesFromXmlNode(Node seriesNode)
 	{
-		if( seriesElement.getNodeType() == Node.ELEMENT_NODE && seriesElement.getNodeName().equals("Series") )
+		if( seriesNode.getNodeType() == Node.ELEMENT_NODE && seriesNode.getNodeName().equals("Series") )
 		{
-			NodeList childNodes = seriesElement.getChildNodes();
-			for( int i=0; i<childNodes.getLength(); i++ )
+			NodeList childNodes = seriesNode.getChildNodes();
+			for( int i = 0; i < childNodes.getLength(); i++ )
 			{
 				Node childNode = childNodes.item(i);
 				if( childNode.getNodeType() == Node.ELEMENT_NODE )
 				{
-					this.put(childNode.getNodeName().toLowerCase(), childNode.getTextContent());
+					this.put(childNode.getNodeName().toLowerCase(Locale.ENGLISH), childNode.getTextContent());
 				}
 			}
 		}
 	}
-
-	public String getDescriptionString()
-	{
-		String description = "";
-
-		description += this.get(SERIESID) + "\n\n";
-		description += "Overview: " + this.get(OVERVIEW) + "\n\n";
-		description += "First Aired: " + this.get(FIRSTAIRED) + "\n\n";
-
-		return description;
-	}
-
 }
