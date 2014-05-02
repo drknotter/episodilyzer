@@ -3,9 +3,9 @@ package com.drknotter.episodilyzer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,12 +29,8 @@ public class Show extends HashMap<String, String>
 	public static final String OVERVIEW = "overview";
 	public static final String FIRSTAIRED = "firstaired";
 
-	ArrayList<Episode> mEpisodesList;
+	TreeMap<String, Season> mSeasons = new TreeMap<String, Season>();
 	Bitmap mBannerBitmap;
-
-	public Show()
-	{
-	}
 
 	public Show(File showDir)
 	{
@@ -60,6 +56,20 @@ public class Show extends HashMap<String, String>
 			if( bannerFile.exists() )
 			{
 				mBannerBitmap = BitmapFactory.decodeStream(new FileInputStream(bannerFile));
+			}
+
+			// Initialize the seasons/episodes.
+			NodeList episodeNodeList = document.getElementsByTagName("Episode");
+			for( int i = 0; i < episodeNodeList.getLength(); i++ )
+			{
+				Episode episode = new Episode(episodeNodeList.item(i));
+				String seasonNumber = episode.get(Episode.SEASONNUMBER);
+				String episodeNumber = episode.get(Episode.EPISODENUMBER);
+				if( !mSeasons.containsKey(seasonNumber) )
+				{
+					mSeasons.put(seasonNumber, new Season());
+				}
+				mSeasons.get(seasonNumber).put(episodeNumber, episode);
 			}
 		}
 		catch( Exception e )

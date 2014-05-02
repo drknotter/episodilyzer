@@ -1,10 +1,15 @@
 package com.drknotter.episodilyzer;
 
+import java.util.ArrayList;
+import java.util.TreeMap;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -13,9 +18,17 @@ import android.widget.TextView;
 
 public class ExpandableLayoutBuilder
 {
+	private static enum LayoutType
+	{
+		TEXT,
+		NESTED
+	};
+
+	private LayoutType mLayoutType = null;
 	private String mTitle = null;
-	private String mContent = null;
+	private String mContentString = null;
 	private Context mContext = null;
+	private ArrayList<ExpandableLayout> mLayoutList = null;
 
 	public ExpandableLayoutBuilder()
 	{
@@ -27,9 +40,60 @@ public class ExpandableLayoutBuilder
 		return this;
 	}
 
-	public ExpandableLayoutBuilder setContent(String content)
+	public ExpandableLayoutBuilder setContentString(String content)
 	{
-		mContent = content;
+		if( mLayoutType != null )
+		{
+			return this;
+		}
+		mLayoutType = LayoutType.TEXT;
+		mContentString = content;
+		return this;
+	}
+	
+	public ExpandableLayoutBuilder setSeries(TreeMap<String, Season> series)
+	{
+		if( mLayoutType != null )
+		{
+			return this;
+		}
+		
+		mLayoutType = LayoutType.NESTED;
+		mLayoutList = new ArrayList<ExpandableLayout>();
+		
+		for( String seasonNumber : series.keySet() )
+		{
+			ExpandableLayout episodeLayout = new ExpandableLayoutBuilder()
+					.setContext(mContext)
+					.setTitle("Season " + seasonNumber)
+					.setSeason(series.get(seasonNumber))
+					.build();
+			mLayoutList.add(episodeLayout);
+		}
+
+		return this;
+	}
+
+	public ExpandableLayoutBuilder setSeason(Season season)
+	{
+		if( mLayoutType != null )
+		{
+			return this;
+		}
+
+		mLayoutType = LayoutType.NESTED;
+		mLayoutList = new ArrayList<ExpandableLayout>();
+
+		for( String episodeNumber : season.keySet() )
+		{
+			ExpandableLayout episodeLayout = new ExpandableLayoutBuilder()
+					.setContext(mContext)
+					.setTitle("Episode " + episodeNumber)
+					.setContentString(season.get(episodeNumber).get(Episode.OVERVIEW))
+					.build();
+			mLayoutList.add(episodeLayout);
+		}
+
 		return this;
 	}
 
@@ -43,7 +107,24 @@ public class ExpandableLayoutBuilder
 	{
 		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		ExpandableLayout layout = (ExpandableLayout) inflater.inflate(R.layout.show_detail_expandable_item_container, null);
-		layout.init(mTitle, mContent);
+		layout.init(mTitle);
+
+		// Insert the contents of the content layout.
+		if( mLayoutType == LayoutType.TEXT )
+		{
+			TextView textView = new TextView(mContext);
+			textView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+			textView.setText(mContentString);
+			layout.addViewToContent(textView);
+		}
+		else if( mLayoutType == LayoutType.NESTED )
+		{
+			for( ExpandableLayout child : mLayoutList )
+			{
+				layout.addViewToContent(child);
+			}
+		}
+
 		return layout;
 	}
 }
@@ -51,7 +132,7 @@ public class ExpandableLayoutBuilder
 class ExpandableLayout extends LinearLayout
 {
 	TextView mTitleText;
-	TextView mContentText;
+	LinearLayout mContent;
 
 	public ExpandableLayout(Context context)
 	{
@@ -68,17 +149,16 @@ class ExpandableLayout extends LinearLayout
 		super(context, attrs, defStyle);
 	}
 
-	public void init(String title, String content)
+	public void init(String title)
 	{
 		mTitleText = (TextView) this.findViewById(R.id.item_title);
-		mContentText = (TextView) this.findViewById(R.id.item_content);
+		mContent = (LinearLayout) this.findViewById(R.id.item_content);
 
 		mTitleText.setText(title);
-		mContentText.setText(content);
-		
+
 		Drawable arrow = getContext().getResources().getDrawable(R.drawable.expand);
 		int size = getContext().getResources().getDimensionPixelSize(R.dimen.expandable_item_height);
-		arrow.setBounds(0, 0, size/2, size/2);
+		arrow.setBounds(0, 0, size / 2, size / 2);
 		mTitleText.setCompoundDrawables(null, null, arrow, null);
 
 		mTitleText.setOnClickListener(new View.OnClickListener()
@@ -87,12 +167,13 @@ class ExpandableLayout extends LinearLayout
 			public void onClick(View v)
 			{
 				Drawable arrow;
-				mContentText.clearAnimation();
-				if( mContentText.getVisibility() == View.GONE )
+				mContent.clearAnimation();
+
+				if( mContent.getVisibility() == View.GONE )
 				{
-					mContentText.setVisibility(View.VISIBLE);
+					mContent.setVisibility(View.VISIBLE);
 					arrow = getContext().getResources().getDrawable(R.drawable.collapse);
-					mContentText.startAnimation(AnimationUtils.loadAnimation(ExpandableLayout.this.getContext(), R.anim.expand_vertical));
+					mContent.startAnimation(AnimationUtils.loadAnimation(ExpandableLayout.this.getContext(), R.anim.expand_vertical));
 				}
 				else
 				{
@@ -103,7 +184,7 @@ class ExpandableLayout extends LinearLayout
 						@Override
 						public void onAnimationEnd(Animation arg0)
 						{
-							mContentText.setVisibility(View.GONE);
+							mContent.setVisibility(View.GONE);
 						}
 
 						@Override
@@ -116,12 +197,17 @@ class ExpandableLayout extends LinearLayout
 						{
 						}
 					});
-					mContentText.startAnimation(animation);
+					mContent.startAnimation(animation);
 				}
 				int size = getContext().getResources().getDimensionPixelSize(R.dimen.expandable_item_height);
-				arrow.setBounds(0, 0, size/2, size/2);
+				arrow.setBounds(0, 0, size / 2, size / 2);
 				mTitleText.setCompoundDrawables(null, null, arrow, null);
 			}
 		});
+	}
+
+	public void addViewToContent(View v)
+	{
+		mContent.addView(v);
 	}
 }

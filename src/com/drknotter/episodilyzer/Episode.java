@@ -21,18 +21,18 @@ public class Episode extends HashMap<String, String>
 	public static final String RATINGCOUNT = "ratingcount";
 	public static final String WRITER = "writer";
 	public static final String GUESTSTARS = "gueststars";
-	
+
 	public Episode(Node episodeNode)
 	{
 		initializeEpisodeFromXmlNode(episodeNode);
 	}
-	
+
 	public void initializeEpisodeFromXmlNode(Node episodeNode)
 	{
 		if( episodeNode.getNodeType() == Node.ELEMENT_NODE && episodeNode.getNodeName().equals("Episode") )
 		{
 			NodeList childNodes = episodeNode.getChildNodes();
-			for( int i=0; i<childNodes.getLength(); i++ )
+			for( int i = 0; i < childNodes.getLength(); i++ )
 			{
 				Node childNode = childNodes.item(i);
 				if( childNode.getNodeType() == Node.ELEMENT_NODE )

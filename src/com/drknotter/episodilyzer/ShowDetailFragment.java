@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ShowDetailFragment extends Fragment
@@ -38,42 +39,9 @@ public class ShowDetailFragment extends Fragment
 			}
 		});
 
-//		Button addRemoveShowButton = (Button) mRootView.findViewById(R.id.add_show_button);
-//		mRootView.findViewById(R.id.anti_minus_sign).setVisibility(View.GONE);
-//		addRemoveShowButton.setOnClickListener(new View.OnClickListener()
-//		{
-//			@Override
-//			public void onClick(View v)
-//			{
-//				String message = mActivity.getString(R.string.remove_show_dialog_message);
-//				message = message.replace("@%", mShow.get(Show.SERIESNAME));
-//
-//				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-//				builder.setPositiveButton(mActivity.getString(android.R.string.yes), new DialogInterface.OnClickListener()
-//				{
-//					@Override
-//					public void onClick(DialogInterface dialog, int which)
-//					{
-//						Log.v(TAG, mShow.toString());
-//						String directoryString = mActivity.getFilesDir().getAbsolutePath() + "/" + mShow.get(Show.ID);
-//						Log.v(TAG, "directoryString: " + directoryString);
-//						File directory = new File(directoryString);
-//						if( directory.isDirectory() )
-//						{
-//							Log.v(TAG, "deleting directory " + directory);
-//							deleteRecursive(directory);
-//						}
-//					}
-//				})
-//						.setNegativeButton(mActivity.getString(android.R.string.no), null)
-//						.setMessage(message)
-//						.show();
-//			}
-//		});
-
 		return mRootView;
 	}
-	
+
 	public void setShow(Show show)
 	{
 		mShow = show;
@@ -96,5 +64,20 @@ public class ShowDetailFragment extends Fragment
 			titleText.setVisibility(View.VISIBLE);
 			titleText.setText(mShow.get(Show.SERIESNAME));
 		}
+		
+		int SEASON_LIST_INDEX = 2;
+		LinearLayout rootDetailContainer = (LinearLayout) mRootView.findViewById(R.id.root_detail_container);
+		ExpandableLayout layout = new ExpandableLayoutBuilder()
+				.setContext(getActivity())
+				.setTitle("Seasons")
+				.setSeries(mShow.mSeasons)
+				.build();
+		
+		if( rootDetailContainer.getChildCount() > SEASON_LIST_INDEX )
+		{
+			rootDetailContainer.removeViewAt(SEASON_LIST_INDEX);
+		}
+		rootDetailContainer.addView(layout, SEASON_LIST_INDEX);
+
 	}
 }

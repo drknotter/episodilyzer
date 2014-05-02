@@ -12,11 +12,12 @@
         android:background="@color/detail_text_background"
         android:textSize="@dimen/show_detail_title_text_size" />
 
-    <TextView
+    <LinearLayout
         android:id="@+id/item_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:padding="@dimen/show_detail_margin" />
+        android:padding="@dimen/show_detail_margin"
+        android:orientation="vertical" />
 
 </com.drknotter.episodilyzer.ExpandableLayout>

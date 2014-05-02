@@ -92,7 +92,7 @@ public class ShowSearchDetailFragment extends ShowDetailFragment
 		ExpandableLayout layout = new ExpandableLayoutBuilder()
 				.setContext(mActivity)
 				.setTitle("Overview")
-				.setContent(mShow.get(Show.OVERVIEW))
+				.setContentString(mShow.get(Show.OVERVIEW))
 				.build();
 		
 		if( rootDetailContainer.getChildCount() > OVERVIEW_INDEX )
