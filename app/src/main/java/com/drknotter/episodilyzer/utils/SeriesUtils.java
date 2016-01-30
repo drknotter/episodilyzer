@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 
+import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.model.Series;
 
 import java.lang.ref.WeakReference;
@@ -11,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by plunkett on 1/24/16.
- */
 public class SeriesUtils {
     private static HandlerThread handlerThread;
     private static Handler handler;
@@ -22,6 +20,10 @@ public class SeriesUtils {
         void onSeriesInserted(List<Series> insertedSeries);
         void onSeriesDeleted(List<Series> deletedSeries);
         void onSeriesUpdated(List<Series> updatedSeries);
+    }
+
+    public interface OnSavedSeriesFetchedListener {
+        void onSavedSeriesFetched(List<Series> savedSeries);
     }
 
     private static List<WeakReference<OnSeriesChangeListener>> listenerRefs = new ArrayList<>();
@@ -44,6 +46,12 @@ public class SeriesUtils {
         }
     }
 
+    public static synchronized void fetchSavedSeries(OnSavedSeriesFetchedListener listener) {
+        startThreadIfNeeded();
+        Message msg = handler.obtainMessage(SeriesUtilsHandler.WHAT_FETCH_SAVED, listener);
+        handler.sendMessage(msg);
+    }
+
     public static synchronized void saveSeries(int seriesId) {
         startThreadIfNeeded();
         Message msg = handler.obtainMessage(SeriesUtilsHandler.WHAT_SAVE, seriesId);
@@ -54,6 +62,12 @@ public class SeriesUtils {
         startThreadIfNeeded();
         Message msg = handler.obtainMessage(SeriesUtilsHandler.WHAT_DELETE, seriesId);
         handler.sendMessage(msg);
+    }
+
+    public static synchronized boolean isSeriesSaved(int seriesId) {
+        return new Select().from(Series.class)
+                .where("series_id = ?", seriesId)
+                .exists();
     }
 
     static synchronized void notifyDeleted(List<Series> deletedSeries) {

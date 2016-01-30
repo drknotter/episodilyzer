@@ -11,6 +11,8 @@ import java.util.List;
 @Table(name="Series")
 public class Series extends Model {
 
+    public Series() {}
+
     public Series(FullSeries fullSeries) {
         super();
         id = fullSeries.series.id;
@@ -70,7 +72,8 @@ public class Series extends Model {
     public Banner randomBanner() {
         return new Select()
                 .from(Banner.class)
-                .where("series = ?, type = ?", getId(), Banner.TYPE_SERIES)
+                .where("series = ?", getId())
+                .and("type = ?", Banner.TYPE_SERIES)
                 .orderBy("RANDOM()")
                 .executeSingle();
     }

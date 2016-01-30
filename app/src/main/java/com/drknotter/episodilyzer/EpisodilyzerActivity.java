@@ -12,7 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.drknotter.episodilyzer.adapter.MyShowsAdapter;
-import com.drknotter.episodilyzer.server.model.FullSeries;
+import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 
 import java.util.List;
@@ -62,7 +62,7 @@ public class EpisodilyzerActivity extends AppCompatActivity implements SeriesUti
     }
 
     @Override
-    public void onSavedSeriesFetched(List<FullSeries> savedSeries) {
+    public void onSavedSeriesFetched(List<Series> savedSeries) {
         MyShowsAdapter adapter = new MyShowsAdapter(savedSeries);
         myShowsList.setAdapter(adapter);
     }

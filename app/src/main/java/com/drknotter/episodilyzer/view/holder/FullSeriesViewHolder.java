@@ -35,12 +35,7 @@ public class FullSeriesViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bindSeries(int seriesId) {
-        final Series series = new Select()
-                .from(Series.class)
-                .where("series_id = ?", seriesId)
-                .executeSingle();
-
+    public void bindSeries(final Series series) {
         if (series != null) {
             Banner randomBanner = series.randomBanner();
 

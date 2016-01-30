@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.drknotter.episodilyzer.R;
-import com.drknotter.episodilyzer.server.model.FullSeries;
+import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.view.holder.FullSeriesViewHolder;
 
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ import java.util.List;
  * Created by plunkett on 1/26/16.
  */
 public class MyShowsAdapter extends RecyclerView.Adapter<FullSeriesViewHolder> {
-    private List<FullSeries> myShows = new ArrayList<>();
+    private List<Series> myShows = new ArrayList<>();
 
-    public MyShowsAdapter(List<FullSeries> myShows) {
+    public MyShowsAdapter(List<Series> myShows) {
         this.myShows.addAll(myShows);
     }
 

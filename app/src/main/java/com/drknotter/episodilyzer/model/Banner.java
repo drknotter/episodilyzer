@@ -10,7 +10,10 @@ import com.drknotter.episodilyzer.server.model.BaseBanner;
 public class Banner extends Model {
     public static final String TYPE_SERIES = "series";
 
+    public Banner() {}
+
     public Banner(BaseBanner baseBanner, Series series) {
+        super();
         this.series = series;
         path = baseBanner.bannerPath;
         thumbnailPath = baseBanner.thumbnailPath;

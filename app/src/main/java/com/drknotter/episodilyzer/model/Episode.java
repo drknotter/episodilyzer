@@ -8,6 +8,8 @@ import com.drknotter.episodilyzer.server.model.BaseEpisode;
  * Created by plunkett on 1/29/16.
  */
 public class Episode extends Model {
+    public Episode() {}
+
     public Episode(BaseEpisode baseEpisode, Series series) {
         super();
         id = baseEpisode.id;

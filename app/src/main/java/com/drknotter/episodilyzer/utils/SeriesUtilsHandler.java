@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.activeandroid.ActiveAndroid;
+import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.Episodilyzer;
 import com.drknotter.episodilyzer.R;
@@ -20,6 +21,7 @@ import com.drknotter.episodilyzer.server.model.FullSeries;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class SeriesUtilsHandler extends Handler {
     public static final int WHAT_SAVE_BATCH = 1;
     public static final int WHAT_DELETE = 2;
     public static final int WHAT_DELETE_BATCH = 3;
+    public static final int WHAT_FETCH_SAVED = 4;
 
     private static Handler uiHandler = new Handler(Looper.getMainLooper());
 
@@ -55,7 +58,29 @@ public class SeriesUtilsHandler extends Handler {
             }
 
             case WHAT_SAVE_BATCH: {
+                @SuppressWarnings("unchecked")
+                List<Integer> seriesIds = (List<Integer>) msg.obj;
+                for (Integer seriesId : seriesIds) {
+                    saveSeries(seriesId, true);
+                }
+                break;
+            }
 
+            case WHAT_DELETE: {
+                int seriesId = (int) msg.obj;
+                List<Series> deletedSeries = new Delete().from(Series.class)
+                        .where("series_id = ?", seriesId)
+                        .execute();
+                SeriesUtils.notifyDeleted(deletedSeries);
+                break;
+            }
+
+            case WHAT_FETCH_SAVED: {
+                SeriesUtils.OnSavedSeriesFetchedListener listener = (SeriesUtils.OnSavedSeriesFetchedListener) msg.obj;
+                List<Series> savedSeries = new Select().from(Series.class)
+                        .orderBy("seriesName")
+                        .execute();
+                uiHandler.post(new FetchedRunnable(listener, savedSeries));
                 break;
             }
         }
@@ -122,8 +147,8 @@ public class SeriesUtilsHandler extends Handler {
             if (notify) {
                 List<Series> seriesList = new ArrayList<>();
                 seriesList.add(series);
-                uiHandler.post(new CallbackRunnable(
-                        exists ? CallbackRunnable.Type.UPDATE : CallbackRunnable.Type.INSERT,
+                uiHandler.post(new NotifyRunnable(
+                        exists ? NotifyRunnable.Type.UPDATE : NotifyRunnable.Type.INSERT,
                         seriesList));
             }
 
@@ -136,7 +161,7 @@ public class SeriesUtilsHandler extends Handler {
         }
     }
 
-    private static class CallbackRunnable implements Runnable {
+    private static class NotifyRunnable implements Runnable {
         enum Type {
             INSERT,
             DELETE,
@@ -145,7 +170,7 @@ public class SeriesUtilsHandler extends Handler {
         private Type type;
         private List<Series> seriesList;
 
-        public CallbackRunnable(Type type, List<Series> seriesList) {
+        public NotifyRunnable(Type type, List<Series> seriesList) {
             this.type = type;
             this.seriesList = seriesList;
         }
@@ -166,5 +191,24 @@ public class SeriesUtilsHandler extends Handler {
                     break;
             }
         }
+    }
+
+    private static class FetchedRunnable implements Runnable {
+        private WeakReference<SeriesUtils.OnSavedSeriesFetchedListener> listenerRef;
+        private List<Series> seriesList;
+
+        public FetchedRunnable(SeriesUtils.OnSavedSeriesFetchedListener listener, List<Series> seriesList) {
+            listenerRef = new WeakReference<>(listener);
+            this.seriesList = seriesList;
+        }
+
+        @Override
+        public void run() {
+            SeriesUtils.OnSavedSeriesFetchedListener listener = listenerRef.get();
+            if (listener != null) {
+                listener.onSavedSeriesFetched(seriesList);
+            }
+        }
+
     }
 }
