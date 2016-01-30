@@ -2,16 +2,33 @@ package com.drknotter.episodilyzer.model;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
+import com.drknotter.episodilyzer.server.model.BaseBanner;
 
 /**
  * Created by plunkett on 1/29/16.
  */
 public class Banner extends Model {
+    public static final String TYPE_SERIES = "series";
+
+    public Banner(BaseBanner baseBanner, Series series) {
+        this.series = series;
+        path = baseBanner.bannerPath;
+        thumbnailPath = baseBanner.thumbnailPath;
+        vignettePath = baseBanner.vignettePath;
+        type = baseBanner.bannerType;
+        type2 = baseBanner.bannerType2;
+        season = baseBanner.season;
+        rating = baseBanner.rating;
+        ratingCount = baseBanner.ratingCount;
+        seriesName = baseBanner.seriesName;
+        colors = baseBanner.colors;
+    }
+
     @Column(name="series")
     public Series series;
 
     // Can be appended to <mirrorpath>/banners/ to determine the actual location of the artwork.
-    @Column(name="path")
+    @Column(name="path", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public String path;
 
     // Used exactly the same way as BannerPath, only shows if BannerType is fanart.

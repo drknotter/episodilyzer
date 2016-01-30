@@ -4,7 +4,7 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 @Root(name = "Banner", strict = false)
-public class Banner {
+public class BaseBanner {
     // Can be appended to <mirrorpath>/banners/ to determine the actual location of the artwork.
     @Element(name="BannerPath")
     public String bannerPath;

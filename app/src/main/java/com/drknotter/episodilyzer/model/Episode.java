@@ -2,14 +2,40 @@ package com.drknotter.episodilyzer.model;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
+import com.drknotter.episodilyzer.server.model.BaseEpisode;
 
 /**
  * Created by plunkett on 1/29/16.
  */
 public class Episode extends Model {
-    @Column(name="id", index = true)
+    public Episode(BaseEpisode baseEpisode, Series series) {
+        super();
+        id = baseEpisode.id;
+        this.series = series;
+        director = baseEpisode.director;
+        episodeName = baseEpisode.episodeName;
+        episodeNumber = baseEpisode.episodeNumber;
+        firstAired = baseEpisode.firstAired;
+        guestStars = baseEpisode.guestStars;
+        overview = baseEpisode.overview;
+        rating = baseEpisode.rating;
+        ratingCount = baseEpisode.ratingCount;
+        seasonNumber = baseEpisode.seasonNumber;
+        writer = baseEpisode.writer;
+        absoluteNumber = baseEpisode.absoluteNumber;
+        filename = baseEpisode.filename;
+        lastUpdated = baseEpisode.lastUpdated;
+        seasonId = baseEpisode.seasonId;
+        thumbAdded = baseEpisode.thumbAdded;
+        thumbHeight = baseEpisode.thumbHeight;
+        thumbWidth = baseEpisode.thumbWidth;
+    }
+
+    // An unsigned integer assigned by our site to the episode. Cannot be null.
+    @Column(name="episode_id", index = true, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public int id;
 
+    // Series that this episode is associated with.
     @Column(name="series")
     public Series series;
 
@@ -80,5 +106,4 @@ public class Episode extends Model {
     // An unsigned integer that represents the width of the episode image in pixels. Can be null
     @Column(name="thumb_width")
     public int thumbWidth;
-
 }

@@ -6,10 +6,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.R;
+import com.drknotter.episodilyzer.model.Banner;
+import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.TheTVDBService;
-import com.drknotter.episodilyzer.server.model.Banner;
-import com.drknotter.episodilyzer.server.model.FullSeries;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.squareup.picasso.Picasso;
 
@@ -34,32 +35,40 @@ public class FullSeriesViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bindSeries(final FullSeries fullSeries) {
-        Uri bannerUri = null;
-        if (fullSeries.banners != null && fullSeries.banners.size() > 0) {
-            for(Banner banner : fullSeries.banners) {
-                if ("series".equals(banner.bannerType)) {
-                    bannerUri = Uri.parse(TheTVDBService.BASE_URL)
-                            .buildUpon()
-                            .appendPath("banners")
-                            .appendPath(banner.bannerPath)
-                            .build();
-                }
-            }
-        }
-        Picasso.with(itemView.getContext())
-                .load(bannerUri)
-                .into(banner);
-        title.setText(fullSeries.series.seriesName);
-        overview.setText(fullSeries.series.overview);
+    public void bindSeries(int seriesId) {
+        final Series series = new Select()
+                .from(Series.class)
+                .where("series_id = ?", seriesId)
+                .executeSingle();
 
-        starToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                starToggle.setActivated(!starToggle.isActivated());
-                SeriesUtils.deleteSeries(fullSeries.series.id);
+        if (series != null) {
+            Banner randomBanner = series.randomBanner();
+
+            Uri bannerUri = null;
+            if (randomBanner != null) {
+                bannerUri = Uri.parse(TheTVDBService.BASE_URL)
+                        .buildUpon()
+                        .appendPath("banners")
+                        .appendPath(randomBanner.path)
+                        .build();
             }
-        });
-        starToggle.setActivated(SeriesUtils.isSeriesSaved(fullSeries.series.id));
+            Picasso.with(itemView.getContext())
+                    .load(bannerUri)
+                    .into(banner);
+            title.setText(series.seriesName);
+            overview.setText(series.overview);
+
+            starToggle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    starToggle.setActivated(!starToggle.isActivated());
+                    SeriesUtils.deleteSeries(series.id);
+                }
+            });
+            starToggle.setActivated(
+                    new Select().from(Series.class)
+                            .where("id = ?", series.id)
+                            .exists());
+        }
     }
 }

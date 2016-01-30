@@ -11,5 +11,5 @@ import java.util.List;
 @Root(name="Banners", strict = false)
 public class BannerList {
     @ElementList(inline = true, name = "Banner")
-    public List<Banner> banners;
+    public List<BaseBanner> banners;
 }

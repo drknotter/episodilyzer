@@ -3,7 +3,6 @@ package com.drknotter.episodilyzer.server.model;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
-import org.simpleframework.xml.Transient;
 
 import java.util.List;
 
@@ -17,7 +16,4 @@ public class FullSeries {
 
     @ElementList(name = "Episode", inline = true)
     public List<BaseEpisode> episodes;
-
-    @Transient
-    public List<Banner> banners;
 }

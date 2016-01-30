@@ -3,12 +3,28 @@ package com.drknotter.episodilyzer.model;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
+import com.drknotter.episodilyzer.server.model.FullSeries;
 
 import java.util.List;
 
 @Table(name="Series")
 public class Series extends Model {
-    @Column(name="id", index=true)
+
+    public Series(FullSeries fullSeries) {
+        super();
+        id = fullSeries.series.id;
+        actors = fullSeries.series.actors;
+        firstAired = fullSeries.series.firstAired;
+        lastUpdated = fullSeries.series.lastUpdated;
+        overview = fullSeries.series.overview;
+        rating = fullSeries.series.rating;
+        ratingCount = fullSeries.series.ratingCount;
+        seriesName = fullSeries.series.seriesName;
+        status = fullSeries.series.status;
+    }
+
+    @Column(name = "series_id", index=true, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public int id;
 
     // A pipe delimited string of actors in plain text. Begins and ends with a pipe even if no actors are listed. Cannot be null.
@@ -51,60 +67,11 @@ public class Series extends Model {
         return getMany(Banner.class, "series");
     }
 
-    public static class Builder {
-        private Series series;
-
-        public Builder() {
-            series = new Series();
-        }
-
-        public Builder id(int id) {
-            series.id = id;
-            return this;
-        }
-
-        public Builder actors(String actors) {
-            series.actors = actors;
-            return this;
-        }
-
-        public Builder firstAired(String firstAired) {
-            series.firstAired = firstAired;
-            return this;
-        }
-
-        public Builder overview(String overview) {
-            series.overview = overview;
-            return this;
-        }
-
-        public Builder rating(double rating) {
-            series.rating = rating;
-            return this;
-        }
-
-        public Builder ratingCount(int ratingCount) {
-            series.ratingCount = ratingCount;
-            return this;
-        }
-
-        public Builder seriesName(String seriesName) {
-            series.seriesName = seriesName;
-            return this;
-        }
-
-        public Builder status(String status) {
-            series.status = status;
-            return this;
-        }
-
-        public Builder lastUpdated(long lastUpdated) {
-            series.lastUpdated = lastUpdated;
-            return this;
-        }
-
-        public Series build() {
-            return series;
-        }
+    public Banner randomBanner() {
+        return new Select()
+                .from(Banner.class)
+                .where("series = ?, type = ?", getId(), Banner.TYPE_SERIES)
+                .orderBy("RANDOM()")
+                .executeSingle();
     }
 }
