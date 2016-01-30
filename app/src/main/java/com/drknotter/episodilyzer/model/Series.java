@@ -50,4 +50,61 @@ public class Series extends Model {
     public List<Banner> banners() {
         return getMany(Banner.class, "series");
     }
+
+    public static class Builder {
+        private Series series;
+
+        public Builder() {
+            series = new Series();
+        }
+
+        public Builder id(int id) {
+            series.id = id;
+            return this;
+        }
+
+        public Builder actors(String actors) {
+            series.actors = actors;
+            return this;
+        }
+
+        public Builder firstAired(String firstAired) {
+            series.firstAired = firstAired;
+            return this;
+        }
+
+        public Builder overview(String overview) {
+            series.overview = overview;
+            return this;
+        }
+
+        public Builder rating(double rating) {
+            series.rating = rating;
+            return this;
+        }
+
+        public Builder ratingCount(int ratingCount) {
+            series.ratingCount = ratingCount;
+            return this;
+        }
+
+        public Builder seriesName(String seriesName) {
+            series.seriesName = seriesName;
+            return this;
+        }
+
+        public Builder status(String status) {
+            series.status = status;
+            return this;
+        }
+
+        public Builder lastUpdated(long lastUpdated) {
+            series.lastUpdated = lastUpdated;
+            return this;
+        }
+
+        public Series build() {
+            return series;
+        }
+    }
 }

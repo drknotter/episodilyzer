@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.drknotter.episodilyzer.Episodilyzer;
 import com.drknotter.episodilyzer.R;
+import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.BannerList;
 import com.drknotter.episodilyzer.server.model.FullSeries;
@@ -99,19 +100,39 @@ public class SeriesUtils {
                                     Episodilyzer.getInstance().getString(R.string.api_key),
                                     seriesId);
 
+                    File seriesDir = new File(Episodilyzer.getInstance().getCacheDir(),
+                            Integer.toString(seriesId));
+                    seriesDir.mkdirs();
                     try {
-                        File seriesDir = new File(Episodilyzer.getInstance().getRootSeriesDir(),
-                                Integer.toString(seriesId));
-                        seriesDir.mkdirs();
-
                         InputStream zipfileInputStream = response.getBody().in();
                         File zipFile = downloadZipFile(zipfileInputStream, seriesDir, seriesId);
                         zipfileInputStream.close();
 
                         unzip(zipFile, seriesDir);
 
-                    } catch (IOException e) {
+                        SimpleXMLConverter converter = new SimpleXMLConverter();
+
+                        // Deserialize the full series information.
+                        File fullSeriesFile = new File(seriesDir, "en.xml");
+                        TypedInput input = new TypedFile("text/xml", fullSeriesFile);
+                        FullSeries fullSeries = (FullSeries) converter.fromBody(input, FullSeries.class);
+
+                        Series series = new Series.Builder().build();
+
+                        File bannersFile = new File(seriesDir, "banners.xml");
+                        input = new TypedFile("text/xml", bannersFile);
+                        Log.v("FindMe", "deserializing banners");
+                        now = System.nanoTime();
+                        BannerList bannerList = (BannerList) converter.fromBody(input, BannerList.class);
+                        Log.v("FindMe", "deserialized banners, took " + (System.nanoTime() - now) / 1000000 + "ms");
+                        series.banners = bannerList.banners;
+
+                    } catch (IOException|ConversionException e) {
                         e.printStackTrace();
+
+                    } finally {
+                        // Clean up after ourselves.
+                        nukeDirectory(seriesDir);
                     }
                     break;
                 }
