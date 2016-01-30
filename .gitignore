@@ -1,11 +1,8 @@
-# Ignore generated files.
-gen/*
-.classpath
-.project
-.settings/
-
-# Ignore binaries.
-bin/*
-
-#ignore .svgs
-res/drawable/*.svg
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
