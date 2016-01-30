@@ -2,6 +2,8 @@ package com.drknotter.episodilyzer;
 
 import android.app.Application;
 
+import com.activeandroid.ActiveAndroid;
+
 import java.io.File;
 
 public class Episodilyzer extends Application {
@@ -10,6 +12,7 @@ public class Episodilyzer extends Application {
     public void onCreate() {
         super.onCreate();
         sInstance = this;
+        ActiveAndroid.initialize(this);
     }
 
     public static Episodilyzer getInstance() {

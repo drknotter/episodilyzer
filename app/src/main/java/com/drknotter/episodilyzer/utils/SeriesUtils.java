@@ -131,17 +131,22 @@ public class SeriesUtils {
                     SimpleXMLConverter converter = new SimpleXMLConverter();
                     final List<FullSeries> savedSeries = new ArrayList<>();
 
-                    Log.v("FindMe", "fetching saved series, obj = " + msg.obj);
                     File rootSeriesDir = Episodilyzer.getInstance().getRootSeriesDir();
                     for (File seriesDir : rootSeriesDir.listFiles()) {
                         try {
                             File fullSeriesFile = new File(seriesDir, "en.xml");
                             TypedInput input = new TypedFile("text/xml", fullSeriesFile);
+                            Log.v("FindMe", "deserializing series " + seriesDir.getName());
+                            long now = System.nanoTime();
                             FullSeries series = (FullSeries) converter.fromBody(input, FullSeries.class);
+                            Log.v("FindMe", "deserialized series, took " + (System.nanoTime() - now) / 1000000 + "ms");
 
                             File bannersFile = new File(seriesDir, "banners.xml");
                             input = new TypedFile("text/xml", bannersFile);
+                            Log.v("FindMe", "deserializing banners");
+                            now = System.nanoTime();
                             BannerList bannerList = (BannerList) converter.fromBody(input, BannerList.class);
+                            Log.v("FindMe", "deserialized banners, took " + (System.nanoTime() - now) / 1000000 + "ms");
                             series.banners = bannerList.banners;
 
                             savedSeries.add(series);

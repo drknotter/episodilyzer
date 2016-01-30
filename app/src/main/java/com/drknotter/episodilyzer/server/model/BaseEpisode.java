@@ -9,6 +9,7 @@ import org.simpleframework.xml.Root;
 @Root(name="Episode", strict = false)
 public class BaseEpisode {
     // An unsigned integer assigned by our site to the episode. Cannot be null.
+    @Element(name="id")
     public int id;
 
     // An unsigned integer or decimal. Cannot be null. This returns the value of DVD_episodenumber if that field is not null. Otherwise it returns the value from EpisodeNumber. The field can be used as a simple way of prioritizing DVD order over aired order in your program. In general it's best to avoid using this field as you can accomplish the same task locally and have more control if you use the DVD_episodenumber and EpisodeNumber fields separately.

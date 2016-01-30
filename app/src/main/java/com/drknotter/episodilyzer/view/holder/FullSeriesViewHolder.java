@@ -2,7 +2,6 @@ package com.drknotter.episodilyzer.view.holder;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,7 +37,6 @@ public class FullSeriesViewHolder extends RecyclerView.ViewHolder {
     public void bindSeries(final FullSeries fullSeries) {
         Uri bannerUri = null;
         if (fullSeries.banners != null && fullSeries.banners.size() > 0) {
-
             for(Banner banner : fullSeries.banners) {
                 if ("series".equals(banner.bannerType)) {
                     bannerUri = Uri.parse(TheTVDBService.BASE_URL)
@@ -49,7 +47,6 @@ public class FullSeriesViewHolder extends RecyclerView.ViewHolder {
                 }
             }
         }
-        Log.v("FindMe", "loading bannerUri: " + bannerUri);
         Picasso.with(itemView.getContext())
                 .load(bannerUri)
                 .into(banner);
