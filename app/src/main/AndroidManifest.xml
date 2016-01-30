@@ -15,7 +15,9 @@
 
         <meta-data android:name="AA_DB_NAME" android:value="TheTV.db" />
         <meta-data android:name="AA_DB_VERSION" android:value="1" />
-
+        <meta-data
+            android:name="AA_MODELS"
+            android:value="com.drknotter.episodilyzer.model.Series, com.drknotter.episodilyzer.model.Episode, com.drknotter.episodilyzer.model.Banner" />
         <activity
             android:name=".EpisodilyzerActivity"
             android:label="@string/app_name"
