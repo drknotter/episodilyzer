@@ -77,4 +77,13 @@ public class Series extends Model {
                 .orderBy("RANDOM()")
                 .executeSingle();
     }
+
+    public Banner bestBanner() {
+        return new Select()
+                .from(Banner.class)
+                .where("series = ?", getId())
+                .and("type = ?", Banner.TYPE_SERIES)
+                .orderBy(Banner.COLUMN_RATING)
+                .executeSingle();
+    }
 }

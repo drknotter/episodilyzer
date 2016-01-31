@@ -9,6 +9,7 @@ import com.drknotter.episodilyzer.server.model.BaseBanner;
  */
 public class Banner extends Model {
     public static final String TYPE_SERIES = "series";
+    public static final String COLUMN_RATING = "rating";
 
     public Banner() {}
 

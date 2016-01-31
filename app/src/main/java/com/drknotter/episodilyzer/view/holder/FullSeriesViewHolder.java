@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Series;
@@ -37,7 +36,7 @@ public class FullSeriesViewHolder extends RecyclerView.ViewHolder {
 
     public void bindSeries(final Series series) {
         if (series != null) {
-            Banner randomBanner = series.randomBanner();
+            Banner randomBanner = series.bestBanner();
 
             Uri bannerUri = null;
             if (randomBanner != null) {
@@ -60,10 +59,7 @@ public class FullSeriesViewHolder extends RecyclerView.ViewHolder {
                     SeriesUtils.deleteSeries(series.id);
                 }
             });
-            starToggle.setActivated(
-                    new Select().from(Series.class)
-                            .where("id = ?", series.id)
-                            .exists());
+            starToggle.setActivated(SeriesUtils.isSeriesSaved(series.id));
         }
     }
 }
