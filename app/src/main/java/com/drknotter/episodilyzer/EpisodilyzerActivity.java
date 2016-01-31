@@ -34,14 +34,18 @@ public class EpisodilyzerActivity extends AppCompatActivity implements SeriesUti
         setSupportActionBar(toolbar);
 
         myShowsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
-        SeriesUtils.fetchSavedSeries(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SeriesUtils.fetchSavedSeries(this);
     }
 
     @Override
