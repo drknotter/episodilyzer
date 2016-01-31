@@ -38,7 +38,7 @@ public class Episode extends Model {
     public int id;
 
     // Series that this episode is associated with.
-    @Column(name="series")
+    @Column(name="series", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
     public Series series;
 
     // A pipe delimited string of directors in plain text. Can be null.

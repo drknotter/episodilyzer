@@ -28,7 +28,7 @@ public class Banner extends Model {
         colors = baseBanner.colors;
     }
 
-    @Column(name="series")
+    @Column(name="series", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
     public Series series;
 
     // Can be appended to <mirrorpath>/banners/ to determine the actual location of the artwork.

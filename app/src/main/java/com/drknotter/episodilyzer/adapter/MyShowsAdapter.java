@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Series;
-import com.drknotter.episodilyzer.view.holder.FullSeriesViewHolder;
+import com.drknotter.episodilyzer.view.holder.BriefSeriesViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by plunkett on 1/26/16.
  */
-public class MyShowsAdapter extends RecyclerView.Adapter<FullSeriesViewHolder> {
+public class MyShowsAdapter extends RecyclerView.Adapter<BriefSeriesViewHolder> {
     private List<Series> myShows = new ArrayList<>();
 
     public MyShowsAdapter(List<Series> myShows) {
@@ -23,14 +23,14 @@ public class MyShowsAdapter extends RecyclerView.Adapter<FullSeriesViewHolder> {
     }
 
     @Override
-    public FullSeriesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BriefSeriesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.view_series, parent, false);
-        return new FullSeriesViewHolder(view);
+        return new BriefSeriesViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(FullSeriesViewHolder holder, int position) {
+    public void onBindViewHolder(BriefSeriesViewHolder holder, int position) {
         holder.bindSeries(myShows.get(position));
     }
 
