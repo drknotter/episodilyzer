@@ -3,46 +3,31 @@ package com.drknotter.episodilyzer;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 
 import com.drknotter.episodilyzer.adapter.SearchResultsAdapter;
 import com.drknotter.episodilyzer.server.TheTVDBService;
-import com.drknotter.episodilyzer.server.model.SearchResult;
 import com.drknotter.episodilyzer.server.model.BriefSeries;
+import com.drknotter.episodilyzer.server.model.SearchResult;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.converter.SimpleXMLConverter;
 
-public class SearchShowsActivity extends AppCompatActivity {
+public class SearchShowsActivity extends SeriesListActivity {
 
     private TheTVDBService theTVDBService;
-
-    @Bind(R.id.search_results_list)
-    RecyclerView searchResultsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_shows);
-        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        searchResultsList.setLayoutManager(new LinearLayoutManager(this));
 
         theTVDBService = new RestAdapter.Builder()
                 .setEndpoint(TheTVDBService.BASE_URL)
@@ -71,7 +56,7 @@ public class SearchShowsActivity extends AppCompatActivity {
     }
 
     private void onSearchSuccess(List<BriefSeries> resultList) {
-        searchResultsList.setAdapter(new SearchResultsAdapter(resultList));
+        seriesList.setAdapter(new SearchResultsAdapter(resultList));
     }
 
     private void onSearchFailure() {

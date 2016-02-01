@@ -2,12 +2,8 @@ package com.drknotter.episodilyzer;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.content.res.Configuration;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,31 +13,7 @@ import com.drknotter.episodilyzer.utils.SeriesUtils;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
-public class EpisodilyzerActivity extends AppCompatActivity implements SeriesUtils.OnSavedSeriesFetchedListener {
-    @Bind(R.id.my_shows_list)
-    RecyclerView myShowsList;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_episodilyzer);
-        ButterKnife.bind(this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        myShowsList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ButterKnife.unbind(this);
-    }
-
+public class EpisodilyzerActivity extends SeriesListActivity implements SeriesUtils.OnSavedSeriesFetchedListener {
     @Override
     protected void onResume() {
         super.onResume();
@@ -68,6 +40,12 @@ public class EpisodilyzerActivity extends AppCompatActivity implements SeriesUti
     @Override
     public void onSavedSeriesFetched(List<Series> savedSeries) {
         MyShowsAdapter adapter = new MyShowsAdapter(savedSeries);
-        myShowsList.setAdapter(adapter);
+        seriesList.setAdapter(adapter);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        findViewById(R.id.toolbar).requestLayout();
     }
 }
