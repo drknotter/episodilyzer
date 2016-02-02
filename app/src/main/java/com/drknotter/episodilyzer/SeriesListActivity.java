@@ -28,6 +28,14 @@ public class SeriesListActivity extends AppCompatActivity {
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
         seriesList.setLayoutManager(manager);
         seriesList.addItemDecoration(new SeriesViewDecoration(getResources().getDimensionPixelSize(R.dimen.series_view_margin)));
+        seriesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    seriesList.invalidateItemDecorations();
+                }
+            }
+        });
     }
 
     @Override

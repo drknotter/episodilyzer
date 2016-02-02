@@ -2,7 +2,6 @@ package com.drknotter.episodilyzer;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,11 +40,5 @@ public class EpisodilyzerActivity extends SeriesListActivity implements SeriesUt
     public void onSavedSeriesFetched(List<Series> savedSeries) {
         MyShowsAdapter adapter = new MyShowsAdapter(savedSeries);
         seriesList.setAdapter(adapter);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        findViewById(R.id.toolbar).requestLayout();
     }
 }
