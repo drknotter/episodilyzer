@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 
 public class SeriesListActivity extends AppCompatActivity {
     @Bind(R.id.series_list)
-    RecyclerView seriesList;
+    RecyclerView seriesListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,13 +26,13 @@ public class SeriesListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
-        seriesList.setLayoutManager(manager);
-        seriesList.addItemDecoration(new SeriesViewDecoration(getResources().getDimensionPixelSize(R.dimen.series_view_margin)));
-        seriesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        seriesListView.setLayoutManager(manager);
+        seriesListView.addItemDecoration(new SeriesViewDecoration(getResources().getDimensionPixelSize(R.dimen.series_view_margin)));
+        seriesListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    seriesList.invalidateItemDecorations();
+                    seriesListView.invalidateItemDecorations();
                 }
             }
         });
@@ -47,11 +47,11 @@ public class SeriesListActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        StaggeredGridLayoutManager manager = (StaggeredGridLayoutManager) seriesList.getLayoutManager();
+        StaggeredGridLayoutManager manager = (StaggeredGridLayoutManager) seriesListView.getLayoutManager();
         int newSpanCount = getSpanCount();
         if (manager.getSpanCount() != newSpanCount) {
             manager.setSpanCount(newSpanCount);
-            seriesList.invalidateItemDecorations();
+            seriesListView.invalidateItemDecorations();
         }
     }
 

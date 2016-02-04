@@ -9,17 +9,16 @@ import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.view.holder.BriefSeriesViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by plunkett on 1/26/16.
  */
 public class MyShowsAdapter extends RecyclerView.Adapter<BriefSeriesViewHolder> {
-    private List<Series> myShows = new ArrayList<>();
+    private List<Series> myShows;
 
     public MyShowsAdapter(List<Series> myShows) {
-        this.myShows.addAll(myShows);
+        this.myShows = myShows;
     }
 
     @Override

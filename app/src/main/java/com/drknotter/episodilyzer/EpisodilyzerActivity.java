@@ -2,6 +2,7 @@ package com.drknotter.episodilyzer;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,9 +11,17 @@ import com.drknotter.episodilyzer.adapter.MyShowsAdapter;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EpisodilyzerActivity extends SeriesListActivity implements SeriesUtils.OnSavedSeriesFetchedListener {
+    private List<Series> myShows = new ArrayList<>();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        seriesListView.setAdapter(new MyShowsAdapter(myShows));
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -38,7 +47,8 @@ public class EpisodilyzerActivity extends SeriesListActivity implements SeriesUt
 
     @Override
     public void onSavedSeriesFetched(List<Series> savedSeries) {
-        MyShowsAdapter adapter = new MyShowsAdapter(savedSeries);
-        seriesList.setAdapter(adapter);
+        myShows.clear();
+        myShows.addAll(savedSeries);
+        seriesListView.getAdapter().notifyDataSetChanged();
     }
 }

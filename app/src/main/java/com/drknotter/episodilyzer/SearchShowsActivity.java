@@ -10,6 +10,7 @@ import com.drknotter.episodilyzer.server.model.BriefSeries;
 import com.drknotter.episodilyzer.server.model.SearchResult;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
@@ -21,6 +22,7 @@ import retrofit.converter.SimpleXMLConverter;
 public class SearchShowsActivity extends SeriesListActivity {
 
     private TheTVDBService theTVDBService;
+    private List<BriefSeries> searchResults = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,7 @@ public class SearchShowsActivity extends SeriesListActivity {
                 .build()
                 .create(TheTVDBService.class);
 
+        seriesListView.setAdapter(new SearchResultsAdapter(searchResults));
         handleIntent(getIntent());
     }
 
@@ -51,12 +54,16 @@ public class SearchShowsActivity extends SeriesListActivity {
             //noinspection ConstantConditions
             getSupportActionBar().setTitle(query);
 
+            searchResults.clear();
+            seriesListView.getAdapter().notifyDataSetChanged();
             theTVDBService.searchShows(query, new SearchResultCallback(this));
         }
     }
 
     private void onSearchSuccess(List<BriefSeries> resultList) {
-        seriesList.setAdapter(new SearchResultsAdapter(resultList));
+        searchResults.clear();
+        searchResults.addAll(resultList);
+        seriesListView.setAdapter(new SearchResultsAdapter(resultList));
     }
 
     private void onSearchFailure() {

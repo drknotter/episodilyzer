@@ -9,17 +9,16 @@ import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.server.model.BriefSeries;
 import com.drknotter.episodilyzer.view.holder.BriefSeriesViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by plunkett on 1/23/16.
  */
 public class SearchResultsAdapter extends RecyclerView.Adapter<BriefSeriesViewHolder> {
-    private List<BriefSeries> searchResults = new ArrayList<>();
+    private List<BriefSeries> searchResults;
 
     public SearchResultsAdapter(List<BriefSeries> searchResults) {
-        this.searchResults.addAll(searchResults);
+        this.searchResults = searchResults;
     }
 
     @Override
