@@ -78,7 +78,7 @@ public class SeriesUtilsHandler extends Handler {
             case WHAT_FETCH_SAVED: {
                 SeriesUtils.OnSavedSeriesFetchedListener listener = (SeriesUtils.OnSavedSeriesFetchedListener) msg.obj;
                 List<Series> savedSeries = new Select().from(Series.class)
-                        .orderBy("seriesName")
+                        .orderBy("lastAccessed DESC, seriesName")
                         .execute();
                 uiHandler.post(new FetchedRunnable(listener, savedSeries));
                 break;

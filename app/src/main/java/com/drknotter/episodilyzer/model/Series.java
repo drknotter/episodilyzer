@@ -24,6 +24,7 @@ public class Series extends Model {
         ratingCount = fullSeries.series.ratingCount;
         seriesName = fullSeries.series.seriesName;
         status = fullSeries.series.status;
+        lastAccessed = System.currentTimeMillis();
     }
 
     @Column(name = "series_id", index=true, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
@@ -61,6 +62,10 @@ public class Series extends Model {
     @Column(name="lastupdated", index=true)
     public long lastUpdated;
 
+    // Unix time stamp indicating the last time the user accessed this series.
+    @Column(name="lastAccessed", index=true)
+    public long lastAccessed;
+
     public List<Episode> episodes() {
         return getMany(Episode.class, "series");
     }
@@ -83,7 +88,7 @@ public class Series extends Model {
                 .from(Banner.class)
                 .where("series = ?", getId())
                 .and("type = ?", Banner.TYPE_SERIES)
-                .orderBy(Banner.COLUMN_RATING)
+                .orderBy("rating DESC")
                 .executeSingle();
     }
 }
