@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,8 +15,9 @@ import com.drknotter.episodilyzer.utils.SeriesUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EpisodilyzerActivity extends RecyclerViewActivity implements SeriesUtils.OnSavedSeriesFetchedListener {
+public class EpisodilyzerActivity extends RecyclerViewActivity implements SeriesUtils.OnSeriesChangeListener {
     private List<Series> myShows = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +27,13 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements Series
     @Override
     protected void onResume() {
         super.onResume();
-        SeriesUtils.fetchSavedSeries(this);
+        SeriesUtils.registerOnSeriesChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SeriesUtils.unregisterOnSeriesChangeListener(this);
     }
 
     @Override
@@ -45,10 +53,30 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements Series
         return super.onOptionsItemSelected(item);
     }
 
+    ///////////////////////////////////////////
+    // OnSeriesChangeListener implementation //
+    ///////////////////////////////////////////
+
     @Override
-    public void onSavedSeriesFetched(List<Series> savedSeries) {
-        myShows.clear();
-        myShows.addAll(savedSeries);
-        recyclerView.getAdapter().notifyDataSetChanged();
+    public void onSeriesInserted(List<Series> insertedSeries) {
+        if (myShows.addAll(0, insertedSeries)) {
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onSeriesDeleted(List<Series> deletedSeries) {
+        Log.v("FindMe", "myShows: " + myShows + ", deletedSeries: " + deletedSeries);
+        if (myShows.removeAll(deletedSeries)) {
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onSeriesUpdated(List<Series> updatedSeries) {
+        if (myShows.removeAll(updatedSeries)
+                || myShows.addAll(0, updatedSeries)) {
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
     }
 }

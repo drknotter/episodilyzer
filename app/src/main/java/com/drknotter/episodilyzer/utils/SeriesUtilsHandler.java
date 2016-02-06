@@ -3,6 +3,7 @@ package com.drknotter.episodilyzer.utils;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.util.Pair;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit.RestAdapter;
@@ -53,40 +55,67 @@ public class SeriesUtilsHandler extends Handler {
         switch (msg.what) {
             case WHAT_SAVE: {
                 int seriesId = (int) msg.obj;
-                saveSeries(seriesId, true);
+                Pair<NotifyRunnable.Type, Series> result = saveSeries(seriesId);
+                if (result.first != null && result.second != null) {
+                    uiHandler.post(new NotifyRunnable(result.first,
+                            Collections.singletonList(result.second)));
+                }
                 break;
             }
 
             case WHAT_SAVE_BATCH: {
                 @SuppressWarnings("unchecked")
                 List<Integer> seriesIds = (List<Integer>) msg.obj;
+
+                List<Series> inserted = new ArrayList<>();
+                List<Series> updated = new ArrayList<>();
                 for (Integer seriesId : seriesIds) {
-                    saveSeries(seriesId, true);
+                    Pair<NotifyRunnable.Type, Series> result = saveSeries(seriesId);
+                    if (result.first == NotifyRunnable.Type.INSERT) {
+                        inserted.add(result.second);
+                    } else if (result.first == NotifyRunnable.Type.UPDATE) {
+                        updated.add(result.second);
+                    }
+                }
+
+                if (inserted.size() > 0) {
+                    uiHandler.post(new NotifyRunnable(NotifyRunnable.Type.INSERT, inserted));
+                }
+                if (updated.size() > 0) {
+                    uiHandler.post(new NotifyRunnable(NotifyRunnable.Type.UPDATE, updated));
                 }
                 break;
             }
 
             case WHAT_DELETE: {
                 int seriesId = (int) msg.obj;
-                List<Series> deletedSeries = new Delete().from(Series.class)
+                List<Series> deletedSeries = new Select().from(Series.class)
                         .where("series_id = ?", seriesId)
                         .execute();
-                SeriesUtils.notifyDeleted(deletedSeries);
+                new Delete().from(Series.class)
+                        .where("series_id = ?", seriesId)
+                        .execute();
+                uiHandler.post(new NotifyRunnable(NotifyRunnable.Type.DELETE, deletedSeries));
                 break;
             }
 
             case WHAT_FETCH_SAVED: {
-                SeriesUtils.OnSavedSeriesFetchedListener listener = (SeriesUtils.OnSavedSeriesFetchedListener) msg.obj;
+                @SuppressWarnings("unchecked")
+                WeakReference<SeriesUtils.OnSeriesChangeListener> listenerRef =
+                        (WeakReference<SeriesUtils.OnSeriesChangeListener>) msg.obj;
                 List<Series> savedSeries = new Select().from(Series.class)
                         .orderBy("lastAccessed DESC, seriesName")
                         .execute();
-                uiHandler.post(new FetchedRunnable(listener, savedSeries));
+                uiHandler.post(new FetchRunnable(listenerRef, savedSeries));
                 break;
             }
         }
     }
 
-    private void saveSeries(int seriesId, boolean notify) {
+    private Pair<NotifyRunnable.Type, Series> saveSeries(int seriesId) {
+        NotifyRunnable.Type type = null;
+        Series series = null;
+
         Response response = new RestAdapter.Builder()
                 .setEndpoint(TheTVDBService.BASE_URL)
                 .build()
@@ -117,7 +146,7 @@ public class SeriesUtilsHandler extends Handler {
                     .where("series_id = ?", fullSeries.series.id)
                     .exists();
 
-            Series series = new Series(fullSeries);
+            series = new Series(fullSeries);
             series.save();
 
             ActiveAndroid.beginTransaction();
@@ -144,13 +173,7 @@ public class SeriesUtilsHandler extends Handler {
                 ActiveAndroid.endTransaction();
             }
 
-            if (notify) {
-                List<Series> seriesList = new ArrayList<>();
-                seriesList.add(series);
-                uiHandler.post(new NotifyRunnable(
-                        exists ? NotifyRunnable.Type.UPDATE : NotifyRunnable.Type.INSERT,
-                        seriesList));
-            }
+            type = exists ? NotifyRunnable.Type.UPDATE : NotifyRunnable.Type.INSERT;
 
         } catch (IOException |ConversionException e) {
             e.printStackTrace();
@@ -158,6 +181,24 @@ public class SeriesUtilsHandler extends Handler {
         } finally {
             // Clean up after ourselves.
             FilesystemUtils.nukeDirectory(seriesDir);
+        }
+
+        return new Pair<>(type, series);
+    }
+
+    private static class FetchRunnable implements Runnable {
+        private WeakReference<SeriesUtils.OnSeriesChangeListener> listenerRef;
+        private List<Series> fetchedSeries;
+
+        public FetchRunnable(WeakReference<SeriesUtils.OnSeriesChangeListener> listenerRef,
+                             List<Series> fetchedSeries) {
+            this.listenerRef = listenerRef;
+            this.fetchedSeries = fetchedSeries;
+        }
+
+        @Override
+        public void run() {
+            SeriesUtils.notifyFetched(listenerRef.get(), fetchedSeries);
         }
     }
 
@@ -191,24 +232,5 @@ public class SeriesUtilsHandler extends Handler {
                     break;
             }
         }
-    }
-
-    private static class FetchedRunnable implements Runnable {
-        private WeakReference<SeriesUtils.OnSavedSeriesFetchedListener> listenerRef;
-        private List<Series> seriesList;
-
-        public FetchedRunnable(SeriesUtils.OnSavedSeriesFetchedListener listener, List<Series> seriesList) {
-            listenerRef = new WeakReference<>(listener);
-            this.seriesList = seriesList;
-        }
-
-        @Override
-        public void run() {
-            SeriesUtils.OnSavedSeriesFetchedListener listener = listenerRef.get();
-            if (listener != null) {
-                listener.onSavedSeriesFetched(seriesList);
-            }
-        }
-
     }
 }

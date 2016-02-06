@@ -22,17 +22,18 @@ public class SeriesUtils {
         void onSeriesUpdated(List<Series> updatedSeries);
     }
 
-    public interface OnSavedSeriesFetchedListener {
-        void onSavedSeriesFetched(List<Series> savedSeries);
-    }
-
     private static List<WeakReference<OnSeriesChangeListener>> listenerRefs = new ArrayList<>();
 
     private SeriesUtils() {
     }
 
     public static synchronized void registerOnSeriesChangeListener(OnSeriesChangeListener listener) {
-        listenerRefs.add(new WeakReference<>(listener));
+        WeakReference<OnSeriesChangeListener> listenerRef = new WeakReference<>(listener);
+        listenerRefs.add(listenerRef);
+
+        startThreadIfNeeded();
+        Message msg = handler.obtainMessage(SeriesUtilsHandler.WHAT_FETCH_SAVED, listenerRef);
+        handler.sendMessage(msg);
     }
 
     public static synchronized void unregisterOnSeriesChangeListener(OnSeriesChangeListener listenerToRemove) {
@@ -44,12 +45,6 @@ public class SeriesUtils {
                 i.remove();
             }
         }
-    }
-
-    public static synchronized void fetchSavedSeries(OnSavedSeriesFetchedListener listener) {
-        startThreadIfNeeded();
-        Message msg = handler.obtainMessage(SeriesUtilsHandler.WHAT_FETCH_SAVED, listener);
-        handler.sendMessage(msg);
     }
 
     public static synchronized void saveSeries(int seriesId) {
@@ -102,6 +97,18 @@ public class SeriesUtils {
                 listener.onSeriesInserted(insertedSeries);
             } else {
                 i.remove();
+            }
+        }
+    }
+
+    static synchronized void notifyFetched(OnSeriesChangeListener listener, List<Series> fetchedSeries) {
+        Iterator<WeakReference<OnSeriesChangeListener>> i = listenerRefs.iterator();
+        while (i.hasNext()) {
+            OnSeriesChangeListener l = i.next().get();
+            if (l == null) {
+                i.remove();
+            } else if (l == listener) {
+                listener.onSeriesInserted(fetchedSeries);
             }
         }
     }
