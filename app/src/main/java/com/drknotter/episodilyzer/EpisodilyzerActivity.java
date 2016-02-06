@@ -14,12 +14,12 @@ import com.drknotter.episodilyzer.utils.SeriesUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EpisodilyzerActivity extends SeriesListActivity implements SeriesUtils.OnSavedSeriesFetchedListener {
+public class EpisodilyzerActivity extends RecyclerViewActivity implements SeriesUtils.OnSavedSeriesFetchedListener {
     private List<Series> myShows = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        seriesListView.setAdapter(new MyShowsAdapter(myShows));
+        recyclerView.setAdapter(new MyShowsAdapter(myShows));
     }
 
     @Override
@@ -49,6 +49,6 @@ public class EpisodilyzerActivity extends SeriesListActivity implements SeriesUt
     public void onSavedSeriesFetched(List<Series> savedSeries) {
         myShows.clear();
         myShows.addAll(savedSeries);
-        seriesListView.getAdapter().notifyDataSetChanged();
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 }

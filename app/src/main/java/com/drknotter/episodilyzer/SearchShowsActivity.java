@@ -19,7 +19,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.converter.SimpleXMLConverter;
 
-public class SearchShowsActivity extends SeriesListActivity {
+public class SearchShowsActivity extends RecyclerViewActivity {
 
     private TheTVDBService theTVDBService;
     private List<BriefSeries> searchResults = new ArrayList<>();
@@ -38,7 +38,7 @@ public class SearchShowsActivity extends SeriesListActivity {
                 .build()
                 .create(TheTVDBService.class);
 
-        seriesListView.setAdapter(new SearchResultsAdapter(searchResults));
+        recyclerView.setAdapter(new SearchResultsAdapter(searchResults));
         handleIntent(getIntent());
     }
 
@@ -55,7 +55,7 @@ public class SearchShowsActivity extends SeriesListActivity {
             getSupportActionBar().setTitle(query);
 
             searchResults.clear();
-            seriesListView.getAdapter().notifyDataSetChanged();
+            recyclerView.getAdapter().notifyDataSetChanged();
             theTVDBService.searchShows(query, new SearchResultCallback(this));
         }
     }
@@ -63,7 +63,7 @@ public class SearchShowsActivity extends SeriesListActivity {
     private void onSearchSuccess(List<BriefSeries> resultList) {
         searchResults.clear();
         searchResults.addAll(resultList);
-        seriesListView.setAdapter(new SearchResultsAdapter(resultList));
+        recyclerView.setAdapter(new SearchResultsAdapter(resultList));
     }
 
     private void onSearchFailure() {

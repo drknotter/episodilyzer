@@ -6,13 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.drknotter.episodilyzer.EpisodilyzerActivity"
-    tools:showIn="@layout/activity_series_list"
+    tools:showIn="@layout/activity_recycler_view"
     android:clipChildren="false"
     android:clipToPadding="false">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/series_list"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </RelativeLayout>

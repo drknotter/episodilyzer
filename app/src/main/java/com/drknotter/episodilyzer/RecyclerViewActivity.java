@@ -12,27 +12,27 @@ import com.drknotter.episodilyzer.view.decoration.SeriesViewDecoration;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class SeriesListActivity extends AppCompatActivity {
-    @Bind(R.id.series_list)
-    RecyclerView seriesListView;
+public class RecyclerViewActivity extends AppCompatActivity {
+    @Bind(R.id.recycler_view)
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_series_list);
+        setContentView(R.layout.activity_recycler_view);
         ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
-        seriesListView.setLayoutManager(manager);
-        seriesListView.addItemDecoration(new SeriesViewDecoration(getResources().getDimensionPixelSize(R.dimen.series_view_margin)));
-        seriesListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.setLayoutManager(manager);
+        recyclerView.addItemDecoration(new SeriesViewDecoration(getResources().getDimensionPixelSize(R.dimen.series_view_margin)));
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    seriesListView.invalidateItemDecorations();
+                    RecyclerViewActivity.this.recyclerView.invalidateItemDecorations();
                 }
             }
         });
@@ -47,15 +47,19 @@ public class SeriesListActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        StaggeredGridLayoutManager manager = (StaggeredGridLayoutManager) seriesListView.getLayoutManager();
+        StaggeredGridLayoutManager manager = (StaggeredGridLayoutManager) recyclerView.getLayoutManager();
         int newSpanCount = getSpanCount();
         if (manager.getSpanCount() != newSpanCount) {
             manager.setSpanCount(newSpanCount);
-            seriesListView.invalidateItemDecorations();
+            recyclerView.invalidateItemDecorations();
         }
     }
 
     private int getSpanCount() {
-        return getResources().getDisplayMetrics().widthPixels / getResources().getDimensionPixelSize(R.dimen.max_column_width);
+        return getResources().getDisplayMetrics().widthPixels / getMaxColumnWidthPixels();
+    }
+
+    protected int getMaxColumnWidthPixels() {
+        return getResources().getDimensionPixelSize(R.dimen.max_column_width);
     }
 }
