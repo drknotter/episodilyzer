@@ -7,5 +7,7 @@
     <string name="saving_series">Adding "%1$s" to My Shows&#8230;</string>
     <string name="my_shows">My Shows</string>
 
+    <string name="first_aired">First aired: %1$s</string>
+
     <string name="api_key">E9C8ADC01AC294C3</string>
 </resources>

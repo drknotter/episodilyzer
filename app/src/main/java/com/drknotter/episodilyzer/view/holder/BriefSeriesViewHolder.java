@@ -15,6 +15,10 @@ import com.drknotter.episodilyzer.server.task.SaveSeriesAsyncTask;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -47,8 +51,8 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
                 .load(bannerUri)
                 .into(banner);
         title.setText(briefSeries.seriesName);
-        firstAired.setText(briefSeries.firstAired);
-        overview.setText(briefSeries.overview);
+        setFirstAired(briefSeries.firstAired);
+        setOverview(briefSeries.overview);
 
         starToggle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,22 +71,22 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
 
     public void bindSeries(final Series series, final View.OnClickListener starClickListener) {
         if (series != null) {
-            Banner randomBanner = series.bestBanner();
+            Banner bestBanner = series.bestBanner();
 
             Uri bannerUri = null;
-            if (randomBanner != null) {
+            if (bestBanner != null) {
                 bannerUri = Uri.parse(TheTVDBService.BASE_URL)
                         .buildUpon()
                         .appendPath("banners")
-                        .appendPath(randomBanner.path)
+                        .appendPath(bestBanner.path)
                         .build();
             }
             Picasso.with(itemView.getContext())
                     .load(bannerUri)
                     .into(banner);
             title.setText(series.seriesName);
-            firstAired.setText(series.firstAired);
-            overview.setText(series.overview);
+            setFirstAired(series.firstAired);
+            setOverview(series.overview);
 
             starToggle.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -94,5 +98,22 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
             });
             starToggle.setActivated(SeriesUtils.isSeriesSaved(series.id));
         }
+    }
+
+    private void setFirstAired(String firstAiredText) {
+        try {
+            Date firstAiredDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(firstAiredText);
+            firstAired.setText(String.format(itemView.getResources().getString(R.string.first_aired),
+                    new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(firstAiredDate)));
+            firstAired.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            firstAired.setText(null);
+            firstAired.setVisibility(View.GONE);
+        }
+    }
+
+    private void setOverview(String overviewText) {
+        overview.setText(overviewText);
+        overview.setVisibility(overviewText != null ? View.VISIBLE : View.GONE);
     }
 }
