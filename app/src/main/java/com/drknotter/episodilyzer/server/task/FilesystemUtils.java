@@ -1,4 +1,4 @@
-package com.drknotter.episodilyzer.utils;
+package com.drknotter.episodilyzer.server.task;
 
 import java.io.File;
 import java.io.FileInputStream;

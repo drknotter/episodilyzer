@@ -29,12 +29,23 @@ public class MyShowsAdapter extends RecyclerView.Adapter<BriefSeriesViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(BriefSeriesViewHolder holder, int position) {
-        holder.bindSeries(myShows.get(position));
+    public void onBindViewHolder(final BriefSeriesViewHolder holder, int position) {
+        holder.bindSeries(myShows.get(position),
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int adapterPosition = holder.getAdapterPosition();
+                        if (adapterPosition != RecyclerView.NO_POSITION) {
+                            myShows.remove(adapterPosition);
+                            notifyItemRemoved(adapterPosition);
+                        }
+                    }
+                });
     }
 
     @Override
     public int getItemCount() {
         return myShows.size();
     }
+
 }

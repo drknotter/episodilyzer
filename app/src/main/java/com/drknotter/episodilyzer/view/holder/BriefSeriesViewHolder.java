@@ -11,6 +11,7 @@ import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.BriefSeries;
+import com.drknotter.episodilyzer.server.task.SaveSeriesAsyncTask;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.squareup.picasso.Picasso;
 
@@ -55,7 +56,7 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
                 starToggle.setActivated(!starToggle.isActivated());
 
                 if (starToggle.isActivated()) {
-                    SeriesUtils.saveSeries(briefSeries.seriesId);
+                    new SaveSeriesAsyncTask().execute(briefSeries.seriesId);
                 } else {
                     SeriesUtils.deleteSeries(briefSeries.seriesId);
                 }
@@ -64,7 +65,7 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
         starToggle.setActivated(SeriesUtils.isSeriesSaved(briefSeries.seriesId));
     }
 
-    public void bindSeries(final Series series) {
+    public void bindSeries(final Series series, final View.OnClickListener starClickListener) {
         if (series != null) {
             Banner randomBanner = series.bestBanner();
 
@@ -88,6 +89,7 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
                 public void onClick(View v) {
                     starToggle.setActivated(!starToggle.isActivated());
                     SeriesUtils.deleteSeries(series.id);
+                    starClickListener.onClick(v);
                 }
             });
             starToggle.setActivated(SeriesUtils.isSeriesSaved(series.id));

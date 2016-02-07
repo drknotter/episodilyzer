@@ -14,7 +14,7 @@ import com.drknotter.episodilyzer.utils.SeriesUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EpisodilyzerActivity extends RecyclerViewActivity implements SeriesUtils.OnSeriesChangeListener {
+public class EpisodilyzerActivity extends RecyclerViewActivity {
     private List<Series> myShows = new ArrayList<>();
 
     @Override
@@ -26,13 +26,8 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements Series
     @Override
     protected void onResume() {
         super.onResume();
-        SeriesUtils.registerOnSeriesChangeListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        SeriesUtils.unregisterOnSeriesChangeListener(this);
+        myShows.clear();
+        myShows.addAll(SeriesUtils.allSeries());
     }
 
     @Override
@@ -50,31 +45,5 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements Series
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
-    }
-
-    ///////////////////////////////////////////
-    // OnSeriesChangeListener implementation //
-    ///////////////////////////////////////////
-
-    @Override
-    public void onSeriesInserted(List<Series> insertedSeries) {
-        if (myShows.addAll(0, insertedSeries)) {
-            recyclerView.getAdapter().notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onSeriesDeleted(List<Series> deletedSeries) {
-        if (myShows.removeAll(deletedSeries)) {
-            recyclerView.getAdapter().notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onSeriesUpdated(List<Series> updatedSeries) {
-        if (myShows.removeAll(updatedSeries)
-                || myShows.addAll(0, updatedSeries)) {
-            recyclerView.getAdapter().notifyDataSetChanged();
-        }
     }
 }

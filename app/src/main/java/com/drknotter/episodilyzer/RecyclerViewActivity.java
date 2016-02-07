@@ -32,7 +32,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    RecyclerViewActivity.this.recyclerView.invalidateItemDecorations();
+                    recyclerView.invalidateItemDecorations();
                 }
             }
         });
