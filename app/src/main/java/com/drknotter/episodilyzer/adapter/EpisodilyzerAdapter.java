@@ -14,10 +14,10 @@ import java.util.List;
 /**
  * Created by plunkett on 1/26/16.
  */
-public class MyShowsAdapter extends RecyclerView.Adapter<BriefSeriesViewHolder> {
+public class EpisodilyzerAdapter extends RecyclerView.Adapter<BriefSeriesViewHolder> {
     private List<Series> myShows;
 
-    public MyShowsAdapter(List<Series> myShows) {
+    public EpisodilyzerAdapter(List<Series> myShows) {
         this.myShows = myShows;
     }
 

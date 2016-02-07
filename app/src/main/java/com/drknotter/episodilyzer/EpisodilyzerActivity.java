@@ -7,7 +7,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.drknotter.episodilyzer.adapter.MyShowsAdapter;
+import com.drknotter.episodilyzer.adapter.EpisodilyzerAdapter;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 
@@ -20,7 +20,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyShowsAdapter adapter = new MyShowsAdapter(myShows);
+        EpisodilyzerAdapter adapter = new EpisodilyzerAdapter(myShows);
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
     }

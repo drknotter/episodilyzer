@@ -14,10 +14,10 @@ import java.util.List;
 /**
  * Created by plunkett on 1/23/16.
  */
-public class SearchResultsAdapter extends RecyclerView.Adapter<BriefSeriesViewHolder> {
+public class SearchShowsAdapter extends RecyclerView.Adapter<BriefSeriesViewHolder> {
     private List<BriefSeries> searchResults;
 
-    public SearchResultsAdapter(List<BriefSeries> searchResults) {
+    public SearchShowsAdapter(List<BriefSeries> searchResults) {
         this.searchResults = searchResults;
     }
 

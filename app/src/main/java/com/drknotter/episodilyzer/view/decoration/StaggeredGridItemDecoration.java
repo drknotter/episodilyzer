@@ -5,13 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
-public class SeriesViewDecoration extends RecyclerView.ItemDecoration {
+public class StaggeredGridItemDecoration extends RecyclerView.ItemDecoration {
     private int margin = 0;
     private boolean lastIsTop;
     private boolean lastIsLeft;
     private boolean lastIsRight;
 
-    public SeriesViewDecoration(int margin) {
+    public StaggeredGridItemDecoration(int margin) {
         this.margin = margin;
     }
 

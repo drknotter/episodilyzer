@@ -3,8 +3,13 @@ package com.drknotter.episodilyzer;
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SeriesActivity extends RecyclerViewActivity {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
+
+    List<Object> seriesInfo = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

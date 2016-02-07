@@ -4,7 +4,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.drknotter.episodilyzer.adapter.SearchResultsAdapter;
+import com.drknotter.episodilyzer.adapter.SearchShowsAdapter;
 import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.BriefSeries;
 import com.drknotter.episodilyzer.server.model.SearchResult;
@@ -38,7 +38,7 @@ public class SearchShowsActivity extends RecyclerViewActivity {
                 .build()
                 .create(TheTVDBService.class);
 
-        recyclerView.setAdapter(new SearchResultsAdapter(searchResults));
+        recyclerView.setAdapter(new SearchShowsAdapter(searchResults));
         handleIntent(getIntent());
     }
 
@@ -63,7 +63,7 @@ public class SearchShowsActivity extends RecyclerViewActivity {
     private void onSearchSuccess(List<BriefSeries> resultList) {
         searchResults.clear();
         searchResults.addAll(resultList);
-        recyclerView.setAdapter(new SearchResultsAdapter(resultList));
+        recyclerView.setAdapter(new SearchShowsAdapter(resultList));
     }
 
     private void onSearchFailure() {

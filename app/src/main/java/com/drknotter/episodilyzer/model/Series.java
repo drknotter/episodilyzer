@@ -91,4 +91,13 @@ public class Series extends Model {
                 .orderBy("rating DESC")
                 .executeSingle();
     }
+
+    public Banner bestFanart() {
+        return new Select()
+                .from(Banner.class)
+                .where("series = ?", getId())
+                .and("type = ?", Banner.TYPE_FANART)
+                .orderBy("rating DESC")
+                .executeSingle();
+    }
 }

@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 
-import com.drknotter.episodilyzer.view.decoration.SeriesViewDecoration;
+import com.drknotter.episodilyzer.view.decoration.StaggeredGridItemDecoration;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,13 +26,15 @@ public class RecyclerViewActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL) {
+            // The default implementation of StaggeredGridLayoutManager does not handle item decorations
+            // correctly during animations when this returns true, so we force it to return false.
             @Override
             public boolean supportsPredictiveItemAnimations() {
                 return false;
             }
         };
         recyclerView.setLayoutManager(manager);
-        recyclerView.addItemDecoration(new SeriesViewDecoration(getResources().getDimensionPixelSize(R.dimen.series_view_margin)));
+        recyclerView.addItemDecoration(new StaggeredGridItemDecoration(getResources().getDimensionPixelSize(R.dimen.series_view_margin)));
     }
 
     @Override
