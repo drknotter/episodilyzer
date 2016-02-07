@@ -54,7 +54,8 @@ public class SeriesActivity extends RecyclerViewActivity {
             params.setScrollFlags(
                     AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                             | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
-                            | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
+                            | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+                            | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
             collapsingToolbar.setLayoutParams(params);
 
             Banner bestFanart = series.bestFanart();
