@@ -20,7 +20,9 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        recyclerView.setAdapter(new MyShowsAdapter(myShows));
+        MyShowsAdapter adapter = new MyShowsAdapter(myShows);
+        adapter.setHasStableIds(true);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override

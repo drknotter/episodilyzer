@@ -48,4 +48,8 @@ public class MyShowsAdapter extends RecyclerView.Adapter<BriefSeriesViewHolder> 
         return myShows.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return myShows.get(position).id;
+    }
 }

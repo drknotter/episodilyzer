@@ -1,45 +1,44 @@
 package com.drknotter.episodilyzer.view.decoration;
 
-import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
-import hugo.weaving.DebugLog;
-
 public class SeriesViewDecoration extends RecyclerView.ItemDecoration {
     private int margin = 0;
-    private Boolean lastIsTop = null;
-    private Boolean lastIsLeft = null;
+    private boolean lastIsTop;
+    private boolean lastIsLeft;
+    private boolean lastIsRight;
 
     public SeriesViewDecoration(int margin) {
         this.margin = margin;
     }
 
     @Override
-    public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        super.onDraw(c, parent, state);
-    }
-
-    @DebugLog
-    @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        boolean isTop = false;
-        boolean isLeft = false;
-        int position = parent.getChildAdapterPosition(view);
+        boolean isLeft;
+        boolean isTop;
+        boolean isRight;
 
+        int position = parent.getChildAdapterPosition(view);
         if (position != RecyclerView.NO_POSITION) {
             StaggeredGridLayoutManager.LayoutParams params = (StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams();
-            isTop = position < ((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount();
+            int spanCount = ((StaggeredGridLayoutManager) parent.getLayoutManager()).getSpanCount();
+            isTop = position < spanCount;
             isLeft = params.getSpanIndex() == 0;
-        } else if (lastIsTop != null && lastIsLeft != null) {
+            isRight = params.getSpanIndex() == spanCount - 1;
+        } else {
             isTop = lastIsTop;
             isLeft = lastIsLeft;
+            isRight = lastIsRight;
         }
 
         lastIsTop = isTop;
         lastIsLeft = isLeft;
-        outRect.set(isLeft ? margin : 0, isTop ? margin : 0, margin, margin);
+        lastIsRight = isRight;
+        outRect.set(isLeft ? margin : margin / 2, isTop ? margin : 0,
+                isRight ? margin : margin / 2, margin);
     }
+
 }
