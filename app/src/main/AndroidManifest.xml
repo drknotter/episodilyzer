@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.drknotter.episodilyzer"
+<manifest xmlns:tools="http://schemas.android.com/tools"
+          package="com.drknotter.episodilyzer"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -37,7 +38,8 @@
             android:label="@string/title_activity_search_shows"
             android:parentActivityName=".EpisodilyzerActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            tools:ignore="UnusedAttribute">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -47,6 +49,16 @@
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
+        </activity>
+        <activity
+            android:name=".SeriesActivity"
+            android:parentActivityName=".EpisodilyzerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|screenSize"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.drknotter.episodilyzer.EpisodilyzerActivity"/>
         </activity>
     </application>
 

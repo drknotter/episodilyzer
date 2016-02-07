@@ -1,7 +1,10 @@
 package com.drknotter.episodilyzer.model;
 
+import android.net.Uri;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
+import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.BaseBanner;
 
 /**
@@ -68,4 +71,12 @@ public class Banner extends Model {
     // Returns either null or three RGB colors in decimal format and pipe delimited. These are colors the artist picked that go well with the image. In order they are Light Accent Color, Dark Accent Color and Neutral Midtone Color. It's meant to be used if you want to write something over the image, it gives you a good idea of what colors may work and show up well. Only shows if BannerType is fanart.
     @Column(name="colors")
     public String colors;
+
+    public Uri uri() {
+        return Uri.parse(TheTVDBService.BASE_URL)
+                .buildUpon()
+                .appendPath("banners")
+                .appendPath(path)
+                .build();
+    }
 }

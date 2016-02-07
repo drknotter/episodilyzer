@@ -1,5 +1,6 @@
 package com.drknotter.episodilyzer.view.holder;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.drknotter.episodilyzer.R;
+import com.drknotter.episodilyzer.SeriesActivity;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.TheTVDBService;
@@ -97,6 +99,15 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
                 }
             });
             starToggle.setActivated(SeriesUtils.isSeriesSaved(series.id));
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent seriesIntent = new Intent(itemView.getContext(), SeriesActivity.class);
+                    seriesIntent.putExtra(SeriesActivity.EXTRA_SERIES_ID, series.id);
+                    itemView.getContext().startActivity(seriesIntent);
+                }
+            });
         }
     }
 

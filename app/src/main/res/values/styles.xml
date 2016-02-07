@@ -23,4 +23,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="TextAppearance.AppCompat.Title.Expanded">
+        <item name="android:ellipsize">none</item>
+    </style>
+
 </resources>
