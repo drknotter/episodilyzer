@@ -1,29 +1,37 @@
 package com.drknotter.episodilyzer.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+
+import com.drknotter.episodilyzer.R;
+import com.drknotter.episodilyzer.model.Episode;
+import com.drknotter.episodilyzer.view.holder.EpisodeViewHolder;
 
 import java.util.List;
 
-public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<Object> seriesInfo;
+public class SeriesAdapter extends RecyclerView.Adapter<EpisodeViewHolder> {
+    private List<Episode> episodes;
 
-    public SeriesAdapter(List<Object> seriesInfo) {
-        this.seriesInfo = seriesInfo;
+    public SeriesAdapter(List<Episode> episodes) {
+        this.episodes = episodes;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+    public EpisodeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = inflater.inflate(R.layout.view_episode, parent, false);
+        return new EpisodeViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(EpisodeViewHolder holder, int position) {
+        holder.bind(episodes.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return episodes.size();
     }
 }

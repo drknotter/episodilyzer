@@ -53,6 +53,7 @@ public class SearchShowsActivity extends RecyclerViewActivity {
 
             //noinspection ConstantConditions
             getSupportActionBar().setTitle(query);
+            collapsingToolbar.setTitleEnabled(false);
 
             searchResults.clear();
             recyclerView.getAdapter().notifyDataSetChanged();

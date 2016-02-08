@@ -23,6 +23,8 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
         EpisodilyzerAdapter adapter = new EpisodilyzerAdapter(myShows);
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
+
+        collapsingToolbar.setTitleEnabled(false);
     }
 
     @Override

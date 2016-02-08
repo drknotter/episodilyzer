@@ -8,6 +8,7 @@ import android.support.design.widget.AppBarLayout;
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.SeriesAdapter;
 import com.drknotter.episodilyzer.model.Banner;
+import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Series;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -18,7 +19,7 @@ import java.util.List;
 public class SeriesActivity extends RecyclerViewActivity {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
 
-    List<Object> seriesInfo = new ArrayList<>();
+    List<Episode> episodes = new ArrayList<>();
     Series series;
 
     @Override
@@ -28,7 +29,7 @@ public class SeriesActivity extends RecyclerViewActivity {
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        recyclerView.setAdapter(new SeriesAdapter(seriesInfo));
+        recyclerView.setAdapter(new SeriesAdapter(episodes));
 
         handleIntent(getIntent());
     }
@@ -70,11 +71,10 @@ public class SeriesActivity extends RecyclerViewActivity {
 
                             @Override
                             public void onError() {
-
                             }
                         });
             }
-
+            collapsingToolbar.setTitleEnabled(bestFanart != null);
 
         } else {
             finish();
