@@ -1,6 +1,5 @@
 package com.drknotter.episodilyzer;
 
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -50,17 +49,6 @@ public class RecyclerViewActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        StaggeredGridLayoutManager manager = (StaggeredGridLayoutManager) recyclerView.getLayoutManager();
-        int newSpanCount = getSpanCount();
-        if (manager.getSpanCount() != newSpanCount) {
-            manager.setSpanCount(newSpanCount);
-            recyclerView.invalidateItemDecorations();
-        }
     }
 
     private int getSpanCount() {
