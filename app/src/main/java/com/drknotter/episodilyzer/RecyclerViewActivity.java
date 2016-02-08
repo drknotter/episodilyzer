@@ -39,15 +39,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
-        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL) {
-            // The default implementation of StaggeredGridLayoutManager does not handle item decorations
-            // correctly during animations when this returns true, so we force it to return false.
-            @Override
-            public boolean supportsPredictiveItemAnimations() {
-                return false;
-            }
-        };
-        recyclerView.setLayoutManager(manager);
+        recyclerView.setLayoutManager(getLayoutManager());
         RecyclerView.ItemDecoration decoration = getItemDecoration();
         if (decoration != null) {
             recyclerView.addItemDecoration(decoration);
@@ -81,5 +73,16 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
     protected RecyclerView.ItemDecoration getItemDecoration() {
         return new StaggeredGridItemDecoration(getResources().getDimensionPixelSize(R.dimen.series_view_margin));
+    }
+
+    protected RecyclerView.LayoutManager getLayoutManager() {
+        return new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL) {
+            // The default implementation of StaggeredGridLayoutManager does not handle item decorations
+            // correctly during animations when this returns true, so we force it to return false.
+            @Override
+            public boolean supportsPredictiveItemAnimations() {
+                return false;
+            }
+        };
     }
 }
