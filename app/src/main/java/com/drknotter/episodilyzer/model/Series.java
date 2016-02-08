@@ -6,6 +6,7 @@ import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.server.model.FullSeries;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name="Series")
@@ -70,8 +71,26 @@ public class Series extends Model {
         return new Select()
                 .from(Episode.class)
                 .where("series = ?", getId())
-                .orderBy("absoluteNumber")
+                .orderBy("seasonNumber, absoluteNumber")
                 .execute();
+    }
+
+    public List<List<Episode>> seasons() {
+        List<List<Episode>> seasons = new ArrayList<>();
+        List<Episode> allEpisodes = episodes();
+
+        int currentSeasonNumber = Integer.MIN_VALUE;
+        List<Episode> currentSeason = new ArrayList<>();
+        for (Episode episode : allEpisodes) {
+            if (episode.seasonNumber != currentSeasonNumber) {
+                currentSeasonNumber = episode.seasonNumber;
+                currentSeason = new ArrayList<>();
+                seasons.add(currentSeason);
+            }
+            currentSeason.add(episode);
+        }
+
+        return seasons;
     }
 
     public List<Banner> banners() {
