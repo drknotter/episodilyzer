@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.RecyclerView;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.SeriesAdapter;
@@ -76,8 +77,21 @@ public class SeriesActivity extends RecyclerViewActivity {
             }
             collapsingToolbar.setTitleEnabled(bestFanart != null);
 
+            episodes.clear();
+            episodes.addAll(series.episodes());
+            recyclerView.getAdapter().notifyDataSetChanged();
         } else {
             finish();
         }
+    }
+
+    @Override
+    protected int getMaxColumnWidthPixels() {
+        return getResources().getDisplayMetrics().widthPixels;
+    }
+
+    @Override
+    protected RecyclerView.ItemDecoration getItemDecoration() {
+        return null;
     }
 }

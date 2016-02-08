@@ -48,7 +48,10 @@ public class RecyclerViewActivity extends AppCompatActivity {
             }
         };
         recyclerView.setLayoutManager(manager);
-        recyclerView.addItemDecoration(new StaggeredGridItemDecoration(getResources().getDimensionPixelSize(R.dimen.series_view_margin)));
+        RecyclerView.ItemDecoration decoration = getItemDecoration();
+        if (decoration != null) {
+            recyclerView.addItemDecoration(decoration);
+        }
     }
 
     @Override
@@ -74,5 +77,9 @@ public class RecyclerViewActivity extends AppCompatActivity {
 
     protected int getMaxColumnWidthPixels() {
         return getResources().getDimensionPixelSize(R.dimen.max_column_width);
+    }
+
+    protected RecyclerView.ItemDecoration getItemDecoration() {
+        return new StaggeredGridItemDecoration(getResources().getDimensionPixelSize(R.dimen.series_view_margin));
     }
 }

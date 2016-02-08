@@ -67,7 +67,11 @@ public class Series extends Model {
     public long lastAccessed;
 
     public List<Episode> episodes() {
-        return getMany(Episode.class, "series");
+        return new Select()
+                .from(Episode.class)
+                .where("series = ?", getId())
+                .orderBy("absoluteNumber")
+                .execute();
     }
 
     public List<Banner> banners() {

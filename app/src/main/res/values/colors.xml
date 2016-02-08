@@ -9,4 +9,5 @@
     <color name="textColorPrimaryInverse">#C7D3D6</color>
     <color name="textColorSecondary">#021300</color>
     <color name="textColorSecondaryInverse">#D6E6D4</color>
+    <color name="dividerColor">#939EAF</color>
 </resources>
