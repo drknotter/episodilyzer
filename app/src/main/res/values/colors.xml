@@ -10,4 +10,5 @@
     <color name="textColorSecondary">#021300</color>
     <color name="textColorSecondaryInverse">#D6E6D4</color>
     <color name="dividerColor">#939EAF</color>
+    <color name="seasonHeaderColor">#EE939EAF</color>
 </resources>

@@ -18,8 +18,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:includeFontPadding="false"
             android:ellipsize="end"
+            android:includeFontPadding="false"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textStyle="bold"/>
@@ -33,19 +33,34 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/overview"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:paddingBottom="16dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/overview"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="top"
+            android:maxLines="2"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+
+        <CheckBox
+            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="8dp"
+            android:text="@null"
+            android:textOff="@null"
+            android:textOn="@null"/>
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/dividerColor" />
+        android:background="@color/dividerColor"/>
 </LinearLayout>
