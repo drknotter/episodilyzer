@@ -12,7 +12,6 @@ import com.drknotter.episodilyzer.adapter.SeriesAdapter;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Series;
-import com.drknotter.episodilyzer.view.decoration.DividerItemDecoration;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
@@ -105,7 +104,7 @@ public class SeriesActivity extends RecyclerViewActivity {
 
     @Override
     protected RecyclerView.ItemDecoration getItemDecoration() {
-        return new DividerItemDecoration(getResources().getDrawable(R.drawable.divider));
+        return null;
     }
 
     @Override

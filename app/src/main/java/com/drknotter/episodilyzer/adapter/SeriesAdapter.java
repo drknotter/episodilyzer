@@ -20,6 +20,7 @@ public class SeriesAdapter
 
     public SeriesAdapter(List<Episode> episodes) {
         this.episodes = episodes;
+
     }
 
     @Override
