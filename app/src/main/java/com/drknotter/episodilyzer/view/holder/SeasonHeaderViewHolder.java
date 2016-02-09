@@ -19,8 +19,11 @@ public class SeasonHeaderViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(int seasonNumber) {
-        seasonName.setText(String.format(
-                itemView.getResources().getString(R.string.season_header),
-                seasonNumber));
+        String headerText = seasonNumber > 0
+                ? String.format(
+                        itemView.getResources().getString(R.string.season_header),
+                        seasonNumber)
+                : itemView.getResources().getString(R.string.season_special_header);
+        seasonName.setText(headerText);
     }
 }
