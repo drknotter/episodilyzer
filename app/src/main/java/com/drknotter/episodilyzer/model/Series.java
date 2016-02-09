@@ -71,7 +71,17 @@ public class Series extends Model {
         return new Select()
                 .from(Episode.class)
                 .where("series = ?", getId())
+                .and("seasonNumber > 0")
                 .orderBy("seasonNumber, absoluteNumber")
+                .execute();
+    }
+
+    public List<Episode> specialEpisodes() {
+        return new Select()
+                .from(Episode.class)
+                .where("series = ?", getId())
+                .and("seasonNumber = 0")
+                .orderBy("absoluteNumber")
                 .execute();
     }
 

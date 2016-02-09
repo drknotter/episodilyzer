@@ -91,6 +91,7 @@ public class SeriesActivity extends RecyclerViewActivity {
 
             episodes.clear();
             episodes.addAll(series.episodes());
+            episodes.addAll(series.specialEpisodes());
             recyclerView.getAdapter().notifyDataSetChanged();
         } else {
             finish();
