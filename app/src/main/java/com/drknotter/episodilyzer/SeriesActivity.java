@@ -12,10 +12,9 @@ import com.drknotter.episodilyzer.adapter.SeriesAdapter;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Series;
+import com.drknotter.episodilyzer.view.decoration.DividerItemDecoration;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersAdapter;
-import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +34,6 @@ public class SeriesActivity extends RecyclerViewActivity {
 
         SeriesAdapter adapter = new SeriesAdapter(episodes);
         recyclerView.setAdapter(adapter);
-        final StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration((StickyRecyclerHeadersAdapter) recyclerView.getAdapter());
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                headersDecor.invalidateHeaders();
-            }
-        });
-        recyclerView.addItemDecoration(headersDecor);
 
         handleIntent(getIntent());
     }
@@ -105,7 +96,7 @@ public class SeriesActivity extends RecyclerViewActivity {
 
     @Override
     protected RecyclerView.ItemDecoration getItemDecoration() {
-        return null;
+        return new DividerItemDecoration(getResources().getDrawable(R.drawable.divider));
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.drknotter.episodilyzer.view.holder;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,7 +13,7 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class EpisodeViewHolder extends RecyclerView.ViewHolder {
+public class EpisodeViewHolder extends BindableViewHolder<Episode> {
     @Bind(R.id.title)
     TextView title;
     @Bind(R.id.firstAired)
@@ -27,6 +26,7 @@ public class EpisodeViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
+    @Override
     public void bind(Episode episode) {
         title.setText(episode.episodeName);
         overview.setText(episode.overview);

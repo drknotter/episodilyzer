@@ -45,5 +45,5 @@ dependencies {
 
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 
-    compile 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar'
+    compile 'com.tonicartos:superslim:0.4.13'
 }
