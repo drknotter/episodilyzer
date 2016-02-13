@@ -48,15 +48,11 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
-
         <CheckBox
             style="@style/Widget.AppCompat.CompoundButton.CheckBox"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_margin="8dp"
-            android:text="@null"
-            android:textOff="@null"
-            android:textOn="@null"/>
+            android:layout_margin="8dp"/>
     </LinearLayout>
 
     <View

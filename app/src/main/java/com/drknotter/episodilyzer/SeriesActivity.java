@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.activeandroid.query.Select;
@@ -12,9 +11,9 @@ import com.drknotter.episodilyzer.adapter.SeriesAdapter;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Series;
-import com.drknotter.episodilyzer.view.decoration.DividerItemDecoration;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.tonicartos.superslim.LayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.List;
 public class SeriesActivity extends RecyclerViewActivity {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
 
-    List<Episode> episodes = new ArrayList<>();
+    List<Object> seriesInfo = new ArrayList<>();
     Series series;
 
     @Override
@@ -32,7 +31,7 @@ public class SeriesActivity extends RecyclerViewActivity {
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        SeriesAdapter adapter = new SeriesAdapter(episodes);
+        SeriesAdapter adapter = new SeriesAdapter(seriesInfo);
         recyclerView.setAdapter(adapter);
 
         handleIntent(getIntent());
@@ -80,9 +79,18 @@ public class SeriesActivity extends RecyclerViewActivity {
             }
             collapsingToolbar.setTitleEnabled(bestFanart != null);
 
-            episodes.clear();
-            episodes.addAll(series.episodes());
-            episodes.addAll(series.specialEpisodes());
+            seriesInfo.clear();
+            int seasonNumber = Integer.MIN_VALUE;
+            //noinspection unchecked
+            for(List<Episode> episodeList : new List[] {series.episodes(), series.specialEpisodes()}) {
+                for (Episode episode : episodeList) {
+                    if (episode.seasonNumber != seasonNumber) {
+                        seasonNumber = episode.seasonNumber;
+                        seriesInfo.add(seasonNumber);
+                    }
+                    seriesInfo.add(episode);
+                }
+            }
             recyclerView.getAdapter().notifyDataSetChanged();
         } else {
             finish();
@@ -96,11 +104,11 @@ public class SeriesActivity extends RecyclerViewActivity {
 
     @Override
     protected RecyclerView.ItemDecoration getItemDecoration() {
-        return new DividerItemDecoration(getResources().getDrawable(R.drawable.divider));
+        return null;// new DividerItemDecoration(getResources().getDrawable(R.drawable.divider));
     }
 
     @Override
     protected RecyclerView.LayoutManager getLayoutManager() {
-        return new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        return new LayoutManager(this);
     }
 }

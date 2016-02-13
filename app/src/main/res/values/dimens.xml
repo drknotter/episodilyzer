@@ -6,4 +6,5 @@
     <dimen name="max_column_width">250dp</dimen>
     <dimen name="series_view_margin">16dp</dimen>
     <dimen name="max_toolbar_height">200dp</dimen>
+    <dimen name="series_header_height">48dp</dimen>
 </resources>

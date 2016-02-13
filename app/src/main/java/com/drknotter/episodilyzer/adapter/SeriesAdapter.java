@@ -10,6 +10,8 @@ import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.view.holder.BindableViewHolder;
 import com.drknotter.episodilyzer.view.holder.EpisodeViewHolder;
 import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
+import com.tonicartos.superslim.LayoutManager;
+import com.tonicartos.superslim.LinearSLM;
 
 import java.util.List;
 
@@ -48,6 +50,20 @@ public class SeriesAdapter
         if (holder instanceof BindableViewHolder) {
             //noinspection unchecked
             ((BindableViewHolder) holder).bind(seriesInfo.get(position));
+
+            /** Embed section configuration. **/
+            final LayoutManager.LayoutParams params = (LayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+
+            params.setSlm(LinearSLM.ID);
+
+            // Position of the first item in the section. This doesn't have to
+            // be a header. However, if an item is a header, it must then be the
+            // first item in a section.
+            int i = position+1;
+            //noinspection StatementWithEmptyBody
+            while(getItemViewType(--i) == VIEW_TYPE_EPISODE);
+            params.setFirstPosition(i);
+            holder.itemView.setLayoutParams(params);
         }
     }
 
