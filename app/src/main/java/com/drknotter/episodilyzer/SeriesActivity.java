@@ -10,6 +10,7 @@ import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.SeriesAdapter;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Episode;
+import com.drknotter.episodilyzer.model.Season;
 import com.drknotter.episodilyzer.model.Series;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -86,7 +87,7 @@ public class SeriesActivity extends RecyclerViewActivity {
                 for (Episode episode : episodeList) {
                     if (episode.seasonNumber != seasonNumber) {
                         seasonNumber = episode.seasonNumber;
-                        seriesInfo.add(seasonNumber);
+                        seriesInfo.add(new Season(episode.seasonId, episode.seasonNumber));
                     }
                     seriesInfo.add(episode);
                 }

@@ -1,16 +1,20 @@
 package com.drknotter.episodilyzer.view.holder;
 
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.drknotter.episodilyzer.R;
+import com.drknotter.episodilyzer.model.Season;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class SeasonHeaderViewHolder extends BindableViewHolder<Integer> {
+public class SeasonHeaderViewHolder extends BindableViewHolder<Season> {
     @Bind(R.id.seasonName)
     TextView seasonName;
+    @Bind(R.id.selected)
+    CheckBox selected;
 
     public SeasonHeaderViewHolder(View itemView) {
         super(itemView);
@@ -18,12 +22,14 @@ public class SeasonHeaderViewHolder extends BindableViewHolder<Integer> {
     }
 
     @Override
-    public void bind(Integer seasonNumber) {
-        String headerText = seasonNumber > 0
+    public void bind(Season season) {
+        String headerText = season.number > 0
                 ? String.format(
                         itemView.getResources().getString(R.string.season_header),
-                        seasonNumber)
+                        season.number)
                 : itemView.getResources().getString(R.string.season_special_header);
         seasonName.setText(headerText);
+
+        selected.setChecked(season.areAllEpisodesSelected());
     }
 }

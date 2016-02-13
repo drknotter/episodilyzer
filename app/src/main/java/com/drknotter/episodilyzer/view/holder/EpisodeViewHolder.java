@@ -1,6 +1,7 @@
 package com.drknotter.episodilyzer.view.holder;
 
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.drknotter.episodilyzer.R;
@@ -20,6 +21,8 @@ public class EpisodeViewHolder extends BindableViewHolder<Episode> {
     TextView firstAired;
     @Bind(R.id.overview)
     TextView overview;
+    @Bind(R.id.selected)
+    CheckBox selected;
 
     public EpisodeViewHolder(View itemView) {
         super(itemView);
@@ -31,6 +34,7 @@ public class EpisodeViewHolder extends BindableViewHolder<Episode> {
         title.setText(episode.episodeName);
         overview.setText(episode.overview);
         setFirstAired(episode.firstAired);
+        selected.setChecked(episode.selected);
     }
 
     private void setFirstAired(String firstAiredText) {

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Episode;
+import com.drknotter.episodilyzer.model.Season;
 import com.drknotter.episodilyzer.view.holder.BindableViewHolder;
 import com.drknotter.episodilyzer.view.holder.EpisodeViewHolder;
 import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
@@ -81,7 +82,7 @@ public class SeriesAdapter
             return -1;
         }
 
-        if (seriesInfo.get(position) instanceof Integer) {
+        if (seriesInfo.get(position) instanceof Season) {
             return VIEW_TYPE_HEADER;
         } else if (seriesInfo.get(position) instanceof Episode) {
             return VIEW_TYPE_EPISODE;

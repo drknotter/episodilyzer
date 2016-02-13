@@ -108,4 +108,7 @@ public class Episode extends Model {
     // An unsigned integer that represents the width of the episode image in pixels. Can be null
     @Column(name="thumb_width")
     public int thumbWidth;
+
+    @Column(name="selected")
+    public boolean selected = true;
 }
