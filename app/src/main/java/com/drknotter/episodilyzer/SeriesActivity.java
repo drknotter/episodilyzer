@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Season;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
+import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.tonicartos.superslim.LayoutManager;
@@ -32,6 +34,8 @@ import butterknife.OnClick;
 public class SeriesActivity extends RecyclerViewActivity {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
 
+    @Bind(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
     @Bind(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbar;
     @Bind(R.id.toolbar_background)
@@ -135,6 +139,7 @@ public class SeriesActivity extends RecyclerViewActivity {
 
     @OnClick(R.id.fab)
     public void randomEpisode() {
+        appBarLayout.setExpanded(false, true);
         if (randomEpisodeOrder == null) {
             randomEpisodeOrder = new ArrayDeque<>();
             //noinspection unchecked
@@ -147,6 +152,7 @@ public class SeriesActivity extends RecyclerViewActivity {
 
         if (randomEpisodeOrder.size() > 0) {
             Episode random = randomEpisodeOrder.poll();
+            Snackbar.make(recyclerView, "Randomly selected " + random.seasonNumber + "." + random.episodeNumber, Snackbar.LENGTH_SHORT).show();
             for (int i=0; i<seriesInfo.size(); i++) {
                 Object model = seriesInfo.get(i);
                 if (model instanceof Episode
@@ -172,6 +178,14 @@ public class SeriesActivity extends RecyclerViewActivity {
 
     @Override
     protected RecyclerView.LayoutManager getLayoutManager() {
-        return new LayoutManager(this);
+        return new LayoutManager(this) {
+            private CenteredSmoothScroller smoothScroller = new CenteredSmoothScroller(SeriesActivity.this);
+            @Override
+            public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+                smoothScroller.setTargetPosition(position);
+                startSmoothScroll(smoothScroller);
+            }
+        };
     }
+
 }
