@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:tools="http://schemas.android.com/tools"
-          package="com.drknotter.episodilyzer"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="com.drknotter.episodilyzer"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".Episodilyzer"
@@ -13,12 +13,16 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <meta-data android:name="AA_DB_NAME" android:value="TheTV.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="1" />
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="TheTV.db"/>
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="1"/>
         <meta-data
             android:name="AA_MODELS"
-            android:value="com.drknotter.episodilyzer.model.Series, com.drknotter.episodilyzer.model.Episode, com.drknotter.episodilyzer.model.Banner" />
+            android:value="com.drknotter.episodilyzer.model.Series, com.drknotter.episodilyzer.model.Episode, com.drknotter.episodilyzer.model.Banner"/>
+
         <activity
             android:name=".EpisodilyzerActivity"
             android:label="@string/app_name"
@@ -28,9 +32,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="com.drknotter.episodilyzer.SearchShowsActivity" />
+                android:value="com.drknotter.episodilyzer.SearchShowsActivity"/>
         </activity>
         <activity
             android:name=".SearchShowsActivity"
@@ -39,8 +44,9 @@
             android:theme="@style/AppTheme.NoActionBar"
             tools:ignore="UnusedAttribute">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.drknotter.episodilyzer.EpisodilyzerActivity"/>

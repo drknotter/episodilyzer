@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
@@ -20,10 +21,13 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.tonicartos.superslim.LayoutManager;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 public class SeriesActivity extends RecyclerViewActivity {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
@@ -33,8 +37,12 @@ public class SeriesActivity extends RecyclerViewActivity {
     @Bind(R.id.toolbar_background)
     ImageView toolbarBackground;
 
+    @Bind(R.id.fab)
+    FloatingActionButton fab;
+
     List<Object> seriesInfo = new ArrayList<>();
     Series series;
+    Queue<Episode> randomEpisodeOrder = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +130,33 @@ public class SeriesActivity extends RecyclerViewActivity {
             recyclerView.getAdapter().notifyDataSetChanged();
         } else {
             finish();
+        }
+    }
+
+    @OnClick(R.id.fab)
+    public void randomEpisode() {
+        if (randomEpisodeOrder == null) {
+            randomEpisodeOrder = new ArrayDeque<>();
+            //noinspection unchecked
+            randomEpisodeOrder.addAll((List) new Select().from(Episode.class)
+                    .where("series = ?", series.getId())
+                    .and("selected = ?", true)
+                    .orderBy("RANDOM()")
+                    .execute());
+        }
+
+        if (randomEpisodeOrder.size() > 0) {
+            Episode random = randomEpisodeOrder.poll();
+            for (int i=0; i<seriesInfo.size(); i++) {
+                Object model = seriesInfo.get(i);
+                if (model instanceof Episode
+                        && ((Episode) model).id == random.id) {
+                    recyclerView.smoothScrollToPosition(i);
+                    break;
+                }
+            }
+        } else {
+            randomEpisodeOrder = null;
         }
     }
 
