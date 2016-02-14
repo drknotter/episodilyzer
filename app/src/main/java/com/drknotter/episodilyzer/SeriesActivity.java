@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.SeriesAdapter;
@@ -21,8 +23,15 @@ import com.tonicartos.superslim.LayoutManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+
 public class SeriesActivity extends RecyclerViewActivity {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
+
+    @Bind(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbar;
+    @Bind(R.id.toolbar_background)
+    ImageView toolbarBackground;
 
     List<Object> seriesInfo = new ArrayList<>();
     Series series;
@@ -49,6 +58,11 @@ public class SeriesActivity extends RecyclerViewActivity {
         });
 
         handleIntent(getIntent());
+    }
+
+    @Override
+    protected int getContentViewId() {
+        return R.layout.activity_series;
     }
 
     @Override

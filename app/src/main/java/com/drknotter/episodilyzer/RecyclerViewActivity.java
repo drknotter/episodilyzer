@@ -2,13 +2,12 @@ package com.drknotter.episodilyzer;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
 import com.drknotter.episodilyzer.view.decoration.StaggeredGridItemDecoration;
 
@@ -18,17 +17,13 @@ import butterknife.ButterKnife;
 public class RecyclerViewActivity extends AppCompatActivity {
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
-    @Bind(R.id.collapsing_toolbar)
-    CollapsingToolbarLayout collapsingToolbar;
-    @Bind(R.id.toolbar_background)
-    ImageView toolbarBackground;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recycler_view);
+        setContentView(getContentViewId());
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -43,6 +38,11 @@ public class RecyclerViewActivity extends AppCompatActivity {
         if (decoration != null) {
             recyclerView.addItemDecoration(decoration);
         }
+    }
+
+    @LayoutRes
+    protected int getContentViewId() {
+        return R.layout.activity_recycler_view;
     }
 
     @Override
