@@ -72,7 +72,7 @@ public class Series extends Model {
                 .from(Episode.class)
                 .where("series = ?", getId())
                 .and("seasonNumber > 0")
-                .orderBy("seasonNumber, absoluteNumber")
+                .orderBy("seasonNumber, episodeNumber")
                 .execute();
     }
 
@@ -81,7 +81,7 @@ public class Series extends Model {
                 .from(Episode.class)
                 .where("series = ?", getId())
                 .and("seasonNumber = 0")
-                .orderBy("absoluteNumber")
+                .orderBy("episodeNumber")
                 .execute();
     }
 
