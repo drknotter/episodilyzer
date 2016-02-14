@@ -71,11 +71,10 @@ public class SeriesActivity extends RecyclerViewActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (randomEpisodePosition != null && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(randomEpisodePosition);
-                    if (viewHolder != null) {
-                        viewHolder.itemView.setSelected(true);
-                    }
+                    possiblySelectPosition(randomEpisodePosition);
                     randomEpisodePosition = null;
+                } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    unselectAllPositions();
                 }
             }
         });
@@ -158,6 +157,7 @@ public class SeriesActivity extends RecyclerViewActivity {
     @OnClick(R.id.fab)
     public void randomEpisode() {
         appBarLayout.setExpanded(false, true);
+        unselectAllPositions();
         if (randomEpisodeOrder == null) {
             randomEpisodeOrder = new ArrayDeque<>();
             //noinspection unchecked
@@ -175,12 +175,29 @@ public class SeriesActivity extends RecyclerViewActivity {
                 if (model instanceof Episode
                         && ((Episode) model).id == random.id) {
                     randomEpisodePosition = i;
+                    possiblySelectPosition(i);
                     recyclerView.smoothScrollToPosition(i);
                     break;
                 }
             }
         } else {
             randomEpisodeOrder = null;
+        }
+    }
+
+    private void possiblySelectPosition(int position) {
+        RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
+        if (viewHolder != null) {
+            viewHolder.itemView.setSelected(true);
+        }
+    }
+
+    private void unselectAllPositions() {
+        for (int i=0; i<seriesInfo.size(); i++ ) {
+            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+            if (viewHolder != null) {
+                viewHolder.itemView.setSelected(false);
+            }
         }
     }
 
