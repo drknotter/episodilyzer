@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 
 import com.activeandroid.query.Select;
@@ -12,6 +13,7 @@ import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Season;
 import com.drknotter.episodilyzer.model.Series;
+import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.tonicartos.superslim.LayoutManager;
@@ -34,6 +36,17 @@ public class SeriesActivity extends RecyclerViewActivity {
 
         SeriesAdapter adapter = new SeriesAdapter(seriesInfo);
         recyclerView.setAdapter(adapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator() {
+            @Override
+            public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder, int fromX, int fromY, int toX, int toY) {
+                if (oldHolder instanceof SeasonHeaderViewHolder && newHolder instanceof SeasonHeaderViewHolder) {
+                    dispatchChangeFinished(oldHolder, true);
+                    dispatchChangeFinished(newHolder, false);
+                    return false;
+                }
+                return super.animateChange(oldHolder, newHolder, fromX, fromY, toX, toY);
+            }
+        });
 
         handleIntent(getIntent());
     }

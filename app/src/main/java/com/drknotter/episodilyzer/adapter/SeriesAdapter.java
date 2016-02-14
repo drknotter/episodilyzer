@@ -17,7 +17,10 @@ import com.tonicartos.superslim.LinearSLM;
 import java.util.List;
 
 public class SeriesAdapter
-        extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements
+        SeasonHeaderViewHolder.OnSeasonSelectedChangeListener,
+        EpisodeViewHolder.OnEpisodeSelectedChangeListener{
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_EPISODE = 1;
 
@@ -34,12 +37,12 @@ public class SeriesAdapter
         switch(viewType) {
             case VIEW_TYPE_EPISODE: {
                 View view = inflater.inflate(R.layout.view_episode, parent, false);
-                return new EpisodeViewHolder(view);
+                return new EpisodeViewHolder(view, this);
             }
 
             case VIEW_TYPE_HEADER: {
                 View view = inflater.inflate(R.layout.view_season_header, parent, false);
-                return new SeasonHeaderViewHolder(view);
+                return new SeasonHeaderViewHolder(view, this);
             }
         }
 
@@ -51,21 +54,17 @@ public class SeriesAdapter
         if (holder instanceof BindableViewHolder) {
             //noinspection unchecked
             ((BindableViewHolder) holder).bind(seriesInfo.get(position));
-
-            /** Embed section configuration. **/
-            final LayoutManager.LayoutParams params = (LayoutManager.LayoutParams) holder.itemView.getLayoutParams();
-
-            params.setSlm(LinearSLM.ID);
-
-            // Position of the first item in the section. This doesn't have to
-            // be a header. However, if an item is a header, it must then be the
-            // first item in a section.
-            int i = position+1;
-            //noinspection StatementWithEmptyBody
-            while(getItemViewType(--i) == VIEW_TYPE_EPISODE);
-            params.setFirstPosition(i);
-            holder.itemView.setLayoutParams(params);
         }
+
+        /** Embed section configuration. **/
+        final LayoutManager.LayoutParams params = (LayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+
+        params.setSlm(LinearSLM.ID);
+        int i = position+1;
+        //noinspection StatementWithEmptyBody
+        while(getItemViewType(--i) == VIEW_TYPE_EPISODE);
+        params.setFirstPosition(i);
+        holder.itemView.setLayoutParams(params);
     }
 
     @Override
@@ -89,5 +88,30 @@ public class SeriesAdapter
         }
 
         return -1;
+    }
+
+    @Override
+    public void onEpisodeSelectedChange(Episode e, boolean selected) {
+        for (int i=0; i<seriesInfo.size(); i++) {
+            Object model = seriesInfo.get(i);
+            if (model instanceof Season
+                    && ((Season) model).id == e.seasonId) {
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onSeasonSelectedChange(Season s, boolean selected) {
+        for (int i=0; i<seriesInfo.size(); i++) {
+            Object model = seriesInfo.get(i);
+            if (model instanceof Episode
+                    && ((Episode) model).seasonId == s.id) {
+                ((Episode) model).selected = selected;
+                ((Episode) model).save();
+                notifyItemChanged(i);
+            }
+        }
     }
 }
