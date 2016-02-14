@@ -31,6 +31,7 @@ public class Episode extends Model {
         thumbAdded = baseEpisode.thumbAdded;
         thumbHeight = baseEpisode.thumbHeight;
         thumbWidth = baseEpisode.thumbWidth;
+        selected = baseEpisode.seasonNumber > 0;
     }
 
     // An unsigned integer assigned by our site to the episode. Cannot be null.
@@ -110,5 +111,5 @@ public class Episode extends Model {
     public int thumbWidth;
 
     @Column(name="selected")
-    public boolean selected = true;
+    public boolean selected;
 }
