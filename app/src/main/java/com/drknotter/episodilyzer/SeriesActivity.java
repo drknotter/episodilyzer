@@ -5,10 +5,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.activeandroid.query.Select;
@@ -41,12 +41,11 @@ public class SeriesActivity extends RecyclerViewActivity {
     @Bind(R.id.toolbar_background)
     ImageView toolbarBackground;
 
-    @Bind(R.id.fab)
-    FloatingActionButton fab;
+    private List<Object> seriesInfo = new ArrayList<>();
+    private Series series;
+    private Queue<Episode> randomEpisodeOrder = null;
 
-    List<Object> seriesInfo = new ArrayList<>();
-    Series series;
-    Queue<Episode> randomEpisodeOrder = null;
+    private Integer randomEpisodePosition = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +65,25 @@ public class SeriesActivity extends RecyclerViewActivity {
                     return false;
                 }
                 return super.animateChange(oldHolder, newHolder, fromX, fromY, toX, toY);
+            }
+        });
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (randomEpisodePosition != null && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(randomEpisodePosition);
+                    if (viewHolder != null) {
+                        viewHolder.itemView.setSelected(true);
+                    }
+                    randomEpisodePosition = null;
+                }
+            }
+        });
+        recyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                randomEpisodePosition = null;
+                return false;
             }
         });
 
@@ -152,11 +170,11 @@ public class SeriesActivity extends RecyclerViewActivity {
 
         if (randomEpisodeOrder.size() > 0) {
             Episode random = randomEpisodeOrder.poll();
-            Snackbar.make(recyclerView, "Randomly selected " + random.seasonNumber + "." + random.episodeNumber, Snackbar.LENGTH_SHORT).show();
             for (int i=0; i<seriesInfo.size(); i++) {
                 Object model = seriesInfo.get(i);
                 if (model instanceof Episode
                         && ((Episode) model).id == random.id) {
+                    randomEpisodePosition = i;
                     recyclerView.smoothScrollToPosition(i);
                     break;
                 }

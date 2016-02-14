@@ -1,64 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:background="@drawable/episode_background"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/firstAired"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="top"
-            android:includeFontPadding="false"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/overview"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="top"
-            android:maxLines="2"
+            android:orientation="horizontal"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+            android:paddingTop="16dp">
 
-        <CheckBox
-            android:id="@+id/selected"
-            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_margin="8dp"/>
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/firstAired"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:includeFontPadding="false"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/overview"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="top"
+                android:maxLines="2"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+
+            <CheckBox
+                android:id="@+id/selected"
+                style="@style/Widget.AppCompat.CompoundButton.CheckBox"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/dividerColor"/>
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/dividerColor"/>
-</LinearLayout>
+</FrameLayout>
