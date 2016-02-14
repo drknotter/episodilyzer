@@ -118,7 +118,7 @@ public class SeriesActivity extends RecyclerViewActivity {
 
     @Override
     protected RecyclerView.ItemDecoration getItemDecoration() {
-        return null;// new DividerItemDecoration(getResources().getDrawable(R.drawable.divider));
+        return null;
     }
 
     @Override
