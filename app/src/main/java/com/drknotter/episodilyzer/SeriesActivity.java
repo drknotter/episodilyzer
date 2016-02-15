@@ -43,7 +43,7 @@ public class SeriesActivity extends RecyclerViewActivity {
 
     private List<Object> seriesInfo = new ArrayList<>();
     private Series series;
-    private Queue<Episode> randomEpisodeOrder = null;
+    private Queue<Episode> randomEpisodeOrder = new ArrayDeque<>();
 
     private Integer randomEpisodePosition = null;
 
@@ -156,21 +156,23 @@ public class SeriesActivity extends RecyclerViewActivity {
 
     @OnClick(R.id.fab)
     public void randomEpisode() {
-        appBarLayout.setExpanded(false, true);
-        unselectAllPositions();
-        if (randomEpisodeOrder == null) {
-            randomEpisodeOrder = new ArrayDeque<>();
+        if (randomEpisodeOrder.size() == 0) {
             //noinspection unchecked
             randomEpisodeOrder.addAll((List) new Select().from(Episode.class)
                     .where("series = ?", series.getId())
-                    .and("selected = ?", true)
                     .orderBy("RANDOM()")
                     .execute());
         }
 
-        if (randomEpisodeOrder.size() > 0) {
-            Episode random = randomEpisodeOrder.poll();
-            for (int i=0; i<seriesInfo.size(); i++) {
+        Episode random;
+        //noinspection StatementWithEmptyBody
+        while ((random = randomEpisodeOrder.poll()) != null && !random.selected);
+
+        if (random != null) {
+            appBarLayout.setExpanded(false, true);
+            unselectAllPositions();
+
+            for (int i = 0; i < seriesInfo.size(); i++) {
                 Object model = seriesInfo.get(i);
                 if (model instanceof Episode
                         && ((Episode) model).id == random.id) {
@@ -180,8 +182,6 @@ public class SeriesActivity extends RecyclerViewActivity {
                     break;
                 }
             }
-        } else {
-            randomEpisodeOrder = null;
         }
     }
 

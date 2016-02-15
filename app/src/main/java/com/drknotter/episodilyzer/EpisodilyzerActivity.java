@@ -30,6 +30,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
         super.onResume();
         myShows.clear();
         myShows.addAll(SeriesUtils.allSeries());
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
