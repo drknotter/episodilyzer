@@ -8,9 +8,11 @@ import android.view.ViewGroup;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Season;
+import com.drknotter.episodilyzer.model.SeriesOverview;
 import com.drknotter.episodilyzer.view.holder.BindableViewHolder;
 import com.drknotter.episodilyzer.view.holder.EpisodeViewHolder;
 import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
+import com.drknotter.episodilyzer.view.holder.SeriesOverviewViewHolder;
 import com.tonicartos.superslim.LayoutManager;
 import com.tonicartos.superslim.LinearSLM;
 
@@ -21,8 +23,9 @@ public class SeriesAdapter
         implements
         SeasonHeaderViewHolder.OnSeasonSelectedChangeListener,
         EpisodeViewHolder.OnEpisodeSelectedChangeListener{
-    private static final int VIEW_TYPE_HEADER = 0;
-    private static final int VIEW_TYPE_EPISODE = 1;
+    private static final int VIEW_TYPE_SERIES_OVERVIEW = 0;
+    private static final int VIEW_TYPE_HEADER = 1;
+    private static final int VIEW_TYPE_EPISODE = 2;
 
     private List<Object> seriesInfo;
 
@@ -35,6 +38,10 @@ public class SeriesAdapter
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         switch(viewType) {
+            case VIEW_TYPE_SERIES_OVERVIEW: {
+                View view = inflater.inflate(R.layout.view_series_overview, parent, false);
+                return new SeriesOverviewViewHolder(view);
+            }
             case VIEW_TYPE_EPISODE: {
                 View view = inflater.inflate(R.layout.view_episode, parent, false);
                 return new EpisodeViewHolder(view, this);
@@ -81,7 +88,9 @@ public class SeriesAdapter
             return -1;
         }
 
-        if (seriesInfo.get(position) instanceof Season) {
+        if (seriesInfo.get(position) instanceof SeriesOverview) {
+            return VIEW_TYPE_SERIES_OVERVIEW;
+        } else if (seriesInfo.get(position) instanceof Season) {
             return VIEW_TYPE_HEADER;
         } else if (seriesInfo.get(position) instanceof Episode) {
             return VIEW_TYPE_EPISODE;

@@ -27,4 +27,8 @@
         <item name="android:ellipsize">none</item>
     </style>
 
+    <style name="TextAppearance.AppCompat.Body1.Inverse">
+        <item name="android:textColor">@color/textColorPrimaryInverse</item>
+    </style>
+
 </resources>

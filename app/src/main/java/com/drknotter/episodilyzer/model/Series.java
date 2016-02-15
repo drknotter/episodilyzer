@@ -6,7 +6,6 @@ import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.server.model.FullSeries;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Table(name="Series")
@@ -67,6 +66,10 @@ public class Series extends Model {
     @Column(name="lastAccessed", index=true)
     public long lastAccessed;
 
+    public SeriesOverview seriesOverview() {
+        return new SeriesOverview(overview, actors);
+    }
+
     public List<Episode> episodes() {
         return new Select()
                 .from(Episode.class)
@@ -83,37 +86,6 @@ public class Series extends Model {
                 .and("seasonNumber = 0")
                 .orderBy("episodeNumber")
                 .execute();
-    }
-
-    public List<List<Episode>> seasons() {
-        List<List<Episode>> seasons = new ArrayList<>();
-        List<Episode> allEpisodes = episodes();
-
-        int currentSeasonNumber = Integer.MIN_VALUE;
-        List<Episode> currentSeason = new ArrayList<>();
-        for (Episode episode : allEpisodes) {
-            if (episode.seasonNumber != currentSeasonNumber) {
-                currentSeasonNumber = episode.seasonNumber;
-                currentSeason = new ArrayList<>();
-                seasons.add(currentSeason);
-            }
-            currentSeason.add(episode);
-        }
-
-        return seasons;
-    }
-
-    public List<Banner> banners() {
-        return getMany(Banner.class, "series");
-    }
-
-    public Banner randomBanner() {
-        return new Select()
-                .from(Banner.class)
-                .where("series = ?", getId())
-                .and("type = ?", Banner.TYPE_SERIES)
-                .orderBy("RANDOM()")
-                .executeSingle();
     }
 
     public Banner bestBanner() {

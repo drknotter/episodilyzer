@@ -18,8 +18,8 @@
             android:layout_height="wrap_content"
             app:contentScrim="?attr/colorPrimary"
             app:statusBarScrim="?attr/colorPrimaryDark"
-            app:expandedTitleMarginStart="32dp"
-            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="16dp"
+            app:expandedTitleMarginBottom="0dp"
             app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title.Expanded"
             android:fitsSystemWindows="true">
             <ImageView

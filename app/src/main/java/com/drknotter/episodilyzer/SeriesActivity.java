@@ -137,6 +137,7 @@ public class SeriesActivity extends RecyclerViewActivity {
             collapsingToolbar.setTitleEnabled(bestFanart != null);
 
             seriesInfo.clear();
+            seriesInfo.add(series.seriesOverview());
             int seasonNumber = Integer.MIN_VALUE;
             //noinspection unchecked
             for(List<Episode> episodeList : new List[] {series.episodes(), series.specialEpisodes()}) {
@@ -157,11 +158,7 @@ public class SeriesActivity extends RecyclerViewActivity {
     @OnClick(R.id.fab)
     public void randomEpisode() {
         if (randomEpisodeOrder.size() == 0) {
-            //noinspection unchecked
-            randomEpisodeOrder.addAll((List) new Select().from(Episode.class)
-                    .where("series = ?", series.getId())
-                    .orderBy("RANDOM()")
-                    .execute());
+            newRandomOrder();
         }
 
         Episode random;
@@ -182,7 +179,18 @@ public class SeriesActivity extends RecyclerViewActivity {
                     break;
                 }
             }
+        } else {
+            newRandomOrder();
         }
+    }
+
+    private void newRandomOrder() {
+        randomEpisodeOrder.clear();
+        //noinspection unchecked
+        randomEpisodeOrder.addAll((List) new Select().from(Episode.class)
+                .where("series = ?", series.getId())
+                .orderBy("RANDOM()")
+                .execute());
     }
 
     private void possiblySelectPosition(int position) {
