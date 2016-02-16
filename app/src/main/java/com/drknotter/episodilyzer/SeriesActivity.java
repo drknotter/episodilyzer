@@ -5,8 +5,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +20,7 @@ import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Season;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
+import com.drknotter.episodilyzer.view.holder.SeriesOverviewViewHolder;
 import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -77,6 +80,18 @@ public class SeriesActivity extends RecyclerViewActivity {
                     unselectAllPositions();
                 }
             }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(0);
+                if (viewHolder != null && viewHolder instanceof SeriesOverviewViewHolder) {
+                    ViewCompat.setElevation(appBarLayout, 0);
+                    ((SeriesOverviewViewHolder) viewHolder).adjustFadeOut();
+                } else {
+                    ViewCompat.setElevation(appBarLayout,
+                            getResources().getDimensionPixelSize(R.dimen.appbarlayout_elevation));
+                }
+            }
         });
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -111,13 +126,6 @@ public class SeriesActivity extends RecyclerViewActivity {
             //noinspection ConstantConditions
             getSupportActionBar().setTitle(series.seriesName);
             collapsingToolbar.setTitle(series.seriesName);
-            AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbar.getLayoutParams();
-            params.setScrollFlags(
-                    AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-                            | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
-                            | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-                            | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
-            collapsingToolbar.setLayoutParams(params);
 
             Banner bestFanart = series.bestFanart();
             if (bestFanart != null) {
@@ -131,13 +139,17 @@ public class SeriesActivity extends RecyclerViewActivity {
 
                             @Override
                             public void onError() {
+                                collapsingToolbar.setTitleEnabled(false);
                             }
                         });
             }
             collapsingToolbar.setTitleEnabled(bestFanart != null);
 
             seriesInfo.clear();
-            seriesInfo.add(series.seriesOverview());
+            if (!TextUtils.isEmpty(series.overview)) {
+                seriesInfo.add(series.seriesOverview());
+            }
+
             int seasonNumber = Integer.MIN_VALUE;
             //noinspection unchecked
             for(List<Episode> episodeList : new List[] {series.episodes(), series.specialEpisodes()}) {

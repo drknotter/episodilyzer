@@ -3,14 +3,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
-    android:padding="16dp"
     android:clipToPadding="false">
+
     <TextView
         android:id="@+id/overview"
         style="@style/TextAppearance.AppCompat.Body1.Inverse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="3"
-        android:ellipsize="end"/>
+        android:padding="16dp"
+        android:background="@color/colorPrimary"/>
+
+    <View
+        android:id="@+id/overview_fade_out"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_gravity="top"
+        android:background="@drawable/overview_fade_out"/>
 </FrameLayout>
