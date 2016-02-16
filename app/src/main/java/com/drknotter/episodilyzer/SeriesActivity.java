@@ -148,6 +148,9 @@ public class SeriesActivity extends RecyclerViewActivity {
             seriesInfo.clear();
             if (!TextUtils.isEmpty(series.overview)) {
                 seriesInfo.add(series.seriesOverview());
+            } else {
+                ViewCompat.setElevation(appBarLayout,
+                        getResources().getDimensionPixelSize(R.dimen.appbarlayout_elevation));
             }
 
             int seasonNumber = Integer.MIN_VALUE;
