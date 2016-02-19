@@ -6,7 +6,12 @@ import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.server.model.FullSeries;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Table(name="Series")
 public class Series extends Model {
@@ -67,7 +72,23 @@ public class Series extends Model {
     public long lastAccessed;
 
     public SeriesOverview seriesOverview() {
-        return new SeriesOverview(overview, actors);
+        return new SeriesOverview(this);
+    }
+
+    public List<String> starring(int limit) {
+        List<String> starring = new ArrayList<>(Arrays.asList(actors != null ? actors.split("\\|") : new String[0]));
+        starring.removeAll(Arrays.asList(null, ""));
+        starring = starring.subList(0, Math.min(limit, starring.size()));
+        return starring;
+    }
+
+    public String firstAiredText() {
+        try {
+            Date firstAiredDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(firstAired);
+            return new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()).format(firstAiredDate);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public List<Episode> episodes() {

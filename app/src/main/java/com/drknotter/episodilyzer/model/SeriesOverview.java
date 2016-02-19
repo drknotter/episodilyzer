@@ -1,10 +1,14 @@
 package com.drknotter.episodilyzer.model;
 
+import java.util.List;
+
 public class SeriesOverview {
-    public SeriesOverview(String overview, String actors) {
-        this.overview = overview;
-        this.actors = actors.split("|");
+    public SeriesOverview(Series series) {
+        this.overview = series.overview;
+        this.starring = series.starring(5);
+        this.firstAired = series.firstAiredText();
     }
     public String overview;
-    public String[] actors;
+    public List<String> starring;
+    public String firstAired;
 }
