@@ -87,11 +87,13 @@ public class SeriesActivity extends RecyclerViewActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(0);
-                if (viewHolder != null && viewHolder instanceof SeriesOverviewViewHolder) {
+                if (viewHolder != null) {
                     ViewCompat.setElevation(appBarLayout, 0);
-                    ((SeriesOverviewViewHolder) viewHolder).adjustFadeOut();
                     if (viewHolder.itemView.getTop() == 0 && dy < 0 && lastState != RecyclerView.SCROLL_STATE_DRAGGING) {
                         appBarLayout.setExpanded(true, true);
+                    }
+                    if (viewHolder instanceof SeriesOverviewViewHolder) {
+                        ((SeriesOverviewViewHolder) viewHolder).adjustFadeOut();
                     }
                 } else {
                     ViewCompat.setElevation(appBarLayout,
