@@ -71,8 +71,11 @@ public class SeriesActivity extends RecyclerViewActivity {
             }
         });
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            private int lastState = -1;
+
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                lastState = newState;
                 if (randomEpisodePosition != null && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     possiblySelectPosition(randomEpisodePosition);
                     randomEpisodePosition = null;
@@ -87,6 +90,9 @@ public class SeriesActivity extends RecyclerViewActivity {
                 if (viewHolder != null && viewHolder instanceof SeriesOverviewViewHolder) {
                     ViewCompat.setElevation(appBarLayout, 0);
                     ((SeriesOverviewViewHolder) viewHolder).adjustFadeOut();
+                    if (viewHolder.itemView.getTop() == 0 && dy < 0 && lastState != RecyclerView.SCROLL_STATE_DRAGGING) {
+                        appBarLayout.setExpanded(true, true);
+                    }
                 } else {
                     ViewCompat.setElevation(appBarLayout,
                             getResources().getDimensionPixelSize(R.dimen.appbarlayout_elevation));
