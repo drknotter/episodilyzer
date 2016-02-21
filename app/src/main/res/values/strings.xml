@@ -12,6 +12,10 @@
     <string name="season_header">Season %1$d</string>
     <string name="season_special_header">Specials</string>
     <string name="starring">Starring: %1$s</string>
+    <plurals name="director">
+        <item quantity="one">Director: %1$s</item>
+        <item quantity="other">Directors: %1$s</item>
+    </plurals>
 
     <string name="api_key">E9C8ADC01AC294C3</string>
 </resources>

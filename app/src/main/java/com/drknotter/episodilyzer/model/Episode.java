@@ -1,8 +1,15 @@
 package com.drknotter.episodilyzer.model;
 
+import android.net.Uri;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
+import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.BaseEpisode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by plunkett on 1/29/16.
@@ -112,4 +119,26 @@ public class Episode extends Model {
 
     @Column(name="selected")
     public boolean selected;
+
+    public List<String> directors() {
+        return directors(Integer.MAX_VALUE);
+    }
+
+    public List<String> directors(int limit) {
+        List<String> starring = new ArrayList<>(Arrays.asList(director != null ? director.split("\\|") : new String[0]));
+        starring.removeAll(Arrays.asList(null, ""));
+        starring = starring.subList(0, Math.min(limit, starring.size()));
+        return starring;
+    }
+
+    public Uri imageUri() {
+        if (filename != null) {
+            return Uri.parse(TheTVDBService.BASE_URL)
+                    .buildUpon()
+                    .appendPath("banners")
+                    .appendPath(filename)
+                    .build();
+        }
+        return null;
+    }
 }
