@@ -86,7 +86,23 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
         // Bind the episode directors, if present.
         List<String> directors = episode.directors();
         this.directors.setVisibility(directors.size() > 0 ? View.VISIBLE : View.GONE);
-        this.directors.setText(String.format(getResources().getQuantityString(R.plurals.director, directors.size()),
+        this.directors.setText(getResources().getQuantityString(R.plurals.director, directors.size(),
                 TextUtils.join(", ", directors)));
+
+        // Bind the episode writers, if present.
+        List<String> writers = episode.writers();
+        this.writers.setVisibility(writers.size() > 0 ? View.VISIBLE : View.GONE);
+        this.writers.setText(getResources().getQuantityString(R.plurals.writer, writers.size(),
+                TextUtils.join(", ", writers)));
+
+        // Bind the guest stars, if present.
+        List<String> guestStars = episode.guestStars();
+        this.guestStarring.setVisibility(guestStars.size() > 0 ? View.VISIBLE : View.GONE);
+        this.guestStarring.setText(getResources().getQuantityString(R.plurals.guest_star, guestStars.size(),
+                TextUtils.join(", ", guestStars)));
+
+        // Bind the overview, if present.
+        this.overview.setVisibility(TextUtils.isEmpty(episode.overview) ? View.GONE : View.VISIBLE);
+        this.overview.setText(episode.overview);
     }
 }

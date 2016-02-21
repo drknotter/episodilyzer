@@ -125,10 +125,32 @@ public class Episode extends Model {
     }
 
     public List<String> directors(int limit) {
-        List<String> starring = new ArrayList<>(Arrays.asList(director != null ? director.split("\\|") : new String[0]));
-        starring.removeAll(Arrays.asList(null, ""));
-        starring = starring.subList(0, Math.min(limit, starring.size()));
-        return starring;
+        List<String> directors = new ArrayList<>(Arrays.asList(director != null ? director.split("\\|") : new String[0]));
+        directors.removeAll(Arrays.asList(null, ""));
+        directors = directors.subList(0, Math.min(limit, directors.size()));
+        return directors;
+    }
+
+    public List<String> writers() {
+        return writers(Integer.MAX_VALUE);
+    }
+
+    public List<String> writers(int limit) {
+        List<String> writers = new ArrayList<>(Arrays.asList(writer != null ? writer.split("\\|") : new String[0]));
+        writers.removeAll(Arrays.asList(null, ""));
+        writers = writers.subList(0, Math.min(limit, writers.size()));
+        return writers;
+    }
+
+    public List<String> guestStars() {
+        return writers(Integer.MAX_VALUE);
+    }
+
+    public List<String> guestStars(int limit) {
+        List<String> guestStars = new ArrayList<>(Arrays.asList(this.guestStars != null ? this.guestStars.split("\\|") : new String[0]));
+        guestStars.removeAll(Arrays.asList(null, ""));
+        guestStars = guestStars.subList(0, Math.min(limit, guestStars.size()));
+        return guestStars;
     }
 
     public Uri imageUri() {

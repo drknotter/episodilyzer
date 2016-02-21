@@ -16,6 +16,14 @@
         <item quantity="one">Director: %1$s</item>
         <item quantity="other">Directors: %1$s</item>
     </plurals>
+    <plurals name="writer">
+        <item quantity="one">Writer: %1$s</item>
+        <item quantity="other">Writers: %1$s</item>
+    </plurals>
+    <plurals name="guest_star">
+        <item quantity="one">Guest star: %1$s</item>
+        <item quantity="other">Guest stars: %1$s</item>
+    </plurals>
 
     <string name="api_key">E9C8ADC01AC294C3</string>
 </resources>
