@@ -1,10 +1,14 @@
 package com.drknotter.episodilyzer.view.holder;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.drknotter.episodilyzer.EpisodeActivity;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Episode;
 
@@ -52,6 +56,17 @@ public class EpisodeViewHolder extends BindableViewHolder<Episode> {
                 episode.save();
                 if (listener != null) {
                     listener.onEpisodeSelectedChange(episode, isChecked);
+                }
+            }
+        });
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.getContext() instanceof Activity) {
+                    Intent episodeIntent = new Intent(v.getContext(), EpisodeActivity.class);
+                    episodeIntent.setData(Uri.parse(Integer.toString(episode.id)));
+                    v.getContext().startActivity(episodeIntent);
                 }
             }
         });

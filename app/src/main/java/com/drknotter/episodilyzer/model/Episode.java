@@ -143,7 +143,7 @@ public class Episode extends Model {
     }
 
     public List<String> guestStars() {
-        return writers(Integer.MAX_VALUE);
+        return guestStars(Integer.MAX_VALUE);
     }
 
     public List<String> guestStars(int limit) {

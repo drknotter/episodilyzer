@@ -1,19 +1,23 @@
-package com.drknotter.episodilyzer.fragment;
+package com.drknotter.episodilyzer;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatDialogFragment;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
-import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.view.AspectRatioImageView;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,9 +25,13 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class EpisodeDialogFragment extends AppCompatDialogFragment {
-    public static final String TAG = EpisodeDialogFragment.class.getSimpleName();
-    public static final String ARG_EPISODE_ID = "ARG_EPISODE_ID";
+public class EpisodeActivity extends AppCompatActivity {
+    private static final String TAG = EpisodeActivity.class.getSimpleName();
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbar;
 
     @Bind(R.id.episode_image)
     AspectRatioImageView episodeImage;
@@ -38,31 +46,37 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
     @Bind(R.id.overview)
     TextView overview;
 
-    public static EpisodeDialogFragment newInstance(int episodeId) {
-        EpisodeDialogFragment fragment = new EpisodeDialogFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_EPISODE_ID, episodeId);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(STYLE_NO_TITLE, R.style.AppTheme_EpisodeDialog);
+        setContentView(R.layout.activity_episode);
+        ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
+
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        handleIntent(getIntent());
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
 
-        View root = inflater.inflate(R.layout.activity_episode, container, false);
-        ButterKnife.bind(this, root);
-
+    private void handleIntent(Intent intent) {
         int episodeId = 0;
-        if (getArguments() != null) {
-            episodeId = getArguments().getInt(ARG_EPISODE_ID);
+        try {
+            episodeId = Integer.parseInt(intent.getDataString());
+        } catch (Exception e) {
+            Log.w(TAG, "Unable to parse intent data " + intent.getDataString());
         }
 
         if (episodeId != 0) {
@@ -72,25 +86,33 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
                     .executeSingle();
             bindEpisode(episode);
         } else {
-            dismissAllowingStateLoss();
+            finish();
         }
 
-        return root;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     private void bindEpisode(Episode episode) {
+        //noinspection ConstantConditions
+        getSupportActionBar().setTitle(episode.episodeName);
+        collapsingToolbar.setTitle(episode.episodeName);
+
         // Bind the episode image, if present.
         Uri episodeImageUri = episode.imageUri();
         episodeImage.setVisibility(episodeImageUri != null ? View.VISIBLE : View.GONE);
-        Picasso.with(getContext())
+        collapsingToolbar.setTitleEnabled(episodeImageUri != null);
+        Picasso.with(this)
                 .load(episodeImageUri)
-                .into(episodeImage);
+                .into(episodeImage, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        toolbar.setBackgroundColor(Color.TRANSPARENT);
+                    }
+
+                    @Override
+                    public void onError() {
+                        collapsingToolbar.setTitleEnabled(false);
+                    }
+                });
         if (episode.thumbWidth > 0 && episode.thumbHeight > 0) {
             episodeImage.setAspectRatio((float) episode.thumbWidth / episode.thumbHeight);
         }
