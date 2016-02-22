@@ -3,6 +3,7 @@ package com.drknotter.episodilyzer;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
@@ -16,7 +17,12 @@ import com.drknotter.episodilyzer.utils.SeriesUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+
 public class EpisodilyzerActivity extends RecyclerViewActivity {
+    @Bind(R.id.fab)
+    FloatingActionButton fab;
+
     private List<Series> myShows = new ArrayList<>();
 
     @Override
@@ -61,5 +67,10 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected int getContentViewId() {
+        return R.layout.activity_episodilyzer;
     }
 }
