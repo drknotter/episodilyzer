@@ -3,6 +3,7 @@ package com.drknotter.episodilyzer.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ public class AboutDialogFragment extends DialogFragment {
 
     @Bind(R.id.version)
     TextView version;
+    @Bind(R.id.about_thetvdb)
+    TextView aboutTheTVDB;
 
     public static AboutDialogFragment newInstance() {
         return new AboutDialogFragment();
@@ -39,6 +42,7 @@ public class AboutDialogFragment extends DialogFragment {
         ButterKnife.bind(this, root);
 
         version.setText(getString(R.string.version, BuildConfig.VERSION_NAME));
+        aboutTheTVDB.setMovementMethod(LinkMovementMethod.getInstance());
 
         return root;
     }
