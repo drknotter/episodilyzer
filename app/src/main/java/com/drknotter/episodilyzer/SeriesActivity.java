@@ -220,7 +220,6 @@ public class SeriesActivity extends RecyclerViewActivity {
         RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
         if (viewHolder != null) {
             viewHolder.itemView.setSelected(true);
-            viewHolder.itemView.performClick();
         }
     }
 

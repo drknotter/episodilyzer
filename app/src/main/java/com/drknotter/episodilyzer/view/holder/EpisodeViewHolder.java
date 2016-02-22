@@ -1,8 +1,6 @@
 package com.drknotter.episodilyzer.view.holder;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,7 +8,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.drknotter.episodilyzer.EpisodeActivity;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.fragment.EpisodeDialogFragment;
 import com.drknotter.episodilyzer.model.Episode;
@@ -67,16 +64,6 @@ public class EpisodeViewHolder extends BindableViewHolder<Episode> {
             @Override
             public void onClick(View v) {
                 if (v.getContext() instanceof Activity) {
-                    Intent episodeIntent = new Intent(v.getContext(), EpisodeActivity.class);
-                    episodeIntent.setData(Uri.parse(Integer.toString(episode.id)));
-                    v.getContext().startActivity(episodeIntent);
-                }
-            }
-        });
-        itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (v.getContext() instanceof AppCompatActivity) {
                     FragmentManager fragmentManager = ((AppCompatActivity) v.getContext()).getSupportFragmentManager();
                     EpisodeDialogFragment fragment = (EpisodeDialogFragment) fragmentManager.findFragmentByTag(EpisodeDialogFragment.TAG);
                     if (fragment != null) {
@@ -85,7 +72,6 @@ public class EpisodeViewHolder extends BindableViewHolder<Episode> {
                     fragment = EpisodeDialogFragment.newInstance(episode.id);
                     fragment.show(fragmentManager, EpisodeDialogFragment.TAG);
                 }
-                return true;
             }
         });
     }

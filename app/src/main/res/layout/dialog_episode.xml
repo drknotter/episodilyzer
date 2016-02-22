@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:paddingTop="14dp"/>
+            android:paddingTop="12dp"/>
 
         <TextView
             android:id="@+id/directors"
