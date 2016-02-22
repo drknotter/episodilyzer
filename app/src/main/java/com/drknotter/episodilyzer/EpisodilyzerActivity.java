@@ -3,11 +3,13 @@ package com.drknotter.episodilyzer;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.drknotter.episodilyzer.adapter.EpisodilyzerAdapter;
+import com.drknotter.episodilyzer.fragment.AboutDialogFragment;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 
@@ -47,6 +49,17 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.about:
+                FragmentManager fragmentMananager = getSupportFragmentManager();
+                AboutDialogFragment fragment = (AboutDialogFragment) fragmentMananager.findFragmentByTag(AboutDialogFragment.TAG);
+                if (fragment != null) {
+                    fragment.dismissAllowingStateLoss();
+                }
+                fragment = AboutDialogFragment.newInstance();
+                fragment.show(fragmentMananager, AboutDialogFragment.TAG);
+                return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 }

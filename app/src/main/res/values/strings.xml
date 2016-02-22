@@ -27,5 +27,10 @@
         <item quantity="other">Guest stars: %1$s</item>
     </plurals>
 
+    <string name="version">Version %1$s</string>
+
+    <string name="about_thetvdb">All content you see in this app is provided by <a href="thetvdb.com">TheTVDB.com</a>, an open database that can be modified by anybody. All content and images on their site have been contributed by their users. If you\'d like to contribute information or artwork for <i>your</i> favorite TV shows, <a href="http://thetvdb.com/?tab=login">join thetvdb.com!</a></string>
+    <string name="about_episodilyzer">About Episodilyzer</string>
+
     <string name="api_key">E9C8ADC01AC294C3</string>
 </resources>

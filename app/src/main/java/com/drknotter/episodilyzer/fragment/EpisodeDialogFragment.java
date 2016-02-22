@@ -49,7 +49,7 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(STYLE_NO_TITLE, R.style.AppTheme_EpisodeDialog);
+        setStyle(STYLE_NO_TITLE, R.style.AppTheme_Dialog);
     }
 
     @Nullable

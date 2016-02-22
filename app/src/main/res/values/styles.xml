@@ -19,7 +19,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.EpisodeDialog" parent="Theme.AppCompat.Light.Dialog">
+    <style name="AppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
     </style>
 
