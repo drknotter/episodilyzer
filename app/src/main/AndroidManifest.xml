@@ -63,15 +63,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.drknotter.episodilyzer.EpisodilyzerActivity"/>
         </activity>
-        <activity
-            android:name=".EpisodeActivity"
-            android:parentActivityName=".SeriesActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            tools:ignore="UnusedAttribute">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.drknotter.episodilyzer.SeriesActivity"/>
-        </activity>
     </application>
 
 </manifest>
