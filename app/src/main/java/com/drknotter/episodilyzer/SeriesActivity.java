@@ -217,9 +217,11 @@ public class SeriesActivity extends RecyclerViewActivity {
     }
 
     private void possiblySelectPosition(int position) {
-        RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
-        if (viewHolder != null) {
-            viewHolder.itemView.setSelected(true);
+        if (recyclerView != null) {
+            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
+            if (viewHolder != null) {
+                viewHolder.itemView.setSelected(true);
+            }
         }
     }
 
