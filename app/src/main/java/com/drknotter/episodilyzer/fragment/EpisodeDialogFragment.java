@@ -8,12 +8,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Episode;
-import com.drknotter.episodilyzer.view.AspectRatioImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
     public static final String ARG_EPISODE_ID = "ARG_EPISODE_ID";
 
     @Bind(R.id.episode_image)
-    AspectRatioImageView episodeImage;
+    ImageView episodeImage;
     @Bind(R.id.episode_name)
     TextView episodeName;
     @Bind(R.id.directors)
@@ -57,7 +57,7 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View root = inflater.inflate(R.layout.activity_episode, container, false);
+        View root = inflater.inflate(R.layout.dialog_episode, container, false);
         ButterKnife.bind(this, root);
 
         int episodeId = 0;
@@ -91,9 +91,6 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
         Picasso.with(getContext())
                 .load(episodeImageUri)
                 .into(episodeImage);
-        if (episode.thumbWidth > 0 && episode.thumbHeight > 0) {
-            episodeImage.setAspectRatio((float) episode.thumbWidth / episode.thumbHeight);
-        }
 
         // Bind the episode name.
         episodeName.setText(episode.episodeName);
