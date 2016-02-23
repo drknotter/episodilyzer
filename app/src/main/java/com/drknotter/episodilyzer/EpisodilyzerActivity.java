@@ -3,27 +3,29 @@ package com.drknotter.episodilyzer;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.EpisodilyzerAdapter;
 import com.drknotter.episodilyzer.fragment.AboutDialogFragment;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
-import butterknife.Bind;
+import butterknife.OnClick;
 
 public class EpisodilyzerActivity extends RecyclerViewActivity {
-    @Bind(R.id.fab)
-    FloatingActionButton fab;
-
     private List<Series> myShows = new ArrayList<>();
+    private Queue<Series> randomSeriesOrder = new ArrayDeque<>();
+    private Integer randomSeriesPosition = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
     }
@@ -73,4 +76,56 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
     protected int getContentViewId() {
         return R.layout.activity_episodilyzer;
     }
+
+    @OnClick(R.id.fab)
+    public void randomSeries() {
+        if (randomSeriesOrder.size() == 0) {
+            newRandomOrder();
+        }
+
+        Series random = randomSeriesOrder.poll();
+
+        if (random != null) {
+            unselectAllPositions();
+
+            for (int i = 0; i < myShows.size(); i++) {
+                Series model = myShows.get(i);
+                if (model.id == random.id) {
+                    randomSeriesPosition = i;
+                    possiblySelectPosition(i);
+                    recyclerView.smoothScrollToPosition(i);
+                    break;
+                }
+            }
+        } else {
+            newRandomOrder();
+        }
+    }
+
+    private void newRandomOrder() {
+        randomSeriesOrder.clear();
+        //noinspection unchecked
+        randomSeriesOrder.addAll((List) new Select().from(Series.class)
+                .orderBy("RANDOM()")
+                .execute());
+    }
+
+    private void possiblySelectPosition(int position) {
+        if (recyclerView != null) {
+            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
+            if (viewHolder != null) {
+                viewHolder.itemView.setSelected(true);
+            }
+        }
+    }
+
+    private void unselectAllPositions() {
+        for (int i=0; i<myShows.size(); i++ ) {
+            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+            if (viewHolder != null) {
+                viewHolder.itemView.setSelected(false);
+            }
+        }
+    }
+
 }

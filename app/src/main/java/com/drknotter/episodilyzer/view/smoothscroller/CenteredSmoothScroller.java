@@ -14,7 +14,7 @@ public class CenteredSmoothScroller extends LinearSmoothScroller {
 
     @Override
     public PointF computeScrollVectorForPosition(int targetPosition) {
-        if (getLayoutManager() != null && getLayoutManager() instanceof LayoutManager) {
+        if (getLayoutManager() != null) {
             LayoutManager manager = (LayoutManager) getLayoutManager();
             int firstPosition = manager.findFirstVisibleItemPosition();
             int lastPosition = manager.findLastVisibleItemPosition();
