@@ -51,7 +51,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         ButterKnife.unbind(this);
     }
 
-    private int getSpanCount() {
+    protected int getSpanCount() {
         return getResources().getDisplayMetrics().widthPixels / getMaxColumnWidthPixels();
     }
 

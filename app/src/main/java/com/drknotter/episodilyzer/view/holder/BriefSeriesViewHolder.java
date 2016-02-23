@@ -52,6 +52,7 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
         Picasso.with(itemView.getContext())
                 .load(bannerUri)
                 .into(banner);
+        banner.setVisibility(bannerUri != null ? View.VISIBLE : View.GONE);
         title.setText(briefSeries.seriesName);
         setFirstAired(briefSeries.firstAired);
         setOverview(briefSeries.overview);
@@ -86,6 +87,7 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
             Picasso.with(itemView.getContext())
                     .load(bannerUri)
                     .into(banner);
+            banner.setVisibility(bannerUri != null ? View.VISIBLE : View.GONE);
             title.setText(series.seriesName);
             setFirstAired(series.firstAired);
             setOverview(series.overview);

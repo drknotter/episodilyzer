@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,6 +15,7 @@ import com.drknotter.episodilyzer.adapter.EpisodilyzerAdapter;
 import com.drknotter.episodilyzer.fragment.AboutDialogFragment;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
+import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -75,6 +77,25 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
     @Override
     protected int getContentViewId() {
         return R.layout.activity_episodilyzer;
+    }
+
+    protected RecyclerView.LayoutManager getLayoutManager() {
+        return new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL) {
+            private CenteredSmoothScroller smoothScroller = new CenteredSmoothScroller(EpisodilyzerActivity.this);
+
+            @Override
+            public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+                smoothScroller.setTargetPosition(position);
+                startSmoothScroll(smoothScroller);
+            }
+
+            // The default implementation of StaggeredGridLayoutManager does not handle item decorations
+            // correctly during animations when this returns true, so we force it to return false.
+            @Override
+            public boolean supportsPredictiveItemAnimations() {
+                return false;
+            }
+        };
     }
 
     @OnClick(R.id.fab)

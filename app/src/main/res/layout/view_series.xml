@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
+        android:background="@drawable/series_background"
         android:orientation="vertical">
 
         <com.drknotter.episodilyzer.view.AspectRatioImageView
