@@ -35,6 +35,25 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
         EpisodilyzerAdapter adapter = new EpisodilyzerAdapter(myShows);
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            private int lastState = -1;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                lastState = newState;
+                if (randomSeriesPosition != null && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    possiblySelectPosition(randomSeriesPosition);
+                    randomSeriesPosition = null;
+                } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    unselectAllPositions();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            }
+        });
     }
 
     @Override
