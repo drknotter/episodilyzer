@@ -170,6 +170,7 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
                             }
                         });
             }
+            toolbarBackground.setVisibility(bestFanart != null ? View.VISIBLE : View.GONE);
             collapsingToolbar.setTitleEnabled(bestFanart != null);
 
             seriesInfo.clear();
