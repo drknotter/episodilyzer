@@ -1,6 +1,7 @@
 package com.drknotter.episodilyzer.model;
 
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
@@ -119,6 +120,11 @@ public class Episode extends Model {
 
     @Column(name="selected")
     public boolean selected;
+
+    private static final String DEFAULT_NAME = "Untitled";
+    public String getName() {
+        return TextUtils.isEmpty(episodeName) ? DEFAULT_NAME : episodeName;
+    }
 
     public List<String> directors() {
         return directors(Integer.MAX_VALUE);

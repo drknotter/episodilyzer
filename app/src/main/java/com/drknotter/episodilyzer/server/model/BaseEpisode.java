@@ -45,7 +45,7 @@ public class BaseEpisode {
     public int epImgFlag;
 
     // A string containing the episode name in the language requested. Will return the English name if no translation is available in the language requested.
-    @Element(name="EpisodeName")
+    @Element(required = false, name="EpisodeName")
     public String episodeName;
 
     // An unsigned integer representing the episode number in its season according to the aired order. Cannot be null.

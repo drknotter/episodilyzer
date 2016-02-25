@@ -44,7 +44,7 @@ public class EpisodeViewHolder extends BindableViewHolder<Episode> {
     @Override
     public void bind(final Episode episode) {
         title.setText(String.format(itemView.getResources().getString(R.string.episode_number_title),
-                        episode.episodeNumber, episode.episodeName));
+                        episode.episodeNumber, episode.getName()));
         overview.setText(episode.overview);
         setFirstAired(episode.firstAired);
         selected.setOnCheckedChangeListener(null);

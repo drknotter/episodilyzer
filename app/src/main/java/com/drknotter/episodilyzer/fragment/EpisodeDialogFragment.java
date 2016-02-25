@@ -93,7 +93,7 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
                 .into(episodeImage);
 
         // Bind the episode name.
-        episodeName.setText(episode.episodeName);
+        episodeName.setText(episode.getName());
 
         // Bind the episode directors, if present.
         List<String> directors = episode.directors();
