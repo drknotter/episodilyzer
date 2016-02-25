@@ -2,6 +2,7 @@ package com.drknotter.episodilyzer;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -24,6 +25,7 @@ import com.drknotter.episodilyzer.view.holder.SeriesOverviewViewHolder;
 import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.seismic.ShakeDetector;
 import com.tonicartos.superslim.LayoutManager;
 
 import java.util.ArrayDeque;
@@ -34,7 +36,7 @@ import java.util.Queue;
 import butterknife.Bind;
 import butterknife.OnClick;
 
-public class SeriesActivity extends RecyclerViewActivity {
+public class SeriesActivity extends RecyclerViewActivity implements ShakeDetector.Listener {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
 
     @Bind(R.id.app_bar_layout)
@@ -46,9 +48,11 @@ public class SeriesActivity extends RecyclerViewActivity {
 
     private List<Object> seriesInfo = new ArrayList<>();
     private Series series;
-    private Queue<Episode> randomEpisodeOrder = new ArrayDeque<>();
 
+    private Queue<Episode> randomEpisodeOrder = new ArrayDeque<>();
     private Integer randomEpisodePosition = null;
+
+    private ShakeDetector shakeDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +114,21 @@ public class SeriesActivity extends RecyclerViewActivity {
         });
 
         handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (shakeDetector == null) {
+            shakeDetector = new ShakeDetector(this);
+        }
+        shakeDetector.start((SensorManager) getSystemService(SENSOR_SERVICE));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shakeDetector.stop();
     }
 
     @Override
@@ -256,4 +275,8 @@ public class SeriesActivity extends RecyclerViewActivity {
         };
     }
 
+    @Override
+    public void hearShake() {
+        randomEpisode();
+    }
 }

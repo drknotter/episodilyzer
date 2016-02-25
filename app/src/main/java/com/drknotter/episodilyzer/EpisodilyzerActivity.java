@@ -2,6 +2,7 @@ package com.drknotter.episodilyzer;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import com.drknotter.episodilyzer.fragment.AboutDialogFragment;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
+import com.squareup.seismic.ShakeDetector;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -24,10 +26,13 @@ import java.util.Queue;
 
 import butterknife.OnClick;
 
-public class EpisodilyzerActivity extends RecyclerViewActivity {
+public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeDetector.Listener {
     private List<Series> myShows = new ArrayList<>();
+
     private Queue<Series> randomSeriesOrder = new ArrayDeque<>();
     private Integer randomSeriesPosition = null;
+
+    private ShakeDetector shakeDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             }
         });
+
     }
 
     @Override
@@ -62,6 +68,17 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
         myShows.clear();
         myShows.addAll(SeriesUtils.allSeries());
         recyclerView.getAdapter().notifyDataSetChanged();
+
+        if (shakeDetector == null) {
+            shakeDetector = new ShakeDetector(this);
+        }
+        shakeDetector.start((SensorManager) getSystemService(SENSOR_SERVICE));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shakeDetector.stop();
     }
 
     @Override
@@ -168,4 +185,8 @@ public class EpisodilyzerActivity extends RecyclerViewActivity {
         }
     }
 
+    @Override
+    public void hearShake() {
+        randomSeries();
+    }
 }
