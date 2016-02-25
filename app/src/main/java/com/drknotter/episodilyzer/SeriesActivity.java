@@ -22,6 +22,7 @@ import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Season;
 import com.drknotter.episodilyzer.model.Series;
+import com.drknotter.episodilyzer.server.task.SaveSeriesAsyncTask;
 import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
 import com.drknotter.episodilyzer.view.holder.SeriesOverviewViewHolder;
 import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
@@ -30,6 +31,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.seismic.ShakeDetector;
 import com.tonicartos.superslim.LayoutManager;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,7 @@ import java.util.Queue;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import hugo.weaving.DebugLog;
 
 public class SeriesActivity extends RecyclerViewActivity implements ShakeDetector.Listener {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
@@ -154,6 +157,7 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sync:
+                new SyncSeriesTask(this).execute(series.id);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -162,57 +166,71 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     private void handleIntent(Intent intent) {
         int seriesId = intent.getIntExtra(EXTRA_SERIES_ID, -1);
         if (seriesId >= 0) {
-            series = new Select().from(Series.class)
-                    .where("series_id = ?", seriesId)
-                    .executeSingle();
-            series.lastAccessed = System.currentTimeMillis();
-            series.save();
-
-            //noinspection ConstantConditions
-            getSupportActionBar().setTitle(series.seriesName);
-            collapsingToolbar.setTitle(series.seriesName);
-
-            Banner bestFanart = series.bestFanart();
-            if (bestFanart != null) {
-                Picasso.with(this)
-                        .load(bestFanart.uri())
-                        .into(toolbarBackground, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                toolbar.setBackgroundColor(Color.TRANSPARENT);
-                            }
-
-                            @Override
-                            public void onError() {
-                                collapsingToolbar.setTitleEnabled(false);
-                            }
-                        });
-            }
-            toolbarBackground.setVisibility(bestFanart != null ? View.VISIBLE : View.GONE);
-            collapsingToolbar.setTitleEnabled(bestFanart != null);
-
-            seriesInfo.clear();
-            if (!TextUtils.isEmpty(series.overview)) {
-                seriesInfo.add(series.seriesOverview());
-            } else {
-                ViewCompat.setElevation(appBarLayout,
-                        getResources().getDimensionPixelSize(R.dimen.appbarlayout_elevation));
-            }
-
-            int seasonNumber = Integer.MIN_VALUE;
-            //noinspection unchecked
-            for(List<Episode> episodeList : new List[] {series.episodes(), series.specialEpisodes()}) {
-                for (Episode episode : episodeList) {
-                    if (episode.seasonNumber != seasonNumber) {
-                        seasonNumber = episode.seasonNumber;
-                        seriesInfo.add(new Season(episode.seasonId, episode.seasonNumber));
-                    }
-                    seriesInfo.add(episode);
-                }
-            }
-            recyclerView.getAdapter().notifyDataSetChanged();
+            initializeWithSeriesId(seriesId);
         } else {
             finish();
+        }
+    }
+
+    @DebugLog
+    private void initializeWithSeriesId(int seriesId) {
+        series = new Select().from(Series.class)
+                .where("series_id = ?", seriesId)
+                .executeSingle();
+        series.lastAccessed = System.currentTimeMillis();
+        series.save();
+
+        //noinspection ConstantConditions
+        getSupportActionBar().setTitle(series.seriesName);
+        collapsingToolbar.setTitle(series.seriesName);
+
+        Banner bestFanart = series.bestFanart();
+        if (bestFanart != null) {
+            Picasso.with(this)
+                    .load(bestFanart.uri())
+                    .into(toolbarBackground, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            toolbar.setBackgroundColor(Color.TRANSPARENT);
+                        }
+
+                        @Override
+                        public void onError() {
+                            collapsingToolbar.setTitleEnabled(false);
+                        }
+                    });
+        }
+        toolbarBackground.setVisibility(bestFanart != null ? View.VISIBLE : View.GONE);
+        collapsingToolbar.setTitleEnabled(bestFanart != null);
+
+        seriesInfo.clear();
+        if (!TextUtils.isEmpty(series.overview)) {
+            seriesInfo.add(series.seriesOverview());
+        } else {
+            ViewCompat.setElevation(appBarLayout,
+                    getResources().getDimensionPixelSize(R.dimen.appbarlayout_elevation));
+        }
+
+        int seasonNumber = Integer.MIN_VALUE;
+        //noinspection unchecked
+        for(List<Episode> episodeList : new List[] {series.episodes(), series.specialEpisodes()}) {
+            for (Episode episode : episodeList) {
+                if (episode.seasonNumber != seasonNumber) {
+                    seasonNumber = episode.seasonNumber;
+                    seriesInfo.add(new Season(episode.seasonId, episode.seasonNumber));
+                }
+                seriesInfo.add(episode);
+            }
+        }
+        recyclerView.getAdapter().notifyDataSetChanged();
+    }
+
+    private void syncSeries(List<Series> seriesList) {
+        for (Series s : seriesList) {
+            if (series.id == s.id) {
+                initializeWithSeriesId(series.id);
+                break;
+            }
         }
     }
 
@@ -297,5 +315,22 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     @Override
     public void hearShake() {
         randomEpisode();
+    }
+
+    private static class SyncSeriesTask extends SaveSeriesAsyncTask {
+        WeakReference<SeriesActivity> activityRef;
+        public SyncSeriesTask(SeriesActivity activity) {
+            activityRef = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected void onPostExecute(List<Series> seriesList) {
+            SeriesActivity activity = activityRef.get();
+            if (activity == null) {
+                return;
+            }
+
+            activity.syncSeries(seriesList);
+        }
     }
 }
