@@ -6,6 +6,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.SeriesAdapter;
+import com.drknotter.episodilyzer.event.SeriesSaveStartEvent;
 import com.drknotter.episodilyzer.event.SeriesSaveSuccessEvent;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Episode;
@@ -33,6 +35,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.seismic.ShakeDetector;
 import com.tonicartos.superslim.LayoutManager;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayDeque;
@@ -140,6 +143,18 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     protected int getContentViewId() {
         return R.layout.activity_series;
     }
@@ -167,8 +182,16 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     }
 
     @Subscribe
+    public void onSeriesSaveStartEvent(SeriesSaveStartEvent event) {
+        if (event.searchResult.seriesId == series.id) {
+            Snackbar.make(recyclerView, getString(R.string.snack_sync_series), Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    @Subscribe
     public void onSeriesSaveSuccessEvent(SeriesSaveSuccessEvent event) {
         if (event.series.id == series.id) {
+            Snackbar.make(recyclerView, getString(R.string.snack_sync_series_success), Snackbar.LENGTH_SHORT).show();
             initializeWithSeriesId(event.series.id);
         }
     }
@@ -184,6 +207,7 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
 
     @DebugLog
     private void initializeWithSeriesId(int seriesId) {
+        Thread.dumpStack();
         series = new Select().from(Series.class)
                 .where("series_id = ?", seriesId)
                 .executeSingle();
@@ -233,15 +257,6 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
             }
         }
         recyclerView.getAdapter().notifyDataSetChanged();
-    }
-
-    private void syncSeries(List<Series> seriesList) {
-        for (Series s : seriesList) {
-            if (series.id == s.id) {
-                initializeWithSeriesId(series.id);
-                break;
-            }
-        }
     }
 
     @OnClick(R.id.fab)

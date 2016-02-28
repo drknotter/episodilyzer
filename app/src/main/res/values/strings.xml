@@ -36,6 +36,8 @@
     <string name="snack_saving_series">Saving \"%1$s\"…</string>
     <string name="snack_series_saved">Saved \"%1$s\"!</string>
     <string name="snack_series_save_failed">Couldn\'t save series \"%1$s\"…</string>
+    <string name="snack_sync_series">Syncing series…</string>
+    <string name="snack_sync_series_success">Successfully synced series!</string>
 
     <string name="api_key">E9C8ADC01AC294C3</string>
 </resources>
