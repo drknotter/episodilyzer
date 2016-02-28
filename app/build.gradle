@@ -48,4 +48,6 @@ dependencies {
     compile 'com.tonicartos:superslim:0.4.13'
 
     compile 'com.squareup:seismic:1.0.2'
+
+    compile 'org.greenrobot:eventbus:3.0.0'
 }

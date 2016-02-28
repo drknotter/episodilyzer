@@ -18,11 +18,13 @@ import android.widget.ImageView;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.SeriesAdapter;
+import com.drknotter.episodilyzer.event.SeriesSaveSuccessEvent;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Season;
 import com.drknotter.episodilyzer.model.Series;
-import com.drknotter.episodilyzer.server.task.SaveSeriesAsyncTask;
+import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
 import com.drknotter.episodilyzer.view.holder.SeriesOverviewViewHolder;
 import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
@@ -31,7 +33,8 @@ import com.squareup.picasso.Picasso;
 import com.squareup.seismic.ShakeDetector;
 import com.tonicartos.superslim.LayoutManager;
 
-import java.lang.ref.WeakReference;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,10 +160,17 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sync:
-                new SyncSeriesTask(this).execute(series.id);
+                SeriesUtils.saveSeries(new SaveSeriesInfo(series));
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Subscribe
+    public void onSeriesSaveSuccessEvent(SeriesSaveSuccessEvent event) {
+        if (event.series.id == series.id) {
+            initializeWithSeriesId(event.series.id);
+        }
     }
 
     private void handleIntent(Intent intent) {
@@ -315,22 +325,5 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     @Override
     public void hearShake() {
         randomEpisode();
-    }
-
-    private static class SyncSeriesTask extends SaveSeriesAsyncTask {
-        WeakReference<SeriesActivity> activityRef;
-        public SyncSeriesTask(SeriesActivity activity) {
-            activityRef = new WeakReference<>(activity);
-        }
-
-        @Override
-        protected void onPostExecute(List<Series> seriesList) {
-            SeriesActivity activity = activityRef.get();
-            if (activity == null) {
-                return;
-            }
-
-            activity.syncSeries(seriesList);
-        }
     }
 }

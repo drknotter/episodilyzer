@@ -8,5 +8,5 @@ import java.util.List;
 @Root(name="Data")
 public class SearchResult {
     @ElementList(name="Series", inline=true)
-    public List<BriefSeries> resultList;
+    public List<SaveSeriesInfo> resultList;
 }

@@ -33,5 +33,9 @@
     <string name="about_thetvdb">All content you see in this app is provided by <a href="http://thetvdb.com">TheTVDB.com</a>, an open database that can be modified by anybody. All content and images on their site have been contributed by their users. If you\'d like to contribute information or artwork for <i>your</i> favorite TV shows, <a href="http://thetvdb.com/?tab=login">join thetvdb.com!</a></string>
     <string name="about_episodilyzer"><b>PLEASE NOTE</b>: Episodilyzer will <i>not</i> let you watch shows! It will <i>only</i> show you what episode you should watch next!</string>
 
+    <string name="snack_saving_series">Saving \"%1$s\"…</string>
+    <string name="snack_series_saved">Saved \"%1$s\"!</string>
+    <string name="snack_series_save_failed">Couldn\'t save series \"%1$s\"…</string>
+
     <string name="api_key">E9C8ADC01AC294C3</string>
 </resources>

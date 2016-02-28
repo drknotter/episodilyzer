@@ -5,6 +5,9 @@ import android.os.AsyncTask;
 import com.activeandroid.ActiveAndroid;
 import com.drknotter.episodilyzer.Episodilyzer;
 import com.drknotter.episodilyzer.R;
+import com.drknotter.episodilyzer.event.SeriesSaveFailEvent;
+import com.drknotter.episodilyzer.event.SeriesSaveStartEvent;
+import com.drknotter.episodilyzer.event.SeriesSaveSuccessEvent;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Series;
@@ -13,12 +16,13 @@ import com.drknotter.episodilyzer.server.model.BannerList;
 import com.drknotter.episodilyzer.server.model.BaseBanner;
 import com.drknotter.episodilyzer.server.model.BaseEpisode;
 import com.drknotter.episodilyzer.server.model.FullSeries;
+import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit.RestAdapter;
 import retrofit.client.Response;
@@ -27,14 +31,39 @@ import retrofit.converter.SimpleXMLConverter;
 import retrofit.mime.TypedFile;
 import retrofit.mime.TypedInput;
 
-public class SaveSeriesAsyncTask extends AsyncTask<Integer, Void, List<Series>> {
+public class SaveSeriesAsyncTask extends AsyncTask<Void, Void, Series> {
+    private SaveSeriesInfo searchResult;
+
+    public SaveSeriesAsyncTask(SaveSeriesInfo searchResult) {
+        this.searchResult = searchResult;
+    }
+
     @Override
-    protected List<Series> doInBackground(Integer[] seriesIds) {
-        List<Series> result = new ArrayList<>();
-        for (Integer seriesId : seriesIds) {
-            result.add(saveSeries(seriesId));
+    protected void onPreExecute() {
+        EventBus.getDefault().post(new SeriesSaveStartEvent(searchResult));
+    }
+
+    @Override
+    protected Series doInBackground(Void... params) {
+        Series result = null;
+        if (searchResult != null) {
+            result = saveSeries(searchResult.seriesId);
         }
         return result;
+    }
+
+    @Override
+    protected void onPostExecute(Series series) {
+        if (series != null) {
+            EventBus.getDefault().post(new SeriesSaveSuccessEvent(series));
+        } else {
+            EventBus.getDefault().post(new SeriesSaveFailEvent(searchResult));
+        }
+    }
+
+    @Override
+    protected void onCancelled(Series series) {
+        EventBus.getDefault().post(new SeriesSaveFailEvent(searchResult));
     }
 
     private Series saveSeries(int seriesId) {

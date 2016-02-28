@@ -12,8 +12,6 @@ import com.drknotter.episodilyzer.SeriesActivity;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.TheTVDBService;
-import com.drknotter.episodilyzer.server.model.BriefSeries;
-import com.drknotter.episodilyzer.server.task.SaveSeriesAsyncTask;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.squareup.picasso.Picasso;
 
@@ -41,35 +39,6 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
     public BriefSeriesViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
-    }
-
-    public void bindSeries(final BriefSeries briefSeries) {
-        Uri bannerUri = Uri.parse(TheTVDBService.BASE_URL)
-                .buildUpon()
-                .appendPath("banners")
-                .appendPath(briefSeries.banner)
-                .build();
-        Picasso.with(itemView.getContext())
-                .load(bannerUri)
-                .into(banner);
-        banner.setVisibility(bannerUri != null ? View.VISIBLE : View.GONE);
-        title.setText(briefSeries.seriesName);
-        setFirstAired(briefSeries.firstAired);
-        setOverview(briefSeries.overview);
-
-        starToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                starToggle.setActivated(!starToggle.isActivated());
-
-                if (starToggle.isActivated()) {
-                    new SaveSeriesAsyncTask().execute(briefSeries.seriesId);
-                } else {
-                    SeriesUtils.deleteSeries(briefSeries.seriesId);
-                }
-            }
-        });
-        starToggle.setActivated(SeriesUtils.isSeriesSaved(briefSeries.seriesId));
     }
 
     public void bindSeries(final Series series, final View.OnClickListener starClickListener) {

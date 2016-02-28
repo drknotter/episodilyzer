@@ -1,10 +1,12 @@
 package com.drknotter.episodilyzer.server.model;
 
+import com.drknotter.episodilyzer.model.Series;
+
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 @Root(name="Series", strict=false)
-public class BriefSeries {
+public class SaveSeriesInfo {
     @Element(name="seriesid")
     public int seriesId;
 
@@ -25,4 +27,11 @@ public class BriefSeries {
 
     @Element(name="IMDB_ID", required=false)
     public String imdbId;
+
+    public SaveSeriesInfo(Series series) {
+        this.seriesId = series.id;
+        this.seriesName = series.seriesName;
+        this.overview = series.overview;
+        this.firstAired = series.firstAired;
+    }
 }

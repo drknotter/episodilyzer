@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -13,11 +14,17 @@ import android.view.MenuItem;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.EpisodilyzerAdapter;
+import com.drknotter.episodilyzer.event.SeriesSaveFailEvent;
+import com.drknotter.episodilyzer.event.SeriesSaveStartEvent;
+import com.drknotter.episodilyzer.event.SeriesSaveSuccessEvent;
 import com.drknotter.episodilyzer.fragment.AboutDialogFragment;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
 import com.squareup.seismic.ShakeDetector;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -82,6 +89,18 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_episodilyzer, menu);
@@ -132,6 +151,31 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
                 return false;
             }
         };
+    }
+
+    @Subscribe
+    public void onSeriesSaveStartEvent(SeriesSaveStartEvent event) {
+        Snackbar.make(recyclerView,
+                getString(
+                        R.string.snack_saving_series,
+                        event.searchResult.seriesName),
+                Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Subscribe
+    public void onSeriesSaveSuccessEvent(SeriesSaveSuccessEvent event) {
+        Snackbar.make(recyclerView, getString(R.string.snack_series_saved, event.series.seriesName), Snackbar.LENGTH_SHORT).show();
+        myShows.clear();
+        myShows.addAll(SeriesUtils.allSeries());
+        recyclerView.getAdapter().notifyDataSetChanged();
+    }
+
+    @Subscribe
+    public void onSeriesSaveFailEvent(SeriesSaveFailEvent event) {
+        Snackbar.make(recyclerView, getString(R.string.snack_series_save_failed, event.searchResult.seriesName), Snackbar.LENGTH_SHORT).show();
+        myShows.clear();
+        myShows.addAll(SeriesUtils.allSeries());
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @OnClick(R.id.fab)
