@@ -64,7 +64,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:backgroundTint="@android:color/white"
                 android:scaleType="center"
-                android:src="@drawable/star_toggle"/>
+                android:src="@drawable/delete"/>
         </LinearLayout>
 
 
