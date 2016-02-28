@@ -14,9 +14,8 @@ import com.drknotter.episodilyzer.event.SeriesSaveStartEvent;
 import com.drknotter.episodilyzer.event.SeriesSaveSuccessEvent;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.TheTVDBService;
-import com.drknotter.episodilyzer.server.model.SearchResult;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
-import com.drknotter.episodilyzer.view.decoration.DividerItemDecoration;
+import com.drknotter.episodilyzer.server.model.SearchResult;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -80,7 +79,7 @@ public class SearchShowsActivity extends RecyclerViewActivity {
 
     @Override
     protected RecyclerView.ItemDecoration getItemDecoration() {
-        return new DividerItemDecoration(getResources().getDrawable(R.drawable.divider));
+        return null;
     }
 
     @Subscribe

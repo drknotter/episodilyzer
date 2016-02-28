@@ -24,9 +24,6 @@ public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.overview)
     TextView overview;
 
-    @Bind(R.id.info_button)
-    View infoButton;
-
     public SeriesSearchResultViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -44,7 +41,7 @@ public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        infoButton.setOnClickListener(new View.OnClickListener() {
+        itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (v.getContext() instanceof Activity) {
