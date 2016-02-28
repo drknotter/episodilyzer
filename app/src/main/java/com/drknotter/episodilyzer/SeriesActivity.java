@@ -1,8 +1,10 @@
 package com.drknotter.episodilyzer;
 
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Color;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -38,6 +40,7 @@ import com.tonicartos.superslim.LayoutManager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +66,7 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     private Integer randomEpisodePosition = null;
 
     private ShakeDetector shakeDetector;
+    private MediaPlayer player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +128,14 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
         });
 
         handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (player != null) {
+            player.release();
+        }
     }
 
     @Override
@@ -279,6 +291,19 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
                     recyclerView.smoothScrollToPosition(i);
                     break;
                 }
+            }
+
+            try {
+                AssetFileDescriptor afd = getAssets().openFd("dice.mp3");
+                if (player != null) {
+                    player.release();
+                }
+                player = new MediaPlayer();
+                player.setDataSource(afd.getFileDescriptor());
+                player.prepare();
+                player.start();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } else {
             newRandomOrder();

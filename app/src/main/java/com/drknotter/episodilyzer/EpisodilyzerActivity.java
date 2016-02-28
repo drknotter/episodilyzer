@@ -2,7 +2,9 @@ package com.drknotter.episodilyzer;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +28,7 @@ import com.squareup.seismic.ShakeDetector;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
     private Integer randomSeriesPosition = null;
 
     private ShakeDetector shakeDetector;
+    private MediaPlayer player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +70,14 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             }
         });
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (player != null) {
+            player.release();
+        }
     }
 
     @Override
@@ -197,6 +208,19 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
                     recyclerView.smoothScrollToPosition(i);
                     break;
                 }
+            }
+
+            try {
+                AssetFileDescriptor afd = getAssets().openFd("dice.mp3");
+                if (player != null) {
+                    player.release();
+                }
+                player = new MediaPlayer();
+                player.setDataSource(afd.getFileDescriptor());
+                player.prepare();
+                player.start();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } else {
             newRandomOrder();
