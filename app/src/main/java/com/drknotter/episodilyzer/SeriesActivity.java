@@ -45,7 +45,6 @@ import java.util.Queue;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import hugo.weaving.DebugLog;
 
 public class SeriesActivity extends RecyclerViewActivity implements ShakeDetector.Listener {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
@@ -205,9 +204,7 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
         }
     }
 
-    @DebugLog
     private void initializeWithSeriesId(int seriesId) {
-        Thread.dumpStack();
         series = new Select().from(Series.class)
                 .where("series_id = ?", seriesId)
                 .executeSingle();
