@@ -16,7 +16,9 @@ import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.SearchResult;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.view.decoration.DividerItemDecoration;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.ref.WeakReference;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import hugo.weaving.DebugLog;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -54,6 +57,18 @@ public class SearchShowsActivity extends RecyclerViewActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         handleIntent(intent);
     }
@@ -61,6 +76,11 @@ public class SearchShowsActivity extends RecyclerViewActivity {
     @Override
     protected RecyclerView.LayoutManager getLayoutManager() {
         return new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    }
+
+    @Override
+    protected RecyclerView.ItemDecoration getItemDecoration() {
+        return new DividerItemDecoration(getResources().getDrawable(R.drawable.divider));
     }
 
     @Subscribe
@@ -102,12 +122,14 @@ public class SearchShowsActivity extends RecyclerViewActivity {
         }
     }
 
+    @DebugLog
     private void onSearchSuccess(List<SaveSeriesInfo> resultList) {
         searchResults.clear();
         searchResults.addAll(resultList);
         recyclerView.setAdapter(new SearchShowsAdapter(resultList));
     }
 
+    @DebugLog
     private void onSearchFailure() {
 
     }

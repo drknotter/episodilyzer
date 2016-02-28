@@ -28,6 +28,8 @@ public class SaveSeriesInfo {
     @Element(name="IMDB_ID", required=false)
     public String imdbId;
 
+    public SaveSeriesInfo() {}
+
     public SaveSeriesInfo(Series series) {
         this.seriesId = series.id;
         this.seriesName = series.seriesName;
