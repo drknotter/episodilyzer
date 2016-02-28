@@ -12,6 +12,10 @@ import com.drknotter.episodilyzer.fragment.SeriesDialogFragment;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -21,6 +25,8 @@ public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
 
     @Bind(R.id.title)
     TextView title;
+    @Bind(R.id.firstAired)
+    TextView firstAired;
     @Bind(R.id.overview)
     TextView overview;
 
@@ -31,6 +37,7 @@ public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
 
     public void bindSearchResult(final SaveSeriesInfo saveSeriesInfo) {
         title.setText(saveSeriesInfo.seriesName);
+        setFirstAired(saveSeriesInfo.firstAired);
         overview.setText(saveSeriesInfo.overview);
         overview.setVisibility(saveSeriesInfo.overview != null ? View.VISIBLE : View.GONE);
 
@@ -55,5 +62,16 @@ public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
+    }
+
+    private void setFirstAired(String firstAiredText) {
+        try {
+            Date firstAiredDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(firstAiredText);
+            firstAired.setText(new SimpleDateFormat("MM/d/yyyy", Locale.getDefault()).format(firstAiredDate));
+            firstAired.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            firstAired.setText(null);
+            firstAired.setVisibility(View.GONE);
+        }
     }
 }
