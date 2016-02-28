@@ -1,10 +1,14 @@
 package com.drknotter.episodilyzer.view.holder;
 
+import android.app.Activity;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.drknotter.episodilyzer.R;
+import com.drknotter.episodilyzer.fragment.SeriesDialogFragment;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 
@@ -37,6 +41,21 @@ public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 SeriesUtils.saveSeries(saveSeriesInfo);
+            }
+        });
+
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.getContext() instanceof Activity) {
+                    FragmentManager fragmentManager = ((AppCompatActivity) v.getContext()).getSupportFragmentManager();
+                    SeriesDialogFragment fragment = (SeriesDialogFragment) fragmentManager.findFragmentByTag(SeriesDialogFragment.TAG);
+                    if (fragment != null) {
+                        fragment.dismissAllowingStateLoss();
+                    }
+                    fragment = SeriesDialogFragment.newInstance(saveSeriesInfo);
+                    fragment.show(fragmentManager, SeriesDialogFragment.TAG);
+                }
             }
         });
     }

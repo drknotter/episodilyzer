@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 
 public class EpisodeDialogFragment extends AppCompatDialogFragment {
     public static final String TAG = EpisodeDialogFragment.class.getSimpleName();
-    public static final String ARG_EPISODE_ID = "ARG_EPISODE_ID";
+    public static final String ARG_EPISODE_ID = "ARG_SERIES_BANNER";
 
     @Bind(R.id.episode_image)
     ImageView episodeImage;
