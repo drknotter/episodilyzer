@@ -58,7 +58,7 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/star_toggle"
+                android:id="@+id/delete_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"

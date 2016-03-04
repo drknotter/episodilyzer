@@ -30,8 +30,8 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
     TextView title;
     @Bind(R.id.firstAired)
     TextView firstAired;
-    @Bind(R.id.star_toggle)
-    View starToggle;
+    @Bind(R.id.delete_button)
+    View deleteButton;
 
     @Bind(R.id.overview)
     TextView overview;
@@ -41,7 +41,7 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bindSeries(final Series series, final View.OnClickListener starClickListener) {
+    public void bindSeries(final Series series, final View.OnClickListener deleteClickListener) {
         if (series != null) {
             Banner bestBanner = series.bestBanner();
 
@@ -61,15 +61,13 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
             setFirstAired(series.firstAired);
             setOverview(series.overview);
 
-            starToggle.setOnClickListener(new View.OnClickListener() {
+            deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    starToggle.setActivated(!starToggle.isActivated());
                     SeriesUtils.deleteSeries(series.id);
-                    starClickListener.onClick(v);
+                    deleteClickListener.onClick(v);
                 }
             });
-            starToggle.setActivated(SeriesUtils.isSeriesSaved(series.id));
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
