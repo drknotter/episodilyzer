@@ -1,7 +1,6 @@
 package com.drknotter.episodilyzer;
 
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
@@ -29,6 +28,7 @@ import com.drknotter.episodilyzer.model.Season;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
+import com.drknotter.episodilyzer.utils.SoundUtils;
 import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
 import com.drknotter.episodilyzer.view.holder.SeriesOverviewViewHolder;
 import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
@@ -40,7 +40,6 @@ import com.tonicartos.superslim.LayoutManager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -131,26 +130,26 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (player != null) {
-            player.release();
-        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         if (shakeDetector == null) {
             shakeDetector = new ShakeDetector(this);
         }
         shakeDetector.start((SensorManager) getSystemService(SENSOR_SERVICE));
+        if (player != null) {
+            player.release();
+        }
+        player = new MediaPlayer();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         shakeDetector.stop();
+        if (player != null) {
+            player.release();
+            player = null;
+        }
     }
 
     @Override
@@ -293,17 +292,8 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
                 }
             }
 
-            try {
-                AssetFileDescriptor afd = getAssets().openFd("dice.mp3");
-                if (player != null) {
-                    player.release();
-                }
-                player = new MediaPlayer();
-                player.setDataSource(afd.getFileDescriptor());
-                player.prepare();
-                player.start();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (player != null) {
+                SoundUtils.fiddleDice(player, this);
             }
         } else {
             newRandomOrder();
@@ -326,6 +316,9 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
                 viewHolder.itemView.setSelected(true);
             }
         }
+        if (player != null) {
+            SoundUtils.rollDice(player, this);
+        }
     }
 
     private void unselectAllPositions() {
@@ -334,6 +327,9 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
             if (viewHolder != null) {
                 viewHolder.itemView.setSelected(false);
             }
+        }
+        if (player != null) {
+            player.reset();
         }
     }
 

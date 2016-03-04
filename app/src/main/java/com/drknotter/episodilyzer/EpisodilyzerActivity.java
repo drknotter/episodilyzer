@@ -2,7 +2,6 @@ package com.drknotter.episodilyzer;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -22,13 +21,13 @@ import com.drknotter.episodilyzer.event.SeriesSaveSuccessEvent;
 import com.drknotter.episodilyzer.fragment.AboutDialogFragment;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
+import com.drknotter.episodilyzer.utils.SoundUtils;
 import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
 import com.squareup.seismic.ShakeDetector;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,12 +90,20 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
             shakeDetector = new ShakeDetector(this);
         }
         shakeDetector.start((SensorManager) getSystemService(SENSOR_SERVICE));
+        if (player != null) {
+            player.release();
+        }
+        player = new MediaPlayer();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         shakeDetector.stop();
+        if (player != null) {
+            player.release();
+            player = null;
+        }
     }
 
     @Override
@@ -210,17 +217,8 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
                 }
             }
 
-            try {
-                AssetFileDescriptor afd = getAssets().openFd("dice.mp3");
-                if (player != null) {
-                    player.release();
-                }
-                player = new MediaPlayer();
-                player.setDataSource(afd.getFileDescriptor());
-                player.prepare();
-                player.start();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (player != null) {
+                SoundUtils.fiddleDice(player, this);
             }
         } else {
             newRandomOrder();
@@ -242,6 +240,9 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
                 viewHolder.itemView.setSelected(true);
             }
         }
+        if (player != null) {
+            SoundUtils.rollDice(player, this);
+        }
     }
 
     private void unselectAllPositions() {
@@ -250,6 +251,9 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
             if (viewHolder != null) {
                 viewHolder.itemView.setSelected(false);
             }
+        }
+        if (player != null) {
+            player.reset();
         }
     }
 
