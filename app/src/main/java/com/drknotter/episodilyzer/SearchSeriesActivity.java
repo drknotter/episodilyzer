@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import hugo.weaving.DebugLog;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -94,12 +93,16 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
     @Subscribe
     public void onSeriesSaveSuccessEvent(SeriesSaveSuccessEvent event) {
         Snackbar.make(recyclerView, getString(R.string.snack_series_saved, event.series.seriesName), Snackbar.LENGTH_SHORT).show();
-        for (int i=0; i<searchResults.size(); i++) {
-            if (searchResults.get(i).seriesId == event.series.id) {
-                searchResults.remove(i);
-                recyclerView.getAdapter().notifyItemRemoved(i);
+        int index = 0;
+        Iterator<SaveSeriesInfo> iterator = searchResults.iterator();
+        while (iterator.hasNext()) {
+            SaveSeriesInfo info = iterator.next();
+            if (info.seriesId == event.series.id) {
+                iterator.remove();
+                recyclerView.getAdapter().notifyItemRemoved(index);
                 break;
             }
+            index++;
         }
     }
 
@@ -121,14 +124,12 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         }
     }
 
-    @DebugLog
     private void onSearchSuccess(List<SaveSeriesInfo> resultList) {
         searchResults.clear();
         searchResults.addAll(resultList);
-        recyclerView.setAdapter(new SearchShowsAdapter(resultList));
+        recyclerView.setAdapter(new SearchShowsAdapter(searchResults));
     }
 
-    @DebugLog
     private void onSearchFailure() {
 
     }
