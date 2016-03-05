@@ -73,6 +73,7 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
                         doDelete();
                     } else {
                         final View checkboxView = LayoutInflater.from(v.getContext()).inflate(R.layout.view_dialog_checkbox, null);
+                        ((TextView) checkboxView.findViewById(R.id.text)).setText(R.string.dont_show_again);
                         new AlertDialog.Builder(v.getContext())
                                 .setTitle(R.string.delete_show_title)
                                 .setMessage(R.string.delete_show_message)
@@ -80,7 +81,7 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         PreferenceUtils.setDoNotShowDeleteAgain(
-                                                ((CheckBox) checkboxView.findViewById(R.id.do_not_show_again)).isChecked());
+                                                ((CheckBox) checkboxView.findViewById(R.id.checkbox)).isChecked());
                                         doDelete();
                                     }
                                 })

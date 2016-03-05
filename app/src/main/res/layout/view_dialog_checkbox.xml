@@ -6,14 +6,15 @@
     android:orientation="horizontal"
     android:paddingLeft="16dp">
     <CheckBox
-        android:id="@+id/do_not_show_again"
+        android:id="@+id/checkbox"
         style="@style/Widget.AppCompat.CompoundButton.CheckBox"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_margin="8dp"/>
     <TextView
+        android:id="@+id/text"
+        style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:text="Do not show again"/>
+        android:gravity="center_vertical"/>
 </LinearLayout>
