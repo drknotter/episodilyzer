@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import hugo.weaving.DebugLog;
-
 public class SeriesUtils {
     private static Map<Integer, SaveSeriesAsyncTask> saveSeriesTaskMap = new HashMap<>();
     private SeriesUtils() {
@@ -35,7 +33,6 @@ public class SeriesUtils {
                 .execute();
     }
 
-    @DebugLog
     public static synchronized void saveSeries(final SaveSeriesInfo seriesInfo) {
         if (seriesInfo == null) {
             return;
@@ -44,8 +41,8 @@ public class SeriesUtils {
         if (!saveSeriesTaskMap.containsKey(seriesInfo.seriesId)) {
             SaveSeriesAsyncTask task = new SaveSeriesAsyncTask(seriesInfo) {
                 @Override
-                protected void onPostExecute(Series series) {
-                    super.onPostExecute(series);
+                protected void onPostExecute(Void result) {
+                    super.onPostExecute(result);
                     saveSeriesTaskMap.remove(seriesInfo.seriesId);
                 }
 

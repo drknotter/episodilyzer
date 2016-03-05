@@ -28,6 +28,7 @@ import com.squareup.seismic.ShakeDetector;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -172,7 +173,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
         };
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveStartEvent(SeriesSaveStartEvent event) {
         Snackbar.make(recyclerView,
                 getString(
@@ -181,7 +182,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
                 Snackbar.LENGTH_SHORT).show();
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveSuccessEvent(SeriesSaveSuccessEvent event) {
         Snackbar.make(recyclerView, getString(R.string.snack_series_saved, event.series.seriesName), Snackbar.LENGTH_SHORT).show();
         myShows.clear();
@@ -189,7 +190,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveFailEvent(SeriesSaveFailEvent event) {
         String message = getString(R.string.snack_series_save_failed, event.searchResult.seriesName);
         if (event.reason == SeriesSaveFailEvent.Reason.NO_RESPONSE) {
@@ -203,7 +204,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
         Snackbar.make(recyclerView,
                 message,
                 Snackbar.LENGTH_LONG).show();
-        
+
         myShows.clear();
         myShows.addAll(SeriesUtils.allSeries());
         recyclerView.getAdapter().notifyDataSetChanged();

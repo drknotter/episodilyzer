@@ -20,6 +20,7 @@ import android.widget.ImageView;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.SeriesAdapter;
+import com.drknotter.episodilyzer.event.SeriesSaveFailEvent;
 import com.drknotter.episodilyzer.event.SeriesSaveStartEvent;
 import com.drknotter.episodilyzer.event.SeriesSaveSuccessEvent;
 import com.drknotter.episodilyzer.model.Banner;
@@ -39,6 +40,7 @@ import com.tonicartos.superslim.LayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -191,18 +193,36 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
         return super.onOptionsItemSelected(item);
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveStartEvent(SeriesSaveStartEvent event) {
         if (event.searchResult.seriesId == series.id) {
             Snackbar.make(recyclerView, getString(R.string.snack_sync_series), Snackbar.LENGTH_SHORT).show();
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveSuccessEvent(SeriesSaveSuccessEvent event) {
         if (event.series.id == series.id) {
             Snackbar.make(recyclerView, getString(R.string.snack_sync_series_success), Snackbar.LENGTH_SHORT).show();
             initializeWithSeriesId(event.series.id);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSeriesSaveFailEvent(SeriesSaveFailEvent event) {
+        if (event.searchResult.seriesId == series.id) {
+            String message = getString(R.string.snack_series_save_failed, event.searchResult.seriesName);
+            if (event.reason == SeriesSaveFailEvent.Reason.NO_RESPONSE) {
+                message = getString(R.string.snack_series_save_failed_no_response, event.searchResult.seriesName);
+            } else if (event.reason == SeriesSaveFailEvent.Reason.NETWORK) {
+                message = getString(R.string.snack_series_save_failed_network_error, event.searchResult.seriesName);
+            } else if (!TextUtils.isEmpty(event.message)) {
+                message = getString(R.string.snack_series_save_failed_with_message, event.searchResult.seriesName, event.message);
+            }
+
+            Snackbar.make(recyclerView,
+                    message,
+                    Snackbar.LENGTH_LONG).show();
         }
     }
 

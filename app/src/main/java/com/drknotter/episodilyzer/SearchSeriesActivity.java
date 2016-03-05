@@ -21,6 +21,7 @@ import com.drknotter.episodilyzer.server.model.SearchResult;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         return null;
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveStartEvent(SeriesSaveStartEvent event) {
         Snackbar.make(recyclerView,
                 getString(
@@ -93,7 +94,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
                 Snackbar.LENGTH_SHORT).show();
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveSuccessEvent(SeriesSaveSuccessEvent event) {
         Snackbar.make(recyclerView, getString(R.string.snack_series_saved, event.series.seriesName), Snackbar.LENGTH_SHORT).show();
         int index = 0;
@@ -109,7 +110,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveFailEvent(SeriesSaveFailEvent event) {
         String message = getString(R.string.snack_series_save_failed, event.searchResult.seriesName);
         if (event.reason == SeriesSaveFailEvent.Reason.NO_RESPONSE) {
