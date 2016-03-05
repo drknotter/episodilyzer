@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.SearchShowsAdapter;
@@ -127,11 +128,22 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
     private void onSearchSuccess(List<SaveSeriesInfo> resultList) {
         searchResults.clear();
         searchResults.addAll(resultList);
-        recyclerView.setAdapter(new SearchShowsAdapter(searchResults));
+        recyclerView.getAdapter().notifyDataSetChanged();
+
+        if (searchResults.size() > 0) {
+            emptyText.setVisibility(View.GONE);
+            emptyImage.setVisibility(View.GONE);
+        } else {
+            emptyText.setVisibility(View.VISIBLE);
+            emptyText.setText(R.string.no_search_results);
+        }
     }
 
     private void onSearchFailure() {
+        searchResults.clear();
+        recyclerView.getAdapter().notifyDataSetChanged();
 
+        emptyText.setVisibility(View.VISIBLE);
     }
 
     private static class SearchResultCallback implements Callback<SearchResult> {

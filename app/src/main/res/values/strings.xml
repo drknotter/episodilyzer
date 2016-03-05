@@ -44,5 +44,7 @@
     <string name="delete_show_button">Delete</string>
     <string name="dont_show_again">Don\'t show again</string>
 
+    <string name="no_search_results">No search results!</string>
+
     <string name="api_key">E9C8ADC01AC294C3</string>
 </resources>
