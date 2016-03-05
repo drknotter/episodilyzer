@@ -35,7 +35,7 @@
 
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="com.drknotter.episodilyzer.SearchShowsActivity"/>
+                android:value="com.drknotter.episodilyzer.SearchSeriesActivity"/>
         </activity>
         <activity
             android:name=".SearchSeriesActivity"
