@@ -31,7 +31,7 @@ import retrofit.converter.SimpleXMLConverter;
 import retrofit.mime.TypedFile;
 import retrofit.mime.TypedInput;
 
-public class SaveSeriesAsyncTask extends AsyncTask<Void, Void, Series> {
+public class SaveSeriesAsyncTask extends AsyncTask<Void, Void, Void> {
     private SaveSeriesInfo searchResult;
 
     public SaveSeriesAsyncTask(SaveSeriesInfo searchResult) {
@@ -44,29 +44,17 @@ public class SaveSeriesAsyncTask extends AsyncTask<Void, Void, Series> {
     }
 
     @Override
-    protected Series doInBackground(Void... params) {
-        Series result = null;
-        if (searchResult != null) {
-            result = saveSeries(searchResult.seriesId);
-        }
-        return result;
+    protected Void doInBackground(Void... params) {
+        saveSeries(searchResult.seriesId);
+        return null;
     }
 
     @Override
-    protected void onPostExecute(Series series) {
-        if (series != null) {
-            EventBus.getDefault().post(new SeriesSaveSuccessEvent(series));
-        } else {
-            EventBus.getDefault().post(new SeriesSaveFailEvent(searchResult));
-        }
+    protected void onCancelled() {
+        EventBus.getDefault().post(new SeriesSaveFailEvent(searchResult, SeriesSaveFailEvent.Reason.CANCELLED, null));
     }
 
-    @Override
-    protected void onCancelled(Series series) {
-        EventBus.getDefault().post(new SeriesSaveFailEvent(searchResult));
-    }
-
-    private Series saveSeries(int seriesId) {
+    private void saveSeries(int seriesId) {
         Series series = null;
 
         Response response = new RestAdapter.Builder()
@@ -76,6 +64,16 @@ public class SaveSeriesAsyncTask extends AsyncTask<Void, Void, Series> {
                 .getSeriesInfo(
                         Episodilyzer.getInstance().getString(R.string.api_key),
                         seriesId);
+
+        if (response == null) {
+            EventBus.getDefault().post(new SeriesSaveFailEvent(searchResult, SeriesSaveFailEvent.Reason.NO_RESPONSE, null));
+            return;
+        }
+
+        if (response.getStatus() != 200) {
+            EventBus.getDefault().post(new SeriesSaveFailEvent(searchResult, SeriesSaveFailEvent.Reason.NETWORK, response.getReason()));
+            return;
+        }
 
         File seriesDir = new File(Episodilyzer.getInstance().getCacheDir(),
                 Integer.toString(seriesId));
@@ -122,14 +120,15 @@ public class SaveSeriesAsyncTask extends AsyncTask<Void, Void, Series> {
                 ActiveAndroid.endTransaction();
             }
 
-        } catch (IOException |ConversionException e) {
+        } catch (IOException|ConversionException e) {
             e.printStackTrace();
+            EventBus.getDefault().post(new SeriesSaveFailEvent(searchResult, SeriesSaveFailEvent.Reason.PARSE, e.getMessage()));
 
         } finally {
             // Clean up after ourselves.
             FilesystemUtils.nukeDirectory(seriesDir);
         }
 
-        return series;
+        EventBus.getDefault().post(new SeriesSaveSuccessEvent(series));
     }
 }
