@@ -38,7 +38,7 @@
                 android:value="com.drknotter.episodilyzer.SearchShowsActivity"/>
         </activity>
         <activity
-            android:name=".SearchShowsActivity"
+            android:name=".SearchSeriesActivity"
             android:label="@string/title_activity_search_shows"
             android:parentActivityName=".EpisodilyzerActivity"
             android:theme="@style/AppTheme.NoActionBar"

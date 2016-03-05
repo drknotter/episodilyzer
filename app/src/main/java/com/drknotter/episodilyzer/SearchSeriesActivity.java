@@ -32,7 +32,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.converter.SimpleXMLConverter;
 
-public class SearchShowsActivity extends RecyclerViewActivity {
+public class SearchSeriesActivity extends RecyclerViewActivity {
 
     private TheTVDBService theTVDBService;
     private List<SaveSeriesInfo> searchResults = new ArrayList<>();
@@ -134,15 +134,15 @@ public class SearchShowsActivity extends RecyclerViewActivity {
     }
 
     private static class SearchResultCallback implements Callback<SearchResult> {
-        private WeakReference<SearchShowsActivity> activityRef;
+        private WeakReference<SearchSeriesActivity> activityRef;
 
-        SearchResultCallback(SearchShowsActivity activity) {
+        SearchResultCallback(SearchSeriesActivity activity) {
             activityRef = new WeakReference<>(activity);
         }
 
         @Override
         public void success(SearchResult searchResult, Response response) {
-            SearchShowsActivity activity = activityRef.get();
+            SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
                 if (searchResult != null && searchResult.resultList != null) {
                     Iterator<SaveSeriesInfo> iterator = searchResult.resultList.iterator();
@@ -163,7 +163,7 @@ public class SearchShowsActivity extends RecyclerViewActivity {
 
         @Override
         public void failure(RetrofitError error) {
-            SearchShowsActivity activity = activityRef.get();
+            SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
                 activity.onSearchFailure();
             }
