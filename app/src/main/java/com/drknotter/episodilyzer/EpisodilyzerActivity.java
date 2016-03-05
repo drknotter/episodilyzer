@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -190,7 +191,19 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
 
     @Subscribe
     public void onSeriesSaveFailEvent(SeriesSaveFailEvent event) {
-        Snackbar.make(recyclerView, getString(R.string.snack_series_save_failed, event.searchResult.seriesName), Snackbar.LENGTH_SHORT).show();
+        String message = getString(R.string.snack_series_save_failed, event.searchResult.seriesName);
+        if (event.reason == SeriesSaveFailEvent.Reason.NO_RESPONSE) {
+            message = getString(R.string.snack_series_save_failed_no_response, event.searchResult.seriesName);
+        } else if (event.reason == SeriesSaveFailEvent.Reason.NETWORK) {
+                    message = getString(R.string.snack_series_save_failed_network_error, event.searchResult.seriesName);
+        } else if (!TextUtils.isEmpty(event.message)) {
+             message = getString(R.string.snack_series_save_failed_with_message, event.searchResult.seriesName, event.message);
+        }
+
+        Snackbar.make(recyclerView,
+                message,
+                Snackbar.LENGTH_LONG).show();
+        
         myShows.clear();
         myShows.addAll(SeriesUtils.allSeries());
         recyclerView.getAdapter().notifyDataSetChanged();

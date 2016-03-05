@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.activeandroid.query.Select;
@@ -110,7 +111,18 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
 
     @Subscribe
     public void onSeriesSaveFailEvent(SeriesSaveFailEvent event) {
-        Snackbar.make(recyclerView, getString(R.string.snack_series_save_failed, event.searchResult.seriesName), Snackbar.LENGTH_SHORT).show();
+        String message = getString(R.string.snack_series_save_failed, event.searchResult.seriesName);
+        if (event.reason == SeriesSaveFailEvent.Reason.NO_RESPONSE) {
+            message = getString(R.string.snack_series_save_failed_no_response, event.searchResult.seriesName);
+        } else if (event.reason == SeriesSaveFailEvent.Reason.NETWORK) {
+            message = getString(R.string.snack_series_save_failed_network_error, event.searchResult.seriesName);
+        } else if (!TextUtils.isEmpty(event.message)) {
+            message = getString(R.string.snack_series_save_failed_with_message, event.searchResult.seriesName, event.message);
+        }
+
+        Snackbar.make(recyclerView,
+                message,
+                Snackbar.LENGTH_SHORT).show();
     }
 
     private void handleIntent(Intent intent) {

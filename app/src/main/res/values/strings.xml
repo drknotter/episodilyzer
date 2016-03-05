@@ -36,6 +36,9 @@
     <string name="snack_saving_series">Saving \"%1$s\"…</string>
     <string name="snack_series_saved">Saved \"%1$s\"!</string>
     <string name="snack_series_save_failed">Couldn\'t save series \"%1$s\"…</string>
+    <string name="snack_series_save_failed_with_message">Couldn\'t save series \"%1$s\"! Error message: %2$s</string>
+    <string name="snack_series_save_failed_no_response">Couldn\'t save series \"%1$s\", no response! Are you connected to the internet?</string>
+    <string name="snack_series_save_failed_network_error">Couldn\'t save series \"%1$s\", network error! Are you connected to the internet?</string>
     <string name="snack_sync_series">Syncing series…</string>
     <string name="snack_sync_series_success">Successfully synced series!</string>
 
@@ -45,10 +48,10 @@
     <string name="dont_show_again">Don\'t show again</string>
 
     <string name="no_search_results">No search results!</string>
-    <string name="search_failed_with_message">Search failed! Error message: %1$s</string>
     <string name="network_error">Network error! Are you connected to the internet?</string>
     <string name="no_response">No response! Are you connected to the internet?</string>
     <string name="search_failed">Search failed! </string>
+    <string name="search_failed_with_message">Search failed! Error message: %1$s</string>
 
     <string name="api_key">E9C8ADC01AC294C3</string>
 </resources>
