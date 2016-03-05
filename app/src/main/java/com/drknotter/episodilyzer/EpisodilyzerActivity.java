@@ -10,9 +10,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.EpisodilyzerAdapter;
@@ -84,9 +87,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
     @Override
     protected void onResume() {
         super.onResume();
-        myShows.clear();
-        myShows.addAll(SeriesUtils.allSeries());
-        recyclerView.getAdapter().notifyDataSetChanged();
+        displayAllSeries();
 
         if (shakeDetector == null) {
             shakeDetector = new ShakeDetector(this);
@@ -185,9 +186,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveSuccessEvent(SeriesSaveSuccessEvent event) {
         Snackbar.make(recyclerView, getString(R.string.snack_series_saved, event.series.seriesName), Snackbar.LENGTH_SHORT).show();
-        myShows.clear();
-        myShows.addAll(SeriesUtils.allSeries());
-        recyclerView.getAdapter().notifyDataSetChanged();
+        displayAllSeries();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -205,9 +204,7 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
                 message,
                 Snackbar.LENGTH_LONG).show();
 
-        myShows.clear();
-        myShows.addAll(SeriesUtils.allSeries());
-        recyclerView.getAdapter().notifyDataSetChanged();
+        displayAllSeries();
     }
 
     @OnClick(R.id.fab)
@@ -236,6 +233,25 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
             }
         } else {
             newRandomOrder();
+        }
+    }
+
+    private void displayAllSeries() {
+        myShows.clear();
+        myShows.addAll(SeriesUtils.allSeries());
+        recyclerView.getAdapter().notifyDataSetChanged();
+
+        emptyText.setVisibility(myShows.size() == 0 ? View.VISIBLE : View.GONE);
+        emptyImage.setVisibility(myShows.size() == 0 ? View.VISIBLE : View.GONE);
+        if (myShows.size() == 0) {
+            String message = getString(R.string.no_series_saved);
+            String replacement = "{ICON}";
+            int index = message.indexOf(replacement);
+
+            SpannableString spannableString = new SpannableString(message);
+            ImageSpan imageSpan = new ImageSpan(this, R.drawable.search_icon);
+            spannableString.setSpan(imageSpan, index, index + replacement.length(), 0);
+            emptyText.setText(spannableString);
         }
     }
 

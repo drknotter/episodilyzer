@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import hugo.weaving.DebugLog;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -180,7 +179,6 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
             activityRef = new WeakReference<>(activity);
         }
 
-        @DebugLog
         @Override
         public void success(SearchResult searchResult, Response response) {
             SearchSeriesActivity activity = activityRef.get();
@@ -204,7 +202,6 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
             }
         }
 
-        @DebugLog
         @Override
         public void failure(RetrofitError error) {
             SearchSeriesActivity activity = activityRef.get();

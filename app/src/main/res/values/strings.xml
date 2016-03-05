@@ -53,5 +53,7 @@
     <string name="search_failed">Search failed! </string>
     <string name="search_failed_with_message">Search failed! Error message: %1$s</string>
 
+    <string name="no_series_saved">You don\'t have any saved TV shows! Click the search icon {ICON} to find your favorite show!</string>
+
     <string name="api_key">E9C8ADC01AC294C3</string>
 </resources>
