@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import hugo.weaving.DebugLog;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -136,14 +137,27 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         } else {
             emptyText.setVisibility(View.VISIBLE);
             emptyText.setText(R.string.no_search_results);
+            emptyImage.setVisibility(View.VISIBLE);
+            emptyImage.setImageResource(R.drawable.error);
         }
     }
 
-    private void onSearchFailure() {
+    private void onSearchFailure(RetrofitError error) {
         searchResults.clear();
         recyclerView.getAdapter().notifyDataSetChanged();
 
         emptyText.setVisibility(View.VISIBLE);
+        emptyImage.setVisibility(View.VISIBLE);
+        emptyImage.setImageResource(R.drawable.network_error);
+        if (error.isNetworkError()) {
+            emptyText.setText(R.string.network_error);
+        } else if (error.getResponse() == null) {
+            emptyText.setText(R.string.no_response);
+        } else if (error.getResponse().getReason() == null) {
+            emptyText.setText(R.string.search_failed);
+        } else {
+            emptyText.setText(getString(R.string.search_failed_with_message, error.getResponse().getReason()));
+        }
     }
 
     private static class SearchResultCallback implements Callback<SearchResult> {
@@ -153,32 +167,36 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
             activityRef = new WeakReference<>(activity);
         }
 
+        @DebugLog
         @Override
         public void success(SearchResult searchResult, Response response) {
             SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
+                List<SaveSeriesInfo> results = new ArrayList<>();
                 if (searchResult != null && searchResult.resultList != null) {
-                    Iterator<SaveSeriesInfo> iterator = searchResult.resultList.iterator();
-                    while (iterator.hasNext()) {
-                        SaveSeriesInfo saveSeriesInfo = iterator.next();
-                        if (new Select().from(Series.class)
-                                .where("series_id = ?", saveSeriesInfo.seriesId)
-                                .exists()) {
-                            iterator.remove();
-                        }
-                    }
-                    activity.onSearchSuccess(searchResult.resultList);
-                } else {
-                    activity.onSearchFailure();
+                    results.addAll(searchResult.resultList);
                 }
+
+                Iterator<SaveSeriesInfo> iterator = results.iterator();
+                while (iterator.hasNext()) {
+                    SaveSeriesInfo saveSeriesInfo = iterator.next();
+                    if (new Select().from(Series.class)
+                            .where("series_id = ?", saveSeriesInfo.seriesId)
+                            .exists()) {
+                        iterator.remove();
+                    }
+                }
+
+                activity.onSearchSuccess(results);
             }
         }
 
+        @DebugLog
         @Override
         public void failure(RetrofitError error) {
             SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
-                activity.onSearchFailure();
+                activity.onSearchFailure(error);
             }
         }
     }

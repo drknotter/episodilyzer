@@ -7,6 +7,6 @@ import java.util.List;
 
 @Root(name="Data")
 public class SearchResult {
-    @ElementList(name="Series", inline=true)
+    @ElementList(name="Series", inline=true, required = false)
     public List<SaveSeriesInfo> resultList;
 }
