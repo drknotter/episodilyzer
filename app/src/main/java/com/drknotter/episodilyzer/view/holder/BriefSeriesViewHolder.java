@@ -1,9 +1,13 @@
 package com.drknotter.episodilyzer.view.holder;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +16,7 @@ import com.drknotter.episodilyzer.SeriesActivity;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.TheTVDBService;
+import com.drknotter.episodilyzer.utils.PreferenceUtils;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.squareup.picasso.Picasso;
 
@@ -64,8 +69,29 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (PreferenceUtils.getDoNotShowDeleteAgain()) {
+                        doDelete();
+                    } else {
+                        final View checkboxView = LayoutInflater.from(v.getContext()).inflate(R.layout.view_dialog_checkbox, null);
+                        new AlertDialog.Builder(v.getContext())
+                                .setTitle(R.string.delete_show_title)
+                                .setMessage(R.string.delete_show_message)
+                                .setPositiveButton(R.string.delete_show_button, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        PreferenceUtils.setDoNotShowDeleteAgain(
+                                                ((CheckBox) checkboxView.findViewById(R.id.do_not_show_again)).isChecked());
+                                        doDelete();
+                                    }
+                                })
+                                .setView(checkboxView)
+                                .show();
+                    }
+                }
+
+                private void doDelete() {
                     SeriesUtils.deleteSeries(series.id);
-                    deleteClickListener.onClick(v);
+                    deleteClickListener.onClick(deleteButton);
                 }
             });
 
