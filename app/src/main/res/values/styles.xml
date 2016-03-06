@@ -35,4 +35,7 @@
         <item name="android:textColor">@color/textColorPrimaryInverse</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
 </resources>

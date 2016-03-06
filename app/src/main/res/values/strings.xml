@@ -57,4 +57,8 @@
     <string name="no_series_saved">You don\'t have any saved TV shows! Click the search icon {ICON} to find your favorite show!</string>
 
     <string name="api_key">E9C8ADC01AC294C3</string>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

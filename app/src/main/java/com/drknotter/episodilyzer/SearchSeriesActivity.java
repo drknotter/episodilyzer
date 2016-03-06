@@ -56,7 +56,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
                 .create(TheTVDBService.class);
 
         recyclerView.setAdapter(new SearchShowsAdapter(searchResults));
-        emptyImage.setImageResource(R.drawable.app_icon);
+        emptyImage.setImageResource(R.mipmap.app_icon);
         emptyText.setText(R.string.searching);
 
         handleIntent(getIntent());

@@ -9,7 +9,7 @@
     <application
         android:name=".Episodilyzer"
         android:allowBackup="true"
-        android:icon="@drawable/app_icon"
+        android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -24,15 +24,20 @@
             android:value="com.drknotter.episodilyzer.model.Series, com.drknotter.episodilyzer.model.Episode, com.drknotter.episodilyzer.model.Banner"/>
 
         <activity
-            android:name=".EpisodilyzerActivity"
+            android:name=".SplashActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
 
+        <activity
+            android:name=".EpisodilyzerActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value="com.drknotter.episodilyzer.SearchSeriesActivity"/>
