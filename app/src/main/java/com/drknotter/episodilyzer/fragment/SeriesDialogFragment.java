@@ -91,10 +91,7 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
         Picasso.with(getContext())
                 .load(bannerUri)
                 .into(seriesBanner);
-        ViewGroup.LayoutParams params = seriesBanner.getLayoutParams();
-        params.height = bannerUri != null ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
-        seriesBanner.setLayoutParams(params);
-        seriesBanner.setAspectRatio(bannerUri != null ? 5.414f : 0f);
+        seriesBanner.setVisibility(bannerUri != null ? View.VISIBLE : View.GONE);
 
         // Bind the episode name.
         seriesName.setText(name);
