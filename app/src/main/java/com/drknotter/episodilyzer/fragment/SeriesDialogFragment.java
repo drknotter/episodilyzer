@@ -13,31 +13,39 @@ import android.widget.TextView;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.drknotter.episodilyzer.view.AspectRatioImageView;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class SeriesDialogFragment extends AppCompatDialogFragment {
     public static final String TAG = SeriesDialogFragment.class.getSimpleName();
-    public static final String ARG_SERIES_BANNER = "ARG_SERIES_BANNER";
-    public static final String ARG_SERIES_NAME = "ARG_SERIES_NAME";
-    public static final String ARG_SERIES_OVERVIEW = "ARG_SERIES_OVERVIEW";
+    public static final String ARG_SERIES_INFO = "ARG_SERIES_INFO";
 
     @Bind(R.id.series_banner)
     AspectRatioImageView seriesBanner;
     @Bind(R.id.series_name)
     TextView seriesName;
+    @Bind(R.id.firstAired)
+    TextView firstAired;
+
+    @Bind(R.id.download_button)
+    View downloadButton;
+
     @Bind(R.id.overview)
     TextView overview;
 
     public static SeriesDialogFragment newInstance(SaveSeriesInfo seriesInfo) {
         SeriesDialogFragment fragment = new SeriesDialogFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_SERIES_BANNER, seriesInfo.banner);
-        args.putString(ARG_SERIES_NAME, seriesInfo.seriesName);
-        args.putString(ARG_SERIES_OVERVIEW, seriesInfo.overview);
+        args.putString(ARG_SERIES_INFO, new Gson().toJson(seriesInfo));
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,15 +64,16 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
         View root = inflater.inflate(R.layout.dialog_series, container, false);
         ButterKnife.bind(this, root);
 
-        String banner = null, name = null, overview = null;
+        SaveSeriesInfo seriesInfo = null;
         if (getArguments() != null) {
-            banner = getArguments().getString(ARG_SERIES_BANNER);
-            name = getArguments().getString(ARG_SERIES_NAME);
-            overview = getArguments().getString(ARG_SERIES_OVERVIEW);
+            try {
+                seriesInfo = new Gson().fromJson(getArguments().getString(ARG_SERIES_INFO), SaveSeriesInfo.class);
+            } catch (Throwable t) {
+            }
         }
 
-        if (!TextUtils.isEmpty(name)) {
-            bindSeries(banner, name, overview);
+        if (!TextUtils.isEmpty(seriesInfo.seriesName)) {
+            bindSeries(seriesInfo);
         } else {
             dismissAllowingStateLoss();
         }
@@ -78,14 +87,14 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
         ButterKnife.unbind(this);
     }
 
-    private void bindSeries(String banner, String name, String overview) {
+    private void bindSeries(final SaveSeriesInfo seriesInfo) {
         // Bind the episode image, if present.
         Uri bannerUri = null;
-        if (banner != null) {
+        if (seriesInfo.banner != null) {
             bannerUri = Uri.parse(TheTVDBService.BASE_URL)
                     .buildUpon()
                     .appendPath("banners")
-                    .appendPath(banner)
+                    .appendPath(seriesInfo.banner)
                     .build();
         }
         Picasso.with(getContext())
@@ -94,11 +103,34 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
         seriesBanner.setVisibility(bannerUri != null ? View.VISIBLE : View.GONE);
 
         // Bind the episode name.
-        seriesName.setText(name);
+        seriesName.setText(seriesInfo.seriesName);
+
+        // Bind the first aired date.
+        setFirstAired(seriesInfo.firstAired);
 
         // Bind the overview, if present.
-        this.overview.setVisibility(TextUtils.isEmpty(overview) ? View.GONE : View.VISIBLE);
-        this.overview.setText(overview);
+        this.overview.setVisibility(TextUtils.isEmpty(seriesInfo.overview) ? View.GONE : View.VISIBLE);
+        this.overview.setText(seriesInfo.overview);
+
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SeriesUtils.saveSeries(seriesInfo);
+                dismissAllowingStateLoss();
+            }
+        });
     }
 
+    private void setFirstAired(String firstAiredText) {
+        try {
+            Date firstAiredDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(firstAiredText);
+            firstAired.setText(
+                    getString(R.string.first_aired,
+                            new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(firstAiredDate)));
+            firstAired.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            firstAired.setText(null);
+            firstAired.setVisibility(View.GONE);
+        }
+    }
 }

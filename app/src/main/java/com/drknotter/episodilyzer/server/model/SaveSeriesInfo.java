@@ -31,9 +31,13 @@ public class SaveSeriesInfo {
     public SaveSeriesInfo() {}
 
     public SaveSeriesInfo(Series series) {
-        this.seriesId = series.id;
-        this.seriesName = series.seriesName;
-        this.overview = series.overview;
-        this.firstAired = series.firstAired;
+        this(series.id, series.seriesName, series.overview, series.firstAired);
+    }
+
+    public SaveSeriesInfo(int seriesId, String seriesName, String overview, String firstAired) {
+        this.seriesId = seriesId;
+        this.seriesName = seriesName;
+        this.overview = overview;
+        this.firstAired = firstAired;
     }
 }
