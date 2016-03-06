@@ -47,6 +47,7 @@
     <string name="delete_show_button">Delete</string>
     <string name="dont_show_again">Don\'t show again</string>
 
+    <string name="searching">Searching…</string>
     <string name="no_search_results">No search results!</string>
     <string name="network_error">Network error! Are you connected to the internet?</string>
     <string name="no_response">No response! Are you connected to the internet?</string>

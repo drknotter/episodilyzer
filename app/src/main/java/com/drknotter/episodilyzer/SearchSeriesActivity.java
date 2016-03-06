@@ -8,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.RotateAnimation;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.SearchShowsAdapter;
@@ -54,6 +56,9 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
                 .create(TheTVDBService.class);
 
         recyclerView.setAdapter(new SearchShowsAdapter(searchResults));
+        emptyImage.setImageResource(R.drawable.app_icon);
+        emptyText.setText(R.string.searching);
+
         handleIntent(getIntent());
     }
 
@@ -134,6 +139,14 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
 
             searchResults.clear();
             recyclerView.getAdapter().notifyDataSetChanged();
+
+            emptyText.setVisibility(View.VISIBLE);
+            emptyText.setText(R.string.searching);
+
+            emptyImage.setVisibility(View.VISIBLE);
+            emptyImage.clearAnimation();
+            emptyImage.startAnimation(new SearchAnimation());
+
             theTVDBService.searchShows(query, new SearchResultCallback(this));
         }
     }
@@ -142,6 +155,8 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         searchResults.clear();
         searchResults.addAll(resultList);
         recyclerView.getAdapter().notifyDataSetChanged();
+
+        emptyImage.clearAnimation();
 
         if (searchResults.size() > 0) {
             emptyText.setVisibility(View.GONE);
@@ -157,6 +172,8 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
     private void onSearchFailure(RetrofitError error) {
         searchResults.clear();
         recyclerView.getAdapter().notifyDataSetChanged();
+
+        emptyImage.clearAnimation();
 
         emptyText.setVisibility(View.VISIBLE);
         emptyImage.setVisibility(View.VISIBLE);
@@ -208,6 +225,15 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
             if (activity != null) {
                 activity.onSearchFailure(error);
             }
+        }
+    }
+
+    private static class SearchAnimation extends RotateAnimation {
+        SearchAnimation() {
+            super(0f, 360f, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.583333333f);
+            setRepeatCount(RotateAnimation.INFINITE);
+            setDuration(1000);
+            setInterpolator(new AnticipateOvershootInterpolator());
         }
     }
 }
