@@ -8,12 +8,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.view.AspectRatioImageView;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -26,7 +26,7 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
     public static final String ARG_SERIES_OVERVIEW = "ARG_SERIES_OVERVIEW";
 
     @Bind(R.id.series_banner)
-    ImageView seriesBanner;
+    AspectRatioImageView seriesBanner;
     @Bind(R.id.series_name)
     TextView seriesName;
     @Bind(R.id.overview)
@@ -80,17 +80,21 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
 
     private void bindSeries(String banner, String name, String overview) {
         // Bind the episode image, if present.
+        Uri bannerUri = null;
         if (banner != null) {
-            Uri bannerUri = Uri.parse(TheTVDBService.BASE_URL)
+            bannerUri = Uri.parse(TheTVDBService.BASE_URL)
                     .buildUpon()
                     .appendPath("banners")
                     .appendPath(banner)
                     .build();
-            Picasso.with(getContext())
-                    .load(bannerUri)
-                    .into(seriesBanner);
         }
-        seriesBanner.setVisibility(banner != null ? View.VISIBLE : View.GONE);
+        Picasso.with(getContext())
+                .load(bannerUri)
+                .into(seriesBanner);
+        ViewGroup.LayoutParams params = seriesBanner.getLayoutParams();
+        params.height = bannerUri != null ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+        seriesBanner.setLayoutParams(params);
+        seriesBanner.setAspectRatio(bannerUri != null ? 5.414f : 0f);
 
         // Bind the episode name.
         seriesName.setText(name);

@@ -45,21 +45,12 @@ public class AspectRatioImageView extends ImageView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (aspectRatio <= 0f) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         }
 
-        int width = getMeasuredWidth();
-        int height = getMeasuredHeight();
-        float viewAspectRatio = (float) width / height;
-
-        if (viewAspectRatio > aspectRatio) {
-            super.onMeasure(widthMeasureSpec,
-                    MeasureSpec.makeMeasureSpec((int) (width / aspectRatio), MeasureSpec.EXACTLY));
-        } else {
-            super.onMeasure(MeasureSpec.makeMeasureSpec((int) (height * aspectRatio), MeasureSpec.EXACTLY),
-                    heightMeasureSpec);
-        }
+        int givenWidth = MeasureSpec.getSize(widthMeasureSpec);
+        setMeasuredDimension(givenWidth, (int) (givenWidth / aspectRatio) + 1);
     }
 }
