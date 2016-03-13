@@ -35,14 +35,9 @@ dependencies {
         exclude module: 'xpp3'
     }
 
-
-
-
-
-
-    compile 'com.android.support:appcompat-v7:23.2.0'
-    compile 'com.android.support:cardview-v7:23.2.0'
-    compile 'com.android.support:design:23.2.0'
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:cardview-v7:23.2.1'
+    compile 'com.android.support:design:23.2.1'
     compile 'com.squareup.retrofit:retrofit:1.6.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:butterknife:7.0.1'
@@ -50,5 +45,5 @@ dependencies {
     compile 'com.tonicartos:superslim:0.4.13'
     compile 'com.squareup:seismic:1.0.2'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.android.support:support-v4:23.2.0'
+    compile 'com.android.support:support-v4:23.2.1'
 }
