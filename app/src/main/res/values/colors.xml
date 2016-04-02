@@ -6,6 +6,7 @@
     <color name="colorPrimaryTransparent">#002F3A4B</color>
     <color name="colorPrimaryDark">#132136</color>
     <color name="colorAccent">#709B6C</color>
+    <color name="colorControlHighlight">#1f000000</color>
     <color name="textColorPrimary">#010710</color>
     <color name="textColorPrimaryInverse">#C7D3D6</color>
     <color name="textColorSecondary">#021300</color>

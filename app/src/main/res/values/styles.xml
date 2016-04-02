@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorPrimaryInverse">@color/textColorPrimaryInverse</item>
@@ -14,7 +15,7 @@
         <item name="android:textColorSecondaryInverse">@color/textColorSecondaryInverse</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
