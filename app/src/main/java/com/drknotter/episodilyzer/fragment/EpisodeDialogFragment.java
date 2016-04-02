@@ -8,12 +8,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Episode;
+import com.drknotter.episodilyzer.view.AspectRatioImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
     public static final String ARG_EPISODE_ID = "ARG_SERIES_BANNER";
 
     @Bind(R.id.episode_image)
-    ImageView episodeImage;
+    AspectRatioImageView episodeImage;
     @Bind(R.id.episode_name)
     TextView episodeName;
     @Bind(R.id.directors)
@@ -88,6 +88,13 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
         // Bind the episode image, if present.
         Uri episodeImageUri = episode.imageUri();
         episodeImage.setVisibility(episodeImageUri != null ? View.VISIBLE : View.GONE);
+        if (episode.episodeImageFlag == 1) {
+            episodeImage.setAspectRatio(4f / 3f);
+        } else if (episode.episodeImageFlag == 2) {
+            episodeImage.setAspectRatio(16f / 9f);
+        } else {
+            episodeImage.setAspectRatio(0f);
+        }
         Picasso.with(getContext())
                 .load(episodeImageUri)
                 .into(episodeImage);

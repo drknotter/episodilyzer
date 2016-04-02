@@ -23,6 +23,7 @@ public class Episode extends Model {
         id = baseEpisode.id;
         this.series = series;
         director = baseEpisode.director;
+        episodeImageFlag = baseEpisode.epImgFlag;
         episodeName = baseEpisode.episodeName;
         episodeNumber = baseEpisode.episodeNumber;
         firstAired = baseEpisode.firstAired;
@@ -53,6 +54,17 @@ public class Episode extends Model {
     // A pipe delimited string of directors in plain text. Can be null.
     @Column(name="director", index = true)
     public String director;
+
+    // An unsigned integer from 1-6.
+    //    1. 4:3 - Indicates an image is a proper 4:3 (1.31 to 1.35) aspect ratio.
+    //    2. 16:9 - Indicates an image is a proper 16:9 (1.739 to 1.818) aspect ratio.
+    //    3. Invalid Aspect Ratio - Indicates anything not in a 4:3 or 16:9 ratio. We don't bother listing any other non standard ratios.
+    //    4. Image too Small - Just means the image is smaller then 300x170.
+    //    5. Black Bars - Indicates there are black bars along one or all four sides of the image.
+    //    6. Improper Action Shot - Could mean a number of things, usually used when someone uploads a promotional picture that isn't actually from that episode but does refrence the episode, it could also mean it's a credit shot or that there is writting all over it. It's rarely used since most times an image would just be outright deleted if it falls in this category.
+    // It can also be null. If it's 1 or 2 the site assumes it's a proper image, anything above 2 is considered incorrect and can be replaced by anyone with an account.
+    @Column(name="episodeImageFlag")
+    public int episodeImageFlag;
 
     // A string containing the episode name in the language requested. Will return the English name if no translation is available in the language requested.
     @Column(name="episodeName", index = true)
