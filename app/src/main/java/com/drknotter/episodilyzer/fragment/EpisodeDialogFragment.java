@@ -90,10 +90,8 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
         episodeImage.setVisibility(episodeImageUri != null ? View.VISIBLE : View.GONE);
         if (episode.episodeImageFlag == 1) {
             episodeImage.setAspectRatio(4f / 3f);
-        } else if (episode.episodeImageFlag == 2) {
-            episodeImage.setAspectRatio(16f / 9f);
         } else {
-            episodeImage.setAspectRatio(0f);
+            episodeImage.setAspectRatio(16f / 9f);
         }
         Picasso.with(getContext())
                 .load(episodeImageUri)
