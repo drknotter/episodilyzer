@@ -16,6 +16,7 @@ import com.drknotter.episodilyzer.SeriesActivity;
 import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.TheTVDBService;
+import com.drknotter.episodilyzer.utils.PicassoUtils;
 import com.drknotter.episodilyzer.utils.PreferenceUtils;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.squareup.picasso.Picasso;
@@ -24,21 +25,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
-    @Bind(R.id.banner)
+    @BindView(R.id.banner)
     ImageView banner;
 
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView title;
-    @Bind(R.id.firstAired)
+    @BindView(R.id.firstAired)
     TextView firstAired;
-    @Bind(R.id.delete_button)
+    @BindView(R.id.delete_button)
     View deleteButton;
 
-    @Bind(R.id.overview)
+    @BindView(R.id.overview)
     TextView overview;
 
     public BriefSeriesViewHolder(View itemView) {
@@ -58,7 +59,7 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
                         .appendPath(bestBanner.path)
                         .build();
             }
-            Picasso.with(itemView.getContext())
+            PicassoUtils.getPicasso(itemView.getContext())
                     .load(bannerUri)
                     .into(banner);
             banner.setVisibility(bannerUri != null ? View.VISIBLE : View.GONE);

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.utils.PicassoUtils;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.drknotter.episodilyzer.view.AspectRatioImageView;
 import com.google.gson.Gson;
@@ -22,25 +23,28 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class SeriesDialogFragment extends AppCompatDialogFragment {
     public static final String TAG = SeriesDialogFragment.class.getSimpleName();
     public static final String ARG_SERIES_INFO = "ARG_SERIES_INFO";
 
-    @Bind(R.id.series_banner)
+    @BindView(R.id.series_banner)
     AspectRatioImageView seriesBanner;
-    @Bind(R.id.series_name)
+    @BindView(R.id.series_name)
     TextView seriesName;
-    @Bind(R.id.firstAired)
+    @BindView(R.id.firstAired)
     TextView firstAired;
 
-    @Bind(R.id.download_button)
+    @BindView(R.id.download_button)
     View downloadButton;
 
-    @Bind(R.id.overview)
+    @BindView(R.id.overview)
     TextView overview;
+
+    private Unbinder unbinder;
 
     public static SeriesDialogFragment newInstance(SaveSeriesInfo seriesInfo) {
         SeriesDialogFragment fragment = new SeriesDialogFragment();
@@ -62,7 +66,7 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.dialog_series, container, false);
-        ButterKnife.bind(this, root);
+        unbinder = ButterKnife.bind(this, root);
 
         SaveSeriesInfo seriesInfo = null;
         if (getArguments() != null) {
@@ -84,7 +88,7 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     private void bindSeries(final SaveSeriesInfo seriesInfo) {
@@ -97,7 +101,7 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
                     .appendPath(seriesInfo.banner)
                     .build();
         }
-        Picasso.with(getContext())
+        PicassoUtils.getPicasso(getContext())
                 .load(bannerUri)
                 .into(seriesBanner);
         seriesBanner.setVisibility(bannerUri != null ? View.VISIBLE : View.GONE);

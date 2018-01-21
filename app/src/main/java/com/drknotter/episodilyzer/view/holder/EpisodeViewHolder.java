@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class EpisodeViewHolder extends BindableViewHolder<Episode> {
@@ -24,13 +24,13 @@ public class EpisodeViewHolder extends BindableViewHolder<Episode> {
         void onEpisodeSelectedChange(Episode e, boolean selected);
     }
 
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView title;
-    @Bind(R.id.firstAired)
+    @BindView(R.id.firstAired)
     TextView firstAired;
-    @Bind(R.id.overview)
+    @BindView(R.id.overview)
     TextView overview;
-    @Bind(R.id.selected)
+    @BindView(R.id.selected)
     CheckBox selected;
 
     private OnEpisodeSelectedChangeListener listener;

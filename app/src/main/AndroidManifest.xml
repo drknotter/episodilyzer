@@ -68,6 +68,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.drknotter.episodilyzer.EpisodilyzerActivity"/>
         </activity>
+        <provider
+            android:name="com.activeandroid.content.ContentProvider"
+            android:authorities="com.drknotter.episodilyzer"
+            android:enabled="true"
+            android:exported="false">
+        </provider>
     </application>
 
 </manifest>

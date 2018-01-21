@@ -6,18 +6,18 @@ import android.widget.TextView;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.SeriesOverview;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SeriesOverviewViewHolder extends BindableViewHolder<SeriesOverview> {
-    @Bind(R.id.firstAired)
+    @BindView(R.id.firstAired)
     TextView firstAired;
-    @Bind(R.id.overview)
+    @BindView(R.id.overview)
     TextView overview;
-    @Bind(R.id.starring)
+    @BindView(R.id.starring)
     TextView starring;
 
-    @Bind(R.id.overview_fade_out)
+    @BindView(R.id.overview_fade_out)
     View overviewFadeOut;
 
     public SeriesOverviewViewHolder(View itemView) {

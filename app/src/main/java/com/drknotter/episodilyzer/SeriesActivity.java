@@ -28,6 +28,7 @@ import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Season;
 import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.utils.PicassoUtils;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.drknotter.episodilyzer.utils.SoundUtils;
 import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
@@ -47,17 +48,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 public class SeriesActivity extends RecyclerViewActivity implements ShakeDetector.Listener {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
 
-    @Bind(R.id.app_bar_layout)
+    @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
-    @Bind(R.id.collapsing_toolbar)
+    @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbar;
-    @Bind(R.id.toolbar_background)
+    @BindView(R.id.toolbar_background)
     ImageView toolbarBackground;
 
     private List<Object> seriesInfo = new ArrayList<>();
@@ -248,7 +249,7 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
 
         Banner bestFanart = series.bestFanart();
         if (bestFanart != null) {
-            Picasso.with(this)
+            PicassoUtils.getPicasso(this)
                     .load(bestFanart.uri())
                     .into(toolbarBackground, new Callback() {
                         @Override

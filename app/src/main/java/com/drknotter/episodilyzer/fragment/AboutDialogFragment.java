@@ -12,15 +12,15 @@ import android.widget.TextView;
 import com.drknotter.episodilyzer.BuildConfig;
 import com.drknotter.episodilyzer.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class AboutDialogFragment extends DialogFragment {
     public static final String TAG = AboutDialogFragment.class.getSimpleName();
 
-    @Bind(R.id.version)
+    @BindView(R.id.version)
     TextView version;
-    @Bind(R.id.about_thetvdb)
+    @BindView(R.id.about_thetvdb)
     TextView aboutTheTVDB;
 
     public static AboutDialogFragment newInstance() {

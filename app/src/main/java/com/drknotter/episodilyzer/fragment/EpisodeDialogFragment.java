@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,30 +14,34 @@ import android.widget.TextView;
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Episode;
+import com.drknotter.episodilyzer.utils.PicassoUtils;
 import com.drknotter.episodilyzer.view.AspectRatioImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class EpisodeDialogFragment extends AppCompatDialogFragment {
     public static final String TAG = EpisodeDialogFragment.class.getSimpleName();
     public static final String ARG_EPISODE_ID = "ARG_SERIES_BANNER";
 
-    @Bind(R.id.episode_image)
+    @BindView(R.id.episode_image)
     AspectRatioImageView episodeImage;
-    @Bind(R.id.episode_name)
+    @BindView(R.id.episode_name)
     TextView episodeName;
-    @Bind(R.id.directors)
+    @BindView(R.id.directors)
     TextView directors;
-    @Bind(R.id.writers)
+    @BindView(R.id.writers)
     TextView writers;
-    @Bind(R.id.guest_starring)
+    @BindView(R.id.guest_starring)
     TextView guestStarring;
-    @Bind(R.id.overview)
+    @BindView(R.id.overview)
     TextView overview;
+
+    private Unbinder unbinder;
 
     public static EpisodeDialogFragment newInstance(int episodeId) {
         EpisodeDialogFragment fragment = new EpisodeDialogFragment();
@@ -58,7 +63,7 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.dialog_episode, container, false);
-        ButterKnife.bind(this, root);
+        unbinder = ButterKnife.bind(this, root);
 
         int episodeId = 0;
         if (getArguments() != null) {
@@ -81,7 +86,7 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     private void bindEpisode(Episode episode) {
@@ -93,7 +98,7 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
         } else {
             episodeImage.setAspectRatio(16f / 9f);
         }
-        Picasso.with(getContext())
+        PicassoUtils.getPicasso(getContext())
                 .load(episodeImageUri)
                 .into(episodeImage);
 

@@ -16,18 +16,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
-    @Bind(R.id.download_button)
+    @BindView(R.id.download_button)
     View downloadButton;
 
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView title;
-    @Bind(R.id.firstAired)
+    @BindView(R.id.firstAired)
     TextView firstAired;
-    @Bind(R.id.overview)
+    @BindView(R.id.overview)
     TextView overview;
 
     public SeriesSearchResultViewHolder(View itemView) {
