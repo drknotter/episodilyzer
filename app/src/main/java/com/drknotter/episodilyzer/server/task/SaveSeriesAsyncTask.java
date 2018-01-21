@@ -1,6 +1,7 @@
 package com.drknotter.episodilyzer.server.task;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
 import com.drknotter.episodilyzer.Episodilyzer;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.converter.ConversionException;
 import retrofit.converter.SimpleXMLConverter;
@@ -32,6 +34,7 @@ import retrofit.mime.TypedFile;
 import retrofit.mime.TypedInput;
 
 public class SaveSeriesAsyncTask extends AsyncTask<Void, Void, Void> {
+    private static final String TAG = "SaveSeriesAsyncTask";
     private SaveSeriesInfo searchResult;
 
     public SaveSeriesAsyncTask(SaveSeriesInfo searchResult) {
@@ -56,14 +59,19 @@ public class SaveSeriesAsyncTask extends AsyncTask<Void, Void, Void> {
 
     private void saveSeries(int seriesId) {
         Series series = null;
+        Response response = null;
 
-        Response response = new RestAdapter.Builder()
-                .setEndpoint(TheTVDBService.BASE_URL)
-                .build()
-                .create(TheTVDBService.class)
-                .getSeriesInfo(
-                        Episodilyzer.getInstance().getString(R.string.api_key),
-                        seriesId);
+        try {
+            response = new RestAdapter.Builder()
+                    .setEndpoint(TheTVDBService.BASE_URL)
+                    .build()
+                    .create(TheTVDBService.class)
+                    .getSeriesInfo(
+                            Episodilyzer.getInstance().getString(R.string.api_key),
+                            seriesId);
+        } catch (RetrofitError e) {
+            Log.w(TAG, "Unable to fetch series info!");
+        }
 
         if (response == null) {
             EventBus.getDefault().post(new SeriesSaveFailEvent(searchResult, SeriesSaveFailEvent.Reason.NO_RESPONSE, null));

@@ -51,7 +51,6 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         theTVDBService = new RestAdapter.Builder()
                 .setEndpoint(TheTVDBService.BASE_URL)
                 .setConverter(new SimpleXMLConverter())
-                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build()
                 .create(TheTVDBService.class);
 
