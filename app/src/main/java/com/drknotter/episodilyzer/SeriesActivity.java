@@ -5,18 +5,16 @@ import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.SeriesAdapter;
@@ -34,8 +32,10 @@ import com.drknotter.episodilyzer.utils.SoundUtils;
 import com.drknotter.episodilyzer.view.holder.SeasonHeaderViewHolder;
 import com.drknotter.episodilyzer.view.holder.SeriesOverviewViewHolder;
 import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 import com.squareup.seismic.ShakeDetector;
 import com.tonicartos.superslim.LayoutManager;
 
@@ -48,17 +48,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-import butterknife.BindView;
-import butterknife.OnClick;
-
 public class SeriesActivity extends RecyclerViewActivity implements ShakeDetector.Listener {
     public static final String EXTRA_SERIES_ID = SeriesActivity.class.getCanonicalName() + ".EXTRA_SERIES_ID";
 
-    @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
-    @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbar;
-    @BindView(R.id.toolbar_background)
     ImageView toolbarBackground;
 
     private List<Object> seriesInfo = new ArrayList<>();
@@ -73,6 +67,16 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        appBarLayout = findViewById(R.id.app_bar_layout);
+        collapsingToolbar = findViewById(R.id.collapsing_toolbar);
+        toolbarBackground = findViewById(R.id.toolbar_background);
+        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                randomEpisode();
+            }
+        });
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -174,6 +178,7 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         handleIntent(intent);
     }
 
@@ -288,7 +293,6 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 
-    @OnClick(R.id.fab)
     public void randomEpisode() {
         if (randomEpisodeOrder.size() == 0) {
             newRandomOrder();

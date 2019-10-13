@@ -11,7 +11,7 @@ import retrofit.http.Query;
 import retrofit.http.Streaming;
 
 public interface TheTVDBService {
-    String BASE_URL = "http://thetvdb.com";
+    String BASE_URL = "https://thetvdb.com";
 
     @POST("/api/GetSeries.php")
     void searchShows(@Query("seriesname") String name,

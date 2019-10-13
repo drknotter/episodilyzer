@@ -5,17 +5,17 @@ import android.content.Context;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.adapter.EpisodilyzerAdapter;
@@ -27,6 +27,7 @@ import com.drknotter.episodilyzer.model.Series;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.drknotter.episodilyzer.utils.SoundUtils;
 import com.drknotter.episodilyzer.view.smoothscroller.CenteredSmoothScroller;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.seismic.ShakeDetector;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,8 +38,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-
-import butterknife.OnClick;
 
 public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeDetector.Listener {
     private List<Series> myShows = new ArrayList<>();
@@ -207,7 +206,6 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
         displayAllSeries();
     }
 
-    @OnClick(R.id.fab)
     public void randomSeries() {
         if (randomSeriesOrder.size() == 0) {
             newRandomOrder();

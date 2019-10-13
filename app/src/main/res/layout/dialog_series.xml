@@ -38,7 +38,7 @@
                     android:paddingBottom="4dp"/>
 
                 <TextView
-                    android:id="@+id/firstAired"
+                    android:id="@+id/first_aired"
                     style="@style/TextAppearance.AppCompat.Caption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>

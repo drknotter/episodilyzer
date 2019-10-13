@@ -3,13 +3,14 @@ package com.drknotter.episodilyzer.view.holder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.SeriesActivity;
@@ -19,32 +20,25 @@ import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.utils.PicassoUtils;
 import com.drknotter.episodilyzer.utils.PreferenceUtils;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.banner)
     ImageView banner;
-
-    @BindView(R.id.title)
     TextView title;
-    @BindView(R.id.firstAired)
     TextView firstAired;
-    @BindView(R.id.delete_button)
     View deleteButton;
-
-    @BindView(R.id.overview)
     TextView overview;
 
     public BriefSeriesViewHolder(View itemView) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+        banner = itemView.findViewById(R.id.banner);
+        title = itemView.findViewById(R.id.title);
+        firstAired = itemView.findViewById(R.id.first_aired);
+        deleteButton = itemView.findViewById(R.id.delete_button);
+        overview = itemView.findViewById(R.id.overview);
     }
 
     public void bindSeries(final Series series, final View.OnClickListener deleteClickListener) {

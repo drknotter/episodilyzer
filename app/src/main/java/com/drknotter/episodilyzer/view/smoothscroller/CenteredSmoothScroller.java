@@ -2,8 +2,8 @@ package com.drknotter.episodilyzer.view.smoothscroller;
 
 import android.content.Context;
 import android.graphics.PointF;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 import com.tonicartos.superslim.LayoutManager;

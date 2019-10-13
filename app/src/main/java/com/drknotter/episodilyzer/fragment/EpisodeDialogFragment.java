@@ -2,46 +2,33 @@ package com.drknotter.episodilyzer.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.utils.PicassoUtils;
 import com.drknotter.episodilyzer.view.AspectRatioImageView;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 public class EpisodeDialogFragment extends AppCompatDialogFragment {
     public static final String TAG = EpisodeDialogFragment.class.getSimpleName();
     public static final String ARG_EPISODE_ID = "ARG_SERIES_BANNER";
 
-    @BindView(R.id.episode_image)
     AspectRatioImageView episodeImage;
-    @BindView(R.id.episode_name)
     TextView episodeName;
-    @BindView(R.id.directors)
     TextView directors;
-    @BindView(R.id.writers)
     TextView writers;
-    @BindView(R.id.guest_starring)
     TextView guestStarring;
-    @BindView(R.id.overview)
     TextView overview;
-
-    private Unbinder unbinder;
 
     public static EpisodeDialogFragment newInstance(int episodeId) {
         EpisodeDialogFragment fragment = new EpisodeDialogFragment();
@@ -63,7 +50,12 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.dialog_episode, container, false);
-        unbinder = ButterKnife.bind(this, root);
+        episodeImage = root.findViewById(R.id.episode_image);
+        episodeName = root.findViewById(R.id.episode_name);
+        directors = root.findViewById(R.id.directors);
+        writers = root.findViewById(R.id.writers);
+        guestStarring = root.findViewById(R.id.guest_starring);
+        overview = root.findViewById(R.id.overview);
 
         int episodeId = 0;
         if (getArguments() != null) {
@@ -86,7 +78,12 @@ public class EpisodeDialogFragment extends AppCompatDialogFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
+        episodeImage = null;
+        episodeName = null;
+        directors = null;
+        writers = null;
+        guestStarring = null;
+        overview = null;
     }
 
     private void bindEpisode(Episode episode) {

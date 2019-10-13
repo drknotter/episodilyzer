@@ -2,39 +2,35 @@ package com.drknotter.episodilyzer;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.drknotter.episodilyzer.view.decoration.StaggeredGridItemDecoration;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-public class RecyclerViewActivity extends AppCompatActivity {
-    @BindView(R.id.toolbar)
+public abstract class RecyclerViewActivity extends AppCompatActivity {
     Toolbar toolbar;
 
-    @BindView(R.id.empty_image)
     ImageView emptyImage;
-    @BindView(R.id.empty_text)
     TextView emptyText;
 
-    @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getContentViewId());
-        ButterKnife.bind(this);
+
+        toolbar = findViewById(R.id.toolbar);
+        emptyImage = findViewById(R.id.empty_image);
+        emptyText = findViewById(R.id.empty_text);
+        recyclerView = findViewById(R.id.recycler_view);
 
         setSupportActionBar(toolbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

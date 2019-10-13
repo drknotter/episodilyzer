@@ -1,11 +1,12 @@
 package com.drknotter.episodilyzer.view.holder;
 
 import android.app.Activity;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.fragment.SeriesDialogFragment;
@@ -16,23 +17,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.download_button)
     View downloadButton;
-
-    @BindView(R.id.title)
     TextView title;
-    @BindView(R.id.firstAired)
     TextView firstAired;
-    @BindView(R.id.overview)
     TextView overview;
 
     public SeriesSearchResultViewHolder(View itemView) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+        downloadButton = itemView.findViewById(R.id.download_button);
+        title = itemView.findViewById(R.id.title);
+        firstAired = itemView.findViewById(R.id.first_aired);
+        overview = itemView.findViewById(R.id.overview);
     }
 
     public void bindSearchResult(final SaveSeriesInfo saveSeriesInfo) {

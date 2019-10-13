@@ -2,13 +2,14 @@ package com.drknotter.episodilyzer.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.server.TheTVDBService;
@@ -17,34 +18,20 @@ import com.drknotter.episodilyzer.utils.PicassoUtils;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.drknotter.episodilyzer.view.AspectRatioImageView;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 public class SeriesDialogFragment extends AppCompatDialogFragment {
     public static final String TAG = SeriesDialogFragment.class.getSimpleName();
     public static final String ARG_SERIES_INFO = "ARG_SERIES_INFO";
 
-    @BindView(R.id.series_banner)
     AspectRatioImageView seriesBanner;
-    @BindView(R.id.series_name)
     TextView seriesName;
-    @BindView(R.id.firstAired)
     TextView firstAired;
-
-    @BindView(R.id.download_button)
     View downloadButton;
-
-    @BindView(R.id.overview)
     TextView overview;
-
-    private Unbinder unbinder;
 
     public static SeriesDialogFragment newInstance(SaveSeriesInfo seriesInfo) {
         SeriesDialogFragment fragment = new SeriesDialogFragment();
@@ -66,7 +53,11 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.dialog_series, container, false);
-        unbinder = ButterKnife.bind(this, root);
+        seriesBanner = root.findViewById(R.id.series_banner);
+        seriesName = root.findViewById(R.id.series_name);
+        firstAired = root.findViewById(R.id.first_aired);
+        downloadButton = root.findViewById(R.id.download_button);
+        overview = root.findViewById(R.id.overview);
 
         SaveSeriesInfo seriesInfo = null;
         if (getArguments() != null) {
@@ -88,7 +79,11 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
+        seriesBanner = null;
+        seriesName = null;
+        firstAired = null;
+        downloadButton = null;
+        overview = null;
     }
 
     private void bindSeries(final SaveSeriesInfo seriesInfo) {

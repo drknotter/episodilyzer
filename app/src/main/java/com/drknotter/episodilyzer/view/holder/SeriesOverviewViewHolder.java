@@ -3,26 +3,23 @@ package com.drknotter.episodilyzer.view.holder;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.SeriesOverview;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class SeriesOverviewViewHolder extends BindableViewHolder<SeriesOverview> {
-    @BindView(R.id.firstAired)
     TextView firstAired;
-    @BindView(R.id.overview)
     TextView overview;
-    @BindView(R.id.starring)
     TextView starring;
-
-    @BindView(R.id.overview_fade_out)
     View overviewFadeOut;
 
     public SeriesOverviewViewHolder(View itemView) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+
+        firstAired = itemView.findViewById(R.id.first_aired);
+        overview = itemView.findViewById(R.id.overview);
+        starring = itemView.findViewById(R.id.starring);
+        overviewFadeOut = itemView.findViewById(R.id.overview_fade_out);
     }
 
     @Override

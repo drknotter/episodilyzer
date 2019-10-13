@@ -3,10 +3,11 @@ package com.drknotter.episodilyzer;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.RotateAnimation;
@@ -38,6 +39,7 @@ import retrofit.converter.SimpleXMLConverter;
 
 public class SearchSeriesActivity extends RecyclerViewActivity {
 
+    private static final String TAG = SearchSeriesActivity.class.getSimpleName();
     private TheTVDBService theTVDBService;
     private List<SaveSeriesInfo> searchResults = new ArrayList<>();
 
@@ -75,6 +77,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         handleIntent(intent);
     }
 
@@ -169,6 +172,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
     }
 
     private void onSearchFailure(RetrofitError error) {
+        Log.d(TAG, "onSearchFailure(" + error + ")");
         searchResults.clear();
         recyclerView.getAdapter().notifyDataSetChanged();
 

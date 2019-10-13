@@ -8,24 +8,22 @@ import android.widget.TextView;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.model.Season;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class SeasonHeaderViewHolder extends BindableViewHolder<Season> {
     public interface OnSeasonSelectedChangeListener {
         void onSeasonSelectedChange(Season s, boolean selected);
     }
 
-    @BindView(R.id.seasonName)
     TextView seasonName;
-    @BindView(R.id.selected)
     CheckBox selected;
 
     private OnSeasonSelectedChangeListener listener;
 
     public SeasonHeaderViewHolder(View itemView, OnSeasonSelectedChangeListener listener) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+
+        seasonName = itemView.findViewById(R.id.season_name);
+        selected = itemView.findViewById(R.id.selected);
+
         this.listener = listener;
     }
 
