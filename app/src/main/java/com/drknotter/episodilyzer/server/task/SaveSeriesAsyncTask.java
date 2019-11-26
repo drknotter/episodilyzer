@@ -48,7 +48,7 @@ public class SaveSeriesAsyncTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        saveSeries(searchResult.seriesId);
+        saveSeries(searchResult.id);
         return null;
     }
 

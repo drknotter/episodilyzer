@@ -3,6 +3,11 @@ package com.drknotter.episodilyzer;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.drknotter.episodilyzer.model.AuthTokenRequest;
+import com.drknotter.episodilyzer.model.AuthTokenResponse;
+import com.drknotter.episodilyzer.utils.PreferenceUtils;
+import com.drknotter.episodilyzer.utils.RequestUtils;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,11 +40,11 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import retrofit.converter.SimpleXMLConverter;
 
 public class SearchSeriesActivity extends RecyclerViewActivity {
-
     private static final String TAG = SearchSeriesActivity.class.getSimpleName();
+    private static final int MAX_ATTEMPTS = 3;
+
     private TheTVDBService theTVDBService;
     private List<SaveSeriesInfo> searchResults = new ArrayList<>();
 
@@ -52,7 +57,6 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
 
         theTVDBService = new RestAdapter.Builder()
                 .setEndpoint(TheTVDBService.BASE_URL)
-                .setConverter(new SimpleXMLConverter())
                 .build()
                 .create(TheTVDBService.class);
 
@@ -107,7 +111,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         Iterator<SaveSeriesInfo> iterator = searchResults.iterator();
         while (iterator.hasNext()) {
             SaveSeriesInfo info = iterator.next();
-            if (info.seriesId == event.series.id) {
+            if (info.id == event.series.id) {
                 iterator.remove();
                 recyclerView.getAdapter().notifyItemRemoved(index);
                 break;
@@ -149,8 +153,26 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
             emptyImage.clearAnimation();
             emptyImage.startAnimation(new SearchAnimation());
 
-            theTVDBService.searchShows(query, new SearchResultCallback(this));
+            String authToken = PreferenceUtils.getAuthToken();
+            if (authToken == null) {
+                getAuthToken(query, 0);
+            } else {
+                searchShows(authToken, query, 0);
+            }
         }
+    }
+
+    private void getAuthToken(String query, int attempts) {
+        theTVDBService.getAuthToken(
+                new AuthTokenRequest(
+                        Episodilyzer.getInstance().getString(R.string.api_key)),
+                new AuthTokenCallback(this, query, attempts));
+    }
+
+    private void searchShows(String authToken, String query, int attempts) {
+        theTVDBService.searchShows(RequestUtils.getBearerString(authToken),
+                query,
+                new SearchResultCallback(this, query, attempts));
     }
 
     private void onSearchSuccess(List<SaveSeriesInfo> resultList) {
@@ -172,7 +194,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
     }
 
     private void onSearchFailure(RetrofitError error) {
-        Log.d(TAG, "onSearchFailure(" + error + ")");
+        Log.d(TAG, "onSearchFailure(" + error + "): " + error.getMessage());
         searchResults.clear();
         recyclerView.getAdapter().notifyDataSetChanged();
 
@@ -192,11 +214,45 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         }
     }
 
-    private static class SearchResultCallback implements Callback<SearchResult> {
-        private WeakReference<SearchSeriesActivity> activityRef;
+    private static class AuthTokenCallback implements Callback<AuthTokenResponse> {
+        private final WeakReference<SearchSeriesActivity> activityRef;
+        private final String query;
+        private final int attempts;
 
-        SearchResultCallback(SearchSeriesActivity activity) {
+        AuthTokenCallback(SearchSeriesActivity activity, String query, int attempts) {
             activityRef = new WeakReference<>(activity);
+            this.query = query;
+            this.attempts = attempts;
+        }
+
+        @Override
+        public void success(AuthTokenResponse authTokenResponse, Response response) {
+            String authToken = authTokenResponse.token;
+            PreferenceUtils.setAuthToken(authToken);
+            SearchSeriesActivity activity = activityRef.get();
+            if (activity != null) {
+                activity.searchShows(authToken, query, attempts);
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            SearchSeriesActivity activity = activityRef.get();
+            if (activity != null) {
+                activity.onSearchFailure(error);
+            }
+        }
+    }
+
+    private static class SearchResultCallback implements Callback<SearchResult> {
+        private final WeakReference<SearchSeriesActivity> activityRef;
+        private final String query;
+        private final int attempts;
+
+        SearchResultCallback(SearchSeriesActivity activity, String query, int attempts) {
+            activityRef = new WeakReference<>(activity);
+            this.query = query;
+            this.attempts = attempts;
         }
 
         @Override
@@ -204,15 +260,15 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
             SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
                 List<SaveSeriesInfo> results = new ArrayList<>();
-                if (searchResult != null && searchResult.resultList != null) {
-                    results.addAll(searchResult.resultList);
+                if (searchResult != null && searchResult.data != null) {
+                    results.addAll(searchResult.data);
                 }
 
                 Iterator<SaveSeriesInfo> iterator = results.iterator();
                 while (iterator.hasNext()) {
                     SaveSeriesInfo saveSeriesInfo = iterator.next();
                     if (new Select().from(Series.class)
-                            .where("series_id = ?", saveSeriesInfo.seriesId)
+                            .where("series_id = ?", saveSeriesInfo.id)
                             .exists()) {
                         iterator.remove();
                     }
@@ -226,7 +282,11 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         public void failure(RetrofitError error) {
             SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
-                activity.onSearchFailure(error);
+                if (error.getResponse().getStatus() == 401 && attempts < MAX_ATTEMPTS) {
+                    activity.getAuthToken(query, attempts + 1);
+                } else {
+                    activity.onSearchFailure(error);
+                }
             }
         }
     }

@@ -201,7 +201,7 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveStartEvent(SeriesSaveStartEvent event) {
-        if (event.searchResult.seriesId == series.id) {
+        if (event.searchResult.id == series.id) {
             Snackbar.make(recyclerView, getString(R.string.snack_sync_series), Snackbar.LENGTH_SHORT).show();
         }
     }
@@ -216,7 +216,7 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveFailEvent(SeriesSaveFailEvent event) {
-        if (event.searchResult.seriesId == series.id) {
+        if (event.searchResult.id == series.id) {
             String message = getString(R.string.snack_series_save_failed, event.searchResult.seriesName);
             if (event.reason == SeriesSaveFailEvent.Reason.NO_RESPONSE) {
                 message = getString(R.string.snack_series_save_failed_no_response, event.searchResult.seriesName);

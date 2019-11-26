@@ -5,28 +5,20 @@ import com.drknotter.episodilyzer.model.Series;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
-@Root(name="Series", strict=false)
+import java.util.List;
+
 public class SaveSeriesInfo {
-    @Element(name="seriesid")
-    public int seriesId;
+    public List<String> aliases;
 
-    @Element(name="language", required=false)
-    public String language;
-
-    @Element(name="SeriesName")
-    public String seriesName;
-
-    @Element(name="banner", required=false)
     public String banner;
 
-    @Element(name="Overview", required=false)
-    public String overview;
-
-    @Element(name="FirstAired", required=false)
     public String firstAired;
 
-    @Element(name="IMDB_ID", required=false)
-    public String imdbId;
+    public int id;
+
+    public String overview;
+
+    public String seriesName;
 
     public SaveSeriesInfo() {}
 
@@ -34,8 +26,8 @@ public class SaveSeriesInfo {
         this(series.id, series.seriesName, series.overview, series.firstAired);
     }
 
-    public SaveSeriesInfo(int seriesId, String seriesName, String overview, String firstAired) {
-        this.seriesId = seriesId;
+    public SaveSeriesInfo(int id, String seriesName, String overview, String firstAired) {
+        this.id = id;
         this.seriesName = seriesName;
         this.overview = overview;
         this.firstAired = firstAired;

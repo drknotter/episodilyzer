@@ -38,12 +38,12 @@ public class SeriesUtils {
             return;
         }
 
-        if (!saveSeriesTaskMap.containsKey(seriesInfo.seriesId)) {
+        if (!saveSeriesTaskMap.containsKey(seriesInfo.id)) {
             SaveSeriesAsyncTask task = new SaveSeriesAsyncTask(seriesInfo) {
                 @Override
                 protected void onPostExecute(Void result) {
                     super.onPostExecute(result);
-                    saveSeriesTaskMap.remove(seriesInfo.seriesId);
+                    saveSeriesTaskMap.remove(seriesInfo.id);
                 }
 
                 @Override
