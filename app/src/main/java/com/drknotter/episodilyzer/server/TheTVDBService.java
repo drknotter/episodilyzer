@@ -2,6 +2,7 @@ package com.drknotter.episodilyzer.server;
 
 import com.drknotter.episodilyzer.model.AuthTokenRequest;
 import com.drknotter.episodilyzer.model.AuthTokenResponse;
+import com.drknotter.episodilyzer.server.model.BannerList;
 import com.drknotter.episodilyzer.server.model.SearchResult;
 
 import retrofit2.Call;
@@ -24,6 +25,12 @@ public interface TheTVDBService {
     @GET("/search/series")
     Call<SearchResult> searchShows(@Header("Authorization") String bearerAuthToken,
                      @Query("name") String name);
+
+    @GET("/series/{seriesId}/images/query")
+    Call<BannerList> getBanners(@Header("Authorization") String bearerAuthToken,
+                                @Path("seriesId") int seriesId,
+                                @Query("keyType") String type,
+                                @Query("subKey") String subType);
 
     @GET("/api/{apiKey}/series/{seriesKey}/all/en.zip")
     @Streaming

@@ -8,8 +8,6 @@ import java.util.List;
 /**
  * Created by plunkett on 1/27/16.
  */
-@Root(name="Banners", strict = false)
 public class BannerList {
-    @ElementList(inline = true, name = "Banner")
-    public List<BaseBanner> banners;
+    public List<BaseBanner> data;
 }

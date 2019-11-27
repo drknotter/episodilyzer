@@ -19,16 +19,16 @@ public class Banner extends Model {
     public Banner(BaseBanner baseBanner, Series series) {
         super();
         this.series = series;
-        path = baseBanner.bannerPath;
-        thumbnailPath = baseBanner.thumbnailPath;
-        vignettePath = baseBanner.vignettePath;
-        type = baseBanner.bannerType;
-        type2 = baseBanner.bannerType2;
-        season = baseBanner.season;
-        rating = baseBanner.rating;
-        ratingCount = baseBanner.ratingCount;
-        seriesName = baseBanner.seriesName;
-        colors = baseBanner.colors;
+        path = baseBanner.fileName;
+        thumbnailPath = baseBanner.thumbnail;
+//        vignettePath = baseBanner.vignettePath;
+        type = baseBanner.keyType;
+        type2 = baseBanner.subKey;
+//        season = baseBanner.season;
+//        rating = baseBanner.rating;
+//        ratingCount = baseBanner.ratingCount;
+//        seriesName = baseBanner.seriesName;
+//        colors = baseBanner.colors;
     }
 
     @Column(name="series", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
@@ -39,7 +39,7 @@ public class Banner extends Model {
     public String path;
 
     // Used exactly the same way as BannerPath, only shows if BannerType is fanart.
-    @Column(name="thumbnailPath")
+    @Column(name="thumbnail")
     public String thumbnailPath;
     @Column(name="vignettePath")
     public String vignettePath;
@@ -49,7 +49,7 @@ public class Banner extends Model {
     public String type;
 
     // For series banners it can be text, graphical, or blank. For season banners it can be season or seasonwide. For fanart it can be 1280x720 or 1920x1080. For poster it will always be 680x1000. Blank banners will leave the title and show logo off the banner. Text banners will show the series name as plain text in an Arial font. Graphical banners will show the series name in the show's official font or will display the actual logo for the show. Season banners are the standard DVD cover format while wide season banners will be the same dimensions as the series banners.
-    @Column(name="bannerType2")
+    @Column(name="subKey")
     public String type2;
 
     // If the banner is for a specific season, that season number will be listed here.

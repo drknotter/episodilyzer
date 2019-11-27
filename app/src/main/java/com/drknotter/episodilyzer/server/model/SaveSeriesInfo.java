@@ -8,8 +8,6 @@ import org.simpleframework.xml.Root;
 import java.util.List;
 
 public class SaveSeriesInfo {
-    public List<String> aliases;
-
     public String banner;
 
     public String firstAired;

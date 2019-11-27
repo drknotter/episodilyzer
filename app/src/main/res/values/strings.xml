@@ -47,6 +47,9 @@
     <string name="delete_show_button">Remove</string>
     <string name="dont_show_again">Don\'t show again</string>
 
+    <string name="auth_failed">Authentication failed!</string>
+    <string name="auth_failed_with_message">Authentication failed! Error message: %1$s</string>
+
     <string name="searching">Searching…</string>
     <string name="no_search_results">No search results!</string>
     <string name="network_error">Network error! Are you connected to the internet?</string>

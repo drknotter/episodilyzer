@@ -3,29 +3,24 @@ package com.drknotter.episodilyzer;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.drknotter.episodilyzer.model.AuthTokenRequest;
-import com.drknotter.episodilyzer.model.AuthTokenResponse;
-import com.drknotter.episodilyzer.utils.PreferenceUtils;
-import com.drknotter.episodilyzer.utils.RequestUtils;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.RotateAnimation;
 
-import com.activeandroid.query.Select;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.drknotter.episodilyzer.adapter.SearchShowsAdapter;
 import com.drknotter.episodilyzer.event.SeriesSaveFailEvent;
 import com.drknotter.episodilyzer.event.SeriesSaveStartEvent;
 import com.drknotter.episodilyzer.event.SeriesSaveSuccessEvent;
-import com.drknotter.episodilyzer.model.Series;
-import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
 import com.drknotter.episodilyzer.server.model.SearchResult;
+import com.drknotter.episodilyzer.server.task.SearchSeriesTask;
+import com.drknotter.episodilyzer.server.task.TaskCallback;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,17 +31,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import retrofit2.Callback;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 public class SearchSeriesActivity extends RecyclerViewActivity {
     private static final String TAG = SearchSeriesActivity.class.getSimpleName();
-    private static final int MAX_ATTEMPTS = 3;
 
-    private TheTVDBService theTVDBService;
     private List<SaveSeriesInfo> searchResults = new ArrayList<>();
 
     @Override
@@ -55,12 +42,6 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        theTVDBService = new Retrofit.Builder()
-                .baseUrl(TheTVDBService.API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(TheTVDBService.class);
 
         recyclerView.setAdapter(new SearchShowsAdapter(searchResults));
         emptyImage.setImageResource(R.mipmap.app_icon);
@@ -155,25 +136,8 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
             emptyImage.clearAnimation();
             emptyImage.startAnimation(new SearchAnimation());
 
-            String authToken = PreferenceUtils.getAuthToken();
-            if (authToken == null) {
-                getAuthToken(query, 0);
-            } else {
-                searchShows(authToken, query, 0);
-            }
+            new SearchSeriesTask(query, new SearchResultTaskCallback(this)).execute();
         }
-    }
-
-    private void getAuthToken(String query, int attempts) {
-        theTVDBService.getAuthToken(
-                new AuthTokenRequest(
-                        Episodilyzer.getInstance().getString(R.string.api_key)))
-                .enqueue(new AuthTokenCallback(this, query, attempts));
-    }
-
-    private void searchShows(String authToken, String query, int attempts) {
-        theTVDBService.searchShows(RequestUtils.getBearerString(authToken), query)
-                .enqueue(new SearchResultCallback(this, query, attempts));
     }
 
     private void onSearchSuccess(List<SaveSeriesInfo> resultList) {
@@ -207,106 +171,28 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         emptyText.setText(message);
     }
 
-    private static class AuthTokenCallback implements Callback<AuthTokenResponse> {
+    private static class SearchResultTaskCallback implements TaskCallback<SearchResult> {
         private final WeakReference<SearchSeriesActivity> activityRef;
-        private final String query;
-        private final int attempts;
 
-        AuthTokenCallback(SearchSeriesActivity activity, String query, int attempts) {
+        SearchResultTaskCallback(SearchSeriesActivity activity) {
             activityRef = new WeakReference<>(activity);
-            this.query = query;
-            this.attempts = attempts;
         }
 
         @Override
-        public void onResponse(Call<AuthTokenResponse> call, Response<AuthTokenResponse> response) {
-            if (response != null && response.isSuccessful() && response.body() != null) {
-                String authToken = response.body().token;
-                PreferenceUtils.setAuthToken(authToken);
-                SearchSeriesActivity activity = activityRef.get();
-                if (activity != null) {
-                    activity.searchShows(authToken, query, attempts);
-                }
-            } else {
-                SearchSeriesActivity activity = activityRef.get();
-                if (activity != null) {
-                    String message = Episodilyzer.getInstance().getString(R.string.search_failed);
-                    if (response == null || response.body() == null) {
-                        message = Episodilyzer.getInstance().getString(R.string.no_response);
-                    } else if (!response.isSuccessful()) {
-                        message = Episodilyzer.getInstance().getString(
-                                R.string.search_failed_with_message, response.message());
-                    }
-                    activity.onSearchFailure(message);
-                }
+        public void onSuccess(SearchResult result) {
+            SearchSeriesActivity activity = activityRef.get();
+            if (activity != null) {
+                activity.onSearchSuccess(result.data);
             }
         }
 
         @Override
-        public void onFailure(Call<AuthTokenResponse> call, Throwable t) {
+        public void onError(String errorMessage) {
             SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
-                activity.onSearchFailure(Episodilyzer.getInstance().getString(R.string.network_error));
-            }
-        }
-    }
-
-    private static class SearchResultCallback implements Callback<SearchResult> {
-        private final WeakReference<SearchSeriesActivity> activityRef;
-        private final String query;
-        private final int attempts;
-
-        SearchResultCallback(SearchSeriesActivity activity, String query, int attempts) {
-            activityRef = new WeakReference<>(activity);
-            this.query = query;
-            this.attempts = attempts;
-        }
-
-        @Override
-        public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
-            SearchSeriesActivity activity = activityRef.get();
-            if (activity != null) {
-                if (response != null && response.isSuccessful() && response.body() != null) {
-                    SearchResult searchResult = response.body();
-                    List<SaveSeriesInfo> results = new ArrayList<>();
-                    if (searchResult.data != null) {
-                        results.addAll(searchResult.data);
-                    }
-
-                    Iterator<SaveSeriesInfo> iterator = results.iterator();
-                    while (iterator.hasNext()) {
-                        SaveSeriesInfo saveSeriesInfo = iterator.next();
-                        if (new Select().from(Series.class)
-                                .where("series_id = ?", saveSeriesInfo.id)
-                                .exists()) {
-                            iterator.remove();
-                        }
-                    }
-
-                    activity.onSearchSuccess(results);
-
-                } else {
-                    if (response != null && response.code() == 401 && attempts < MAX_ATTEMPTS) {
-                        activity.getAuthToken(query, attempts + 1);
-                    } else {
-                        String message = Episodilyzer.getInstance().getString(R.string.search_failed);
-                        if (response == null || response.body() == null) {
-                            message = Episodilyzer.getInstance().getString(R.string.no_response);
-                        } else if (!response.isSuccessful()) {
-                            message = Episodilyzer.getInstance().getString(
-                                    R.string.search_failed_with_message, response.message());
-                        }
-                        activity.onSearchFailure(message);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Call<SearchResult> call, Throwable t) {
-            SearchSeriesActivity activity = activityRef.get();
-            if (activity != null) {
-                activity.onSearchFailure(Episodilyzer.getInstance().getString(R.string.network_error));
+                activity.onSearchFailure(errorMessage == null || errorMessage.isEmpty()
+                        ? Episodilyzer.getInstance().getString(R.string.search_failed)
+                        : errorMessage);
             }
         }
     }

@@ -18,10 +18,10 @@ import java.util.Date;
 import java.util.Locale;
 
 public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
-    View downloadButton;
-    TextView title;
-    TextView firstAired;
-    TextView overview;
+    private View downloadButton;
+    private TextView title;
+    private TextView firstAired;
+    private TextView overview;
 
     public SeriesSearchResultViewHolder(View itemView) {
         super(itemView);

@@ -1,5 +1,6 @@
 package com.drknotter.episodilyzer.fragment;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,17 +10,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.server.TheTVDBService;
+import com.drknotter.episodilyzer.server.model.BannerList;
 import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.server.task.GetBannerTask;
+import com.drknotter.episodilyzer.server.task.TaskCallback;
 import com.drknotter.episodilyzer.utils.PicassoUtils;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.drknotter.episodilyzer.view.AspectRatioImageView;
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -28,11 +34,11 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
     public static final String TAG = SeriesDialogFragment.class.getSimpleName();
     public static final String ARG_SERIES_INFO = "ARG_SERIES_INFO";
 
-    AspectRatioImageView seriesBanner;
-    TextView seriesName;
-    TextView firstAired;
-    View downloadButton;
-    TextView overview;
+    private AspectRatioImageView seriesBanner;
+    private TextView seriesName;
+    private TextView firstAired;
+    private View downloadButton;
+    private TextView overview;
 
     public static SeriesDialogFragment newInstance(SaveSeriesInfo seriesInfo) {
         SeriesDialogFragment fragment = new SeriesDialogFragment();
@@ -50,7 +56,7 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.dialog_series, container, false);
@@ -64,7 +70,7 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
         if (getArguments() != null) {
             try {
                 seriesInfo = new Gson().fromJson(getArguments().getString(ARG_SERIES_INFO), SaveSeriesInfo.class);
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
             }
         }
 
@@ -89,16 +95,7 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
 
     private void bindSeries(final SaveSeriesInfo seriesInfo) {
         // Bind the episode image, if present.
-        Uri bannerUri = null;
-        if (seriesInfo.banner != null) {
-            Log.d("FindMe", "banner: " + seriesInfo.banner);
-            bannerUri = Uri.parse(TheTVDBService.WEB_URL + seriesInfo.banner);
-            Log.d("FindMe", "uri: " + bannerUri.toString());
-        }
-        PicassoUtils.getPicasso(getContext())
-                .load(bannerUri)
-                .into(seriesBanner);
-        seriesBanner.setVisibility(bannerUri != null ? View.VISIBLE : View.GONE);
+        new GetBannerTask(seriesInfo.id, "series", "graphical", new BannerTaskCallback(getContext(), seriesBanner)).execute();
 
         // Bind the episode name.
         seriesName.setText(seriesInfo.seriesName);
@@ -130,5 +127,40 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
             firstAired.setText(null);
             firstAired.setVisibility(View.GONE);
         }
+    }
+
+    private static class BannerTaskCallback implements TaskCallback<BannerList> {
+        private final WeakReference<Context> contextRef;
+        private final WeakReference<AspectRatioImageView> bannerRef;
+
+        private BannerTaskCallback(Context context, AspectRatioImageView banner) {
+            contextRef = new WeakReference<>(context);
+            bannerRef = new WeakReference<>(banner);
+        }
+
+        @Override
+        public void onSuccess(BannerList bannerList) {
+            Context context = contextRef.get();
+            AspectRatioImageView banner = bannerRef.get();
+            if (context == null || banner == null) {
+                return;
+            }
+
+            Uri bannerUri = null;
+            if (bannerList != null && bannerList.data != null && bannerList.data.size() > 0) {
+                bannerUri = Uri.parse(TheTVDBService.WEB_URL)
+                        .buildUpon()
+                        .appendPath("banners")
+                        .appendPath(bannerList.data.get(0).fileName)
+                        .build();
+            }
+            PicassoUtils.getPicasso(context)
+                    .load(bannerUri)
+                    .into(banner);
+            banner.setVisibility(bannerUri != null ? View.VISIBLE : View.GONE);
+        }
+
+        @Override
+        public void onError(String errorMessage) {}
     }
 }
