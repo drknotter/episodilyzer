@@ -3,6 +3,7 @@ package com.drknotter.episodilyzer.fragment;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,11 +91,9 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
         // Bind the episode image, if present.
         Uri bannerUri = null;
         if (seriesInfo.banner != null) {
-            bannerUri = Uri.parse(TheTVDBService.BASE_URL)
-                    .buildUpon()
-                    .appendPath("banners")
-                    .appendPath(seriesInfo.banner)
-                    .build();
+            Log.d("FindMe", "banner: " + seriesInfo.banner);
+            bannerUri = Uri.parse(TheTVDBService.WEB_URL + seriesInfo.banner);
+            Log.d("FindMe", "uri: " + bannerUri.toString());
         }
         PicassoUtils.getPicasso(getContext())
                 .load(bannerUri)

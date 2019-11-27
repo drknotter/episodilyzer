@@ -173,7 +173,7 @@ public class Episode extends Model {
 
     public Uri imageUri() {
         if (filename != null) {
-            return Uri.parse(TheTVDBService.BASE_URL)
+            return Uri.parse(TheTVDBService.API_URL)
                     .buildUpon()
                     .appendPath("banners")
                     .appendPath(filename)

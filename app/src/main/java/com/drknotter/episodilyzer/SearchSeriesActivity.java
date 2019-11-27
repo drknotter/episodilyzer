@@ -36,10 +36,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Callback;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SearchSeriesActivity extends RecyclerViewActivity {
     private static final String TAG = SearchSeriesActivity.class.getSimpleName();
@@ -55,8 +56,9 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        theTVDBService = new RestAdapter.Builder()
-                .setEndpoint(TheTVDBService.BASE_URL)
+        theTVDBService = new Retrofit.Builder()
+                .baseUrl(TheTVDBService.API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(TheTVDBService.class);
 
@@ -165,14 +167,13 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
     private void getAuthToken(String query, int attempts) {
         theTVDBService.getAuthToken(
                 new AuthTokenRequest(
-                        Episodilyzer.getInstance().getString(R.string.api_key)),
-                new AuthTokenCallback(this, query, attempts));
+                        Episodilyzer.getInstance().getString(R.string.api_key)))
+                .enqueue(new AuthTokenCallback(this, query, attempts));
     }
 
     private void searchShows(String authToken, String query, int attempts) {
-        theTVDBService.searchShows(RequestUtils.getBearerString(authToken),
-                query,
-                new SearchResultCallback(this, query, attempts));
+        theTVDBService.searchShows(RequestUtils.getBearerString(authToken), query)
+                .enqueue(new SearchResultCallback(this, query, attempts));
     }
 
     private void onSearchSuccess(List<SaveSeriesInfo> resultList) {
@@ -193,8 +194,8 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         }
     }
 
-    private void onSearchFailure(RetrofitError error) {
-        Log.d(TAG, "onSearchFailure(" + error + "): " + error.getMessage());
+    private void onSearchFailure(String message) {
+        Log.d(TAG, "onSearchFailure(" + message + ")");
         searchResults.clear();
         recyclerView.getAdapter().notifyDataSetChanged();
 
@@ -203,15 +204,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         emptyText.setVisibility(View.VISIBLE);
         emptyImage.setVisibility(View.VISIBLE);
         emptyImage.setImageResource(R.drawable.network_error);
-        if (error.isNetworkError()) {
-            emptyText.setText(R.string.network_error);
-        } else if (error.getResponse() == null) {
-            emptyText.setText(R.string.no_response);
-        } else if (error.getResponse().getReason() == null) {
-            emptyText.setText(R.string.search_failed);
-        } else {
-            emptyText.setText(getString(R.string.search_failed_with_message, error.getResponse().getReason()));
-        }
+        emptyText.setText(message);
     }
 
     private static class AuthTokenCallback implements Callback<AuthTokenResponse> {
@@ -226,20 +219,34 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         }
 
         @Override
-        public void success(AuthTokenResponse authTokenResponse, Response response) {
-            String authToken = authTokenResponse.token;
-            PreferenceUtils.setAuthToken(authToken);
-            SearchSeriesActivity activity = activityRef.get();
-            if (activity != null) {
-                activity.searchShows(authToken, query, attempts);
+        public void onResponse(Call<AuthTokenResponse> call, Response<AuthTokenResponse> response) {
+            if (response != null && response.isSuccessful() && response.body() != null) {
+                String authToken = response.body().token;
+                PreferenceUtils.setAuthToken(authToken);
+                SearchSeriesActivity activity = activityRef.get();
+                if (activity != null) {
+                    activity.searchShows(authToken, query, attempts);
+                }
+            } else {
+                SearchSeriesActivity activity = activityRef.get();
+                if (activity != null) {
+                    String message = Episodilyzer.getInstance().getString(R.string.search_failed);
+                    if (response == null || response.body() == null) {
+                        message = Episodilyzer.getInstance().getString(R.string.no_response);
+                    } else if (!response.isSuccessful()) {
+                        message = Episodilyzer.getInstance().getString(
+                                R.string.search_failed_with_message, response.message());
+                    }
+                    activity.onSearchFailure(message);
+                }
             }
         }
 
         @Override
-        public void failure(RetrofitError error) {
+        public void onFailure(Call<AuthTokenResponse> call, Throwable t) {
             SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
-                activity.onSearchFailure(error);
+                activity.onSearchFailure(Episodilyzer.getInstance().getString(R.string.network_error));
             }
         }
     }
@@ -256,37 +263,50 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         }
 
         @Override
-        public void success(SearchResult searchResult, Response response) {
+        public void onResponse(Call<SearchResult> call, Response<SearchResult> response) {
             SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
-                List<SaveSeriesInfo> results = new ArrayList<>();
-                if (searchResult != null && searchResult.data != null) {
-                    results.addAll(searchResult.data);
-                }
+                if (response != null && response.isSuccessful() && response.body() != null) {
+                    SearchResult searchResult = response.body();
+                    List<SaveSeriesInfo> results = new ArrayList<>();
+                    if (searchResult.data != null) {
+                        results.addAll(searchResult.data);
+                    }
 
-                Iterator<SaveSeriesInfo> iterator = results.iterator();
-                while (iterator.hasNext()) {
-                    SaveSeriesInfo saveSeriesInfo = iterator.next();
-                    if (new Select().from(Series.class)
-                            .where("series_id = ?", saveSeriesInfo.id)
-                            .exists()) {
-                        iterator.remove();
+                    Iterator<SaveSeriesInfo> iterator = results.iterator();
+                    while (iterator.hasNext()) {
+                        SaveSeriesInfo saveSeriesInfo = iterator.next();
+                        if (new Select().from(Series.class)
+                                .where("series_id = ?", saveSeriesInfo.id)
+                                .exists()) {
+                            iterator.remove();
+                        }
+                    }
+
+                    activity.onSearchSuccess(results);
+
+                } else {
+                    if (response != null && response.code() == 401 && attempts < MAX_ATTEMPTS) {
+                        activity.getAuthToken(query, attempts + 1);
+                    } else {
+                        String message = Episodilyzer.getInstance().getString(R.string.search_failed);
+                        if (response == null || response.body() == null) {
+                            message = Episodilyzer.getInstance().getString(R.string.no_response);
+                        } else if (!response.isSuccessful()) {
+                            message = Episodilyzer.getInstance().getString(
+                                    R.string.search_failed_with_message, response.message());
+                        }
+                        activity.onSearchFailure(message);
                     }
                 }
-
-                activity.onSearchSuccess(results);
             }
         }
 
         @Override
-        public void failure(RetrofitError error) {
+        public void onFailure(Call<SearchResult> call, Throwable t) {
             SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
-                if (error.getResponse().getStatus() == 401 && attempts < MAX_ATTEMPTS) {
-                    activity.getAuthToken(query, attempts + 1);
-                } else {
-                    activity.onSearchFailure(error);
-                }
+                activity.onSearchFailure(Episodilyzer.getInstance().getString(R.string.network_error));
             }
         }
     }

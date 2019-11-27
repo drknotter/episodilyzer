@@ -4,34 +4,29 @@ import com.drknotter.episodilyzer.model.AuthTokenRequest;
 import com.drknotter.episodilyzer.model.AuthTokenResponse;
 import com.drknotter.episodilyzer.server.model.SearchResult;
 
-import retrofit.Callback;
-import retrofit.client.Response;
-import retrofit.http.Body;
-import retrofit.http.GET;
-import retrofit.http.Header;
-import retrofit.http.POST;
-import retrofit.http.Path;
-import retrofit.http.Query;
-import retrofit.http.Streaming;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 
 public interface TheTVDBService {
-    String BASE_URL = "https://api.thetvdb.com";
+    String API_URL = "https://api.thetvdb.com";
+    String WEB_URL = "https://thetvdb.com";
 
     @POST("/login")
-    void getAuthToken(@Body AuthTokenRequest authTokenRequest,
-                      Callback<AuthTokenResponse> cb);
-
-    @GET("/refresh_token")
-    void getRefreshToken(@Header("Authorization") String bearerAuthToken,
-                         Callback<AuthTokenResponse> cb);
+    Call<AuthTokenResponse> getAuthToken(@Body AuthTokenRequest authTokenRequest);
 
     @GET("/search/series")
-    void searchShows(@Header("Authorization") String bearerAuthToken,
-                     @Query("name") String name,
-                     Callback<SearchResult> cb);
+    Call<SearchResult> searchShows(@Header("Authorization") String bearerAuthToken,
+                     @Query("name") String name);
 
     @GET("/api/{apiKey}/series/{seriesKey}/all/en.zip")
     @Streaming
     Response getSeriesInfo(@Path("apiKey") String apiKey,
-                       @Path("seriesKey") int seriesKey);
+                           @Path("seriesKey") int seriesKey);
 }

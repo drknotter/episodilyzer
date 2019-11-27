@@ -73,7 +73,7 @@ public class Banner extends Model {
     public String colors;
 
     public Uri uri() {
-        return Uri.parse(TheTVDBService.BASE_URL)
+        return Uri.parse(TheTVDBService.API_URL)
                 .buildUpon()
                 .appendPath("banners")
                 .appendPath(path)
