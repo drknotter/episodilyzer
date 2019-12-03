@@ -25,7 +25,7 @@ import com.drknotter.episodilyzer.model.Banner;
 import com.drknotter.episodilyzer.model.Episode;
 import com.drknotter.episodilyzer.model.Season;
 import com.drknotter.episodilyzer.model.Series;
-import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.server.model.SeriesSearchResult;
 import com.drknotter.episodilyzer.utils.PicassoUtils;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 import com.drknotter.episodilyzer.utils.SoundUtils;
@@ -193,7 +193,7 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sync:
-                SeriesUtils.saveSeries(new SaveSeriesInfo(series));
+                SeriesUtils.saveSeries(new SeriesSearchResult(series));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -216,20 +216,9 @@ public class SeriesActivity extends RecyclerViewActivity implements ShakeDetecto
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveFailEvent(SeriesSaveFailEvent event) {
-        if (event.searchResult.id == series.id) {
-            String message = getString(R.string.snack_series_save_failed, event.searchResult.seriesName);
-            if (event.reason == SeriesSaveFailEvent.Reason.NO_RESPONSE) {
-                message = getString(R.string.snack_series_save_failed_no_response, event.searchResult.seriesName);
-            } else if (event.reason == SeriesSaveFailEvent.Reason.NETWORK) {
-                message = getString(R.string.snack_series_save_failed_network_error, event.searchResult.seriesName);
-            } else if (!TextUtils.isEmpty(event.message)) {
-                message = getString(R.string.snack_series_save_failed_with_message, event.searchResult.seriesName, event.message);
-            }
-
-            Snackbar.make(recyclerView,
-                    message,
-                    Snackbar.LENGTH_LONG).show();
-        }
+        Snackbar.make(recyclerView,
+                event.message,
+                Snackbar.LENGTH_LONG).show();
     }
 
     private void handleIntent(Intent intent) {

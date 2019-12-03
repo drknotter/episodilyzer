@@ -1,19 +1,21 @@
 package com.drknotter.episodilyzer.server;
 
-import com.drknotter.episodilyzer.model.AuthTokenRequest;
-import com.drknotter.episodilyzer.model.AuthTokenResponse;
+import com.drknotter.episodilyzer.server.model.ActorList;
+import com.drknotter.episodilyzer.server.model.AuthTokenRequest;
+import com.drknotter.episodilyzer.server.model.AuthTokenResponse;
 import com.drknotter.episodilyzer.server.model.BannerList;
-import com.drknotter.episodilyzer.server.model.SearchResult;
+import com.drknotter.episodilyzer.server.model.EpisodeList;
+import com.drknotter.episodilyzer.server.model.Series;
+import com.drknotter.episodilyzer.server.model.SeriesResponse;
+import com.drknotter.episodilyzer.server.model.SeriesSearchResultList;
 
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import retrofit2.http.Streaming;
 
 public interface TheTVDBService {
     String API_URL = "https://api.thetvdb.com";
@@ -23,8 +25,8 @@ public interface TheTVDBService {
     Call<AuthTokenResponse> getAuthToken(@Body AuthTokenRequest authTokenRequest);
 
     @GET("/search/series")
-    Call<SearchResult> searchShows(@Header("Authorization") String bearerAuthToken,
-                     @Query("name") String name);
+    Call<SeriesSearchResultList> searchShows(@Header("Authorization") String bearerAuthToken,
+                                             @Query("name") String name);
 
     @GET("/series/{seriesId}/images/query")
     Call<BannerList> getBanners(@Header("Authorization") String bearerAuthToken,
@@ -32,8 +34,17 @@ public interface TheTVDBService {
                                 @Query("keyType") String type,
                                 @Query("subKey") String subType);
 
-    @GET("/api/{apiKey}/series/{seriesKey}/all/en.zip")
-    @Streaming
-    Response getSeriesInfo(@Path("apiKey") String apiKey,
-                           @Path("seriesKey") int seriesKey);
+    @GET("/series/{seriesId}")
+    Call<SeriesResponse> getSeries(@Header("Authorization") String bearerAuthToken,
+                                   @Path("seriesId") int seriesId);
+
+    @GET("/series/{seriesId}/episodes")
+    Call<EpisodeList> getEpisodes(@Header("Authorization") String bearerAuthToken,
+                                  @Path("seriesId") int seriesId,
+                                  @Query("page") Integer page);
+
+    @GET("/series/{seriesId}/actors")
+    Call<ActorList> getSeriesActors(@Header("Authorization") String bearerAuthToken,
+                                    @Path("seriesId") int seriesId);
+
 }

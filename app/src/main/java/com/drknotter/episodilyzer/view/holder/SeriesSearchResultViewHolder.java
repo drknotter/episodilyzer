@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.fragment.SeriesDialogFragment;
-import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.server.model.SeriesSearchResult;
 import com.drknotter.episodilyzer.utils.SeriesUtils;
 
 import java.text.SimpleDateFormat;
@@ -31,16 +31,16 @@ public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
         overview = itemView.findViewById(R.id.overview);
     }
 
-    public void bindSearchResult(final SaveSeriesInfo saveSeriesInfo) {
-        title.setText(saveSeriesInfo.seriesName);
-        setFirstAired(saveSeriesInfo.firstAired);
-        overview.setText(saveSeriesInfo.overview);
-        overview.setVisibility(saveSeriesInfo.overview != null ? View.VISIBLE : View.GONE);
+    public void bindSearchResult(final SeriesSearchResult seriesSearchResult) {
+        title.setText(seriesSearchResult.seriesName);
+        setFirstAired(seriesSearchResult.firstAired);
+        overview.setText(seriesSearchResult.overview);
+        overview.setVisibility(seriesSearchResult.overview != null ? View.VISIBLE : View.GONE);
 
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SeriesUtils.saveSeries(saveSeriesInfo);
+                SeriesUtils.saveSeries(seriesSearchResult);
             }
         });
 
@@ -53,7 +53,7 @@ public class SeriesSearchResultViewHolder extends RecyclerView.ViewHolder {
                     if (fragment != null) {
                         fragment.dismissAllowingStateLoss();
                     }
-                    fragment = SeriesDialogFragment.newInstance(saveSeriesInfo);
+                    fragment = SeriesDialogFragment.newInstance(seriesSearchResult);
                     fragment.show(fragmentManager, SeriesDialogFragment.TAG);
                 }
             }

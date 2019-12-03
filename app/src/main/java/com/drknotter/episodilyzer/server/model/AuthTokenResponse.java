@@ -1,4 +1,4 @@
-package com.drknotter.episodilyzer.model;
+package com.drknotter.episodilyzer.server.model;
 
 public class AuthTokenResponse {
     public final String token;

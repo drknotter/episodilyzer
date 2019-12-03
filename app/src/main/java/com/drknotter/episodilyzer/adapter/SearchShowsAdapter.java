@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.drknotter.episodilyzer.R;
-import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.server.model.SeriesSearchResult;
 import com.drknotter.episodilyzer.view.holder.SeriesSearchResultViewHolder;
 
 import java.util.List;
@@ -15,9 +15,9 @@ import java.util.List;
  * Created by plunkett on 1/23/16.
  */
 public class SearchShowsAdapter extends RecyclerView.Adapter<SeriesSearchResultViewHolder> {
-    private List<SaveSeriesInfo> searchResults;
+    private List<SeriesSearchResult> searchResults;
 
-    public SearchShowsAdapter(List<SaveSeriesInfo> searchResults) {
+    public SearchShowsAdapter(List<SeriesSearchResult> searchResults) {
         this.searchResults = searchResults;
     }
 

@@ -190,17 +190,8 @@ public class EpisodilyzerActivity extends RecyclerViewActivity implements ShakeD
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveFailEvent(SeriesSaveFailEvent event) {
-        String message = getString(R.string.snack_series_save_failed, event.searchResult.seriesName);
-        if (event.reason == SeriesSaveFailEvent.Reason.NO_RESPONSE) {
-            message = getString(R.string.snack_series_save_failed_no_response, event.searchResult.seriesName);
-        } else if (event.reason == SeriesSaveFailEvent.Reason.NETWORK) {
-                    message = getString(R.string.snack_series_save_failed_network_error, event.searchResult.seriesName);
-        } else if (!TextUtils.isEmpty(event.message)) {
-             message = getString(R.string.snack_series_save_failed_with_message, event.searchResult.seriesName, event.message);
-        }
-
         Snackbar.make(recyclerView,
-                message,
+                event.message,
                 Snackbar.LENGTH_LONG).show();
 
         displayAllSeries();

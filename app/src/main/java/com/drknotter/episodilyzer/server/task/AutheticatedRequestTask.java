@@ -1,41 +1,49 @@
 package com.drknotter.episodilyzer.server.task;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.drknotter.episodilyzer.Episodilyzer;
 import com.drknotter.episodilyzer.R;
-import com.drknotter.episodilyzer.model.AuthTokenRequest;
-import com.drknotter.episodilyzer.model.AuthTokenResponse;
+import com.drknotter.episodilyzer.server.model.AuthTokenRequest;
+import com.drknotter.episodilyzer.server.model.AuthTokenResponse;
 import com.drknotter.episodilyzer.server.TheTVDBService;
-import com.drknotter.episodilyzer.server.model.SearchResult;
 import com.drknotter.episodilyzer.utils.PreferenceUtils;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public abstract class AutheticatedRequestTask<T> extends AsyncTask<Void, Void, T> {
+public abstract class AutheticatedRequestTask<T> extends AsyncTask<Void, Void, Void> {
     private final TheTVDBService service;
     private final TaskCallback<T> callback;
 
-    private String token;
     private String errorMessage;
+    private T result;
 
     AutheticatedRequestTask(TaskCallback<T> callback) {
         this.service = new Retrofit.Builder()
                 .baseUrl(TheTVDBService.API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(new OkHttpClient.Builder()
+                        .addInterceptor(
+                                new HttpLoggingInterceptor()
+                                        .setLevel(HttpLoggingInterceptor.Level.BODY))
+                        .build())
                 .build()
                 .create(TheTVDBService.class);
         this.callback = callback;
     }
 
     @Override
-    protected void onPostExecute(T result) {
-        if (getErrorMessage() != null) {
-            callback.onError(getErrorMessage());
+    protected void onPostExecute(Void ignored) {
+        if (errorMessage != null) {
+            callback.onError(errorMessage);
         } else if (result == null) {
             callback.onError(Episodilyzer.getInstance().getString(R.string.no_response));
         } else {
@@ -44,14 +52,17 @@ public abstract class AutheticatedRequestTask<T> extends AsyncTask<Void, Void, T
     }
 
 
-    abstract Response<T> fetchResponse();
-
-    final Response<T> fetchAuthenticatedResponse() {
-        if (getAuthToken() == null && !fetchAuthToken()) {
+    final <S> Response<S> fetchAuthenticatedResponse(Callable<Response<S>> fetcher) {
+        if (PreferenceUtils.getAuthToken() == null && !fetchAuthToken()) {
             return null;
         }
 
-        Response<T> response = fetchResponse();
+        Response<S> response = null;
+        try {
+            response = fetcher.call();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (response == null) {
             return null;
         }
@@ -61,13 +72,17 @@ public abstract class AutheticatedRequestTask<T> extends AsyncTask<Void, Void, T
             if (!fetchAuthToken()) {
                 return null;
             }
-            response = fetchResponse();
+            try {
+                response = fetcher.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return response;
     }
 
-    final boolean fetchAuthToken() {
+    private boolean fetchAuthToken() {
         Response<AuthTokenResponse> tokenResponse;
         try {
             tokenResponse = service.getAuthToken(new AuthTokenRequest(
@@ -79,8 +94,7 @@ public abstract class AutheticatedRequestTask<T> extends AsyncTask<Void, Void, T
         }
         if (tokenResponse.isSuccessful() && tokenResponse.body() != null
                 && tokenResponse.body().token != null) {
-            token = tokenResponse.body().token;
-            PreferenceUtils.setAuthToken(token);
+            PreferenceUtils.setAuthToken(tokenResponse.body().token);
         } else {
             errorMessage = Episodilyzer.getInstance().getString(R.string.auth_failed);
             if (tokenResponse.body() == null) {
@@ -99,15 +113,12 @@ public abstract class AutheticatedRequestTask<T> extends AsyncTask<Void, Void, T
         return service;
     }
 
-    final String getAuthToken() {
-        return token;
-    }
-
     final void setErrorMessage(String errorMessage) {
+        Log.d("FindMe", "setErrorMessage(" + errorMessage +")", new Throwable());
         this.errorMessage = errorMessage;
     }
 
-    final String getErrorMessage() {
-        return errorMessage;
+    final void setResult(T result) {
+        this.result = result;
     }
 }

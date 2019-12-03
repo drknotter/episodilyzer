@@ -1,6 +1,6 @@
 package com.drknotter.episodilyzer.server.model;
 
-public class BaseBanner {
+public class Banner {
     // Can be appended to <mirrorpath>/banners/ to determine the actual location of the artwork.
     public String fileName;
 

@@ -1,10 +1,12 @@
 package com.drknotter.episodilyzer.model;
 
+import android.text.TextUtils;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
-import com.drknotter.episodilyzer.server.model.FullSeries;
+import com.drknotter.episodilyzer.server.model.Actor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,17 +20,23 @@ public class Series extends Model {
 
     public Series() {}
 
-    public Series(FullSeries fullSeries) {
+    public Series(com.drknotter.episodilyzer.server.model.Series series, List<Actor> actors) {
         super();
-        id = fullSeries.series.id;
-        actors = fullSeries.series.actors;
-        firstAired = fullSeries.series.firstAired;
-        lastUpdated = fullSeries.series.lastUpdated;
-        overview = fullSeries.series.overview;
-        rating = fullSeries.series.rating;
-        ratingCount = fullSeries.series.ratingCount;
-        seriesName = fullSeries.series.seriesName;
-        status = fullSeries.series.status;
+        List<String> actorNames = new ArrayList<>();
+        if (actors != null) {
+            for (Actor actor : actors) {
+                actorNames.add(actor.name);
+            }
+        }
+        id = series.id;
+        this.actors = TextUtils.join("|", actorNames);
+        firstAired = series.firstAired;
+        lastUpdated = series.lastUpdated;
+        overview = series.overview;
+        rating = series.siteRating;
+        ratingCount = series.siteRatingCount;
+        seriesName = series.seriesName;
+        status = series.status;
         lastAccessed = System.currentTimeMillis();
     }
 

@@ -6,6 +6,7 @@ import com.drknotter.episodilyzer.server.model.BannerList;
 import com.drknotter.episodilyzer.utils.RequestUtils;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import retrofit2.Response;
 
@@ -22,12 +23,31 @@ public class GetBannerTask extends AutheticatedRequestTask<BannerList> {
     }
 
     @Override
-    protected BannerList doInBackground(Void... voids) {
-        Response<BannerList> bannerResponse = fetchAuthenticatedResponse();
+    protected Void doInBackground(Void... voids) {
+        Response<BannerList> bannerResponse = fetchAuthenticatedResponse(
+                new Callable<Response<BannerList>>() {
+                    @Override
+                    public Response<BannerList> call() {
+                        Response<BannerList> bannerListResponse = null;
+                        try {
+                            bannerListResponse = getService().getBanners(
+                                    RequestUtils.getBearerString(),
+                                    seriesId, type, subType).execute();
+                        } catch (IOException ignored) {}
+
+                        if (bannerListResponse == null) {
+                            setErrorMessage(
+                                    Episodilyzer.getInstance().getString(R.string.network_error));
+                        }
+                        return bannerListResponse;
+                    }
+                }
+        );
 
         if (bannerResponse != null && bannerResponse.isSuccessful()
                 && bannerResponse.body() != null) {
-            return bannerResponse.body();
+            setResult(bannerResponse.body());
+            return null;
         } else {
             setErrorMessage(Episodilyzer.getInstance().getString(R.string.search_failed));
             if (bannerResponse == null || bannerResponse.body() == null) {
@@ -39,19 +59,5 @@ public class GetBannerTask extends AutheticatedRequestTask<BannerList> {
         }
 
         return null;
-    }
-
-    @Override
-    Response<BannerList> fetchResponse() {
-        Response<BannerList> bannerListResponse = null;
-        try {
-            bannerListResponse = getService().getBanners(
-                    RequestUtils.getBearerString(getAuthToken()), seriesId, type, subType).execute();
-        } catch (IOException ignored) {}
-
-        if (bannerListResponse == null) {
-            setErrorMessage(Episodilyzer.getInstance().getString(R.string.network_error));
-        }
-        return bannerListResponse;
     }
 }

@@ -2,6 +2,6 @@ package com.drknotter.episodilyzer.server.model;
 
 import java.util.List;
 
-public class SearchResult {
-    public List<SaveSeriesInfo> data;
+public class ActorList {
+    public List<Actor> data;
 }

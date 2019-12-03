@@ -47,7 +47,7 @@ public class BriefSeriesViewHolder extends RecyclerView.ViewHolder {
 
             Uri bannerUri = null;
             if (bestBanner != null) {
-                bannerUri = Uri.parse(TheTVDBService.API_URL)
+                bannerUri = Uri.parse(TheTVDBService.WEB_URL)
                         .buildUpon()
                         .appendPath("banners")
                         .appendPath(bestBanner.path)

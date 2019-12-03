@@ -2,12 +2,7 @@ package com.drknotter.episodilyzer.server.model;
 
 import com.drknotter.episodilyzer.model.Series;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
-
-import java.util.List;
-
-public class SaveSeriesInfo {
+public class SeriesSearchResult {
     public String banner;
 
     public String firstAired;
@@ -18,13 +13,13 @@ public class SaveSeriesInfo {
 
     public String seriesName;
 
-    public SaveSeriesInfo() {}
+    public SeriesSearchResult() {}
 
-    public SaveSeriesInfo(Series series) {
+    public SeriesSearchResult(Series series) {
         this(series.id, series.seriesName, series.overview, series.firstAired);
     }
 
-    public SaveSeriesInfo(int id, String seriesName, String overview, String firstAired) {
+    public SeriesSearchResult(int id, String seriesName, String overview, String firstAired) {
         this.id = id;
         this.seriesName = seriesName;
         this.overview = overview;

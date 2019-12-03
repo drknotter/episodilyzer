@@ -5,7 +5,6 @@ import android.net.Uri;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.drknotter.episodilyzer.server.TheTVDBService;
-import com.drknotter.episodilyzer.server.model.BaseBanner;
 
 /**
  * Created by plunkett on 1/29/16.
@@ -16,19 +15,19 @@ public class Banner extends Model {
 
     public Banner() {}
 
-    public Banner(BaseBanner baseBanner, Series series) {
+    public Banner(com.drknotter.episodilyzer.server.model.Banner banner, Series series) {
         super();
         this.series = series;
-        path = baseBanner.fileName;
-        thumbnailPath = baseBanner.thumbnail;
-//        vignettePath = baseBanner.vignettePath;
-        type = baseBanner.keyType;
-        type2 = baseBanner.subKey;
-//        season = baseBanner.season;
-//        rating = baseBanner.rating;
-//        ratingCount = baseBanner.ratingCount;
-//        seriesName = baseBanner.seriesName;
-//        colors = baseBanner.colors;
+        path = banner.fileName;
+        thumbnailPath = banner.thumbnail;
+//        vignettePath = banner.vignettePath;
+        type = banner.keyType;
+        type2 = banner.subKey;
+//        season = banner.season;
+        rating = banner.ratingsInfo != null ? banner.ratingsInfo.average : 0;
+        ratingCount = banner.ratingsInfo != null ? banner.ratingsInfo.count : 0;
+//        seriesName = banner.seriesName;
+//        colors = banner.colors;
     }
 
     @Column(name="series", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
@@ -73,7 +72,7 @@ public class Banner extends Model {
     public String colors;
 
     public Uri uri() {
-        return Uri.parse(TheTVDBService.API_URL)
+        return Uri.parse(TheTVDBService.WEB_URL)
                 .buildUpon()
                 .appendPath("banners")
                 .appendPath(path)

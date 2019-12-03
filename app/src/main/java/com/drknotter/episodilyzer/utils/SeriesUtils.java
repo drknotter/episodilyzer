@@ -3,7 +3,7 @@ package com.drknotter.episodilyzer.utils;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.drknotter.episodilyzer.model.Series;
-import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.server.model.SeriesSearchResult;
 import com.drknotter.episodilyzer.server.task.SaveSeriesAsyncTask;
 
 import java.util.HashMap;
@@ -33,7 +33,7 @@ public class SeriesUtils {
                 .execute();
     }
 
-    public static synchronized void saveSeries(final SaveSeriesInfo seriesInfo) {
+    public static synchronized void saveSeries(final SeriesSearchResult seriesInfo) {
         if (seriesInfo == null) {
             return;
         }

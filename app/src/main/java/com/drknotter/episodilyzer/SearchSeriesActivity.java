@@ -16,8 +16,8 @@ import com.drknotter.episodilyzer.adapter.SearchShowsAdapter;
 import com.drknotter.episodilyzer.event.SeriesSaveFailEvent;
 import com.drknotter.episodilyzer.event.SeriesSaveStartEvent;
 import com.drknotter.episodilyzer.event.SeriesSaveSuccessEvent;
-import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
-import com.drknotter.episodilyzer.server.model.SearchResult;
+import com.drknotter.episodilyzer.server.model.SeriesSearchResult;
+import com.drknotter.episodilyzer.server.model.SeriesSearchResultList;
 import com.drknotter.episodilyzer.server.task.SearchSeriesTask;
 import com.drknotter.episodilyzer.server.task.TaskCallback;
 import com.google.android.material.snackbar.Snackbar;
@@ -34,7 +34,7 @@ import java.util.List;
 public class SearchSeriesActivity extends RecyclerViewActivity {
     private static final String TAG = SearchSeriesActivity.class.getSimpleName();
 
-    private List<SaveSeriesInfo> searchResults = new ArrayList<>();
+    private List<SeriesSearchResult> searchResults = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +91,9 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
     public void onSeriesSaveSuccessEvent(SeriesSaveSuccessEvent event) {
         Snackbar.make(recyclerView, getString(R.string.snack_series_saved, event.series.seriesName), Snackbar.LENGTH_SHORT).show();
         int index = 0;
-        Iterator<SaveSeriesInfo> iterator = searchResults.iterator();
+        Iterator<SeriesSearchResult> iterator = searchResults.iterator();
         while (iterator.hasNext()) {
-            SaveSeriesInfo info = iterator.next();
+            SeriesSearchResult info = iterator.next();
             if (info.id == event.series.id) {
                 iterator.remove();
                 recyclerView.getAdapter().notifyItemRemoved(index);
@@ -105,17 +105,8 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSeriesSaveFailEvent(SeriesSaveFailEvent event) {
-        String message = getString(R.string.snack_series_save_failed, event.searchResult.seriesName);
-        if (event.reason == SeriesSaveFailEvent.Reason.NO_RESPONSE) {
-            message = getString(R.string.snack_series_save_failed_no_response, event.searchResult.seriesName);
-        } else if (event.reason == SeriesSaveFailEvent.Reason.NETWORK) {
-            message = getString(R.string.snack_series_save_failed_network_error, event.searchResult.seriesName);
-        } else if (!TextUtils.isEmpty(event.message)) {
-            message = getString(R.string.snack_series_save_failed_with_message, event.searchResult.seriesName, event.message);
-        }
-
         Snackbar.make(recyclerView,
-                message,
+                event.message,
                 Snackbar.LENGTH_SHORT).show();
     }
 
@@ -140,7 +131,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         }
     }
 
-    private void onSearchSuccess(List<SaveSeriesInfo> resultList) {
+    private void onSearchSuccess(List<SeriesSearchResult> resultList) {
         searchResults.clear();
         searchResults.addAll(resultList);
         recyclerView.getAdapter().notifyDataSetChanged();
@@ -171,7 +162,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         emptyText.setText(message);
     }
 
-    private static class SearchResultTaskCallback implements TaskCallback<SearchResult> {
+    private static class SearchResultTaskCallback implements TaskCallback<SeriesSearchResultList> {
         private final WeakReference<SearchSeriesActivity> activityRef;
 
         SearchResultTaskCallback(SearchSeriesActivity activity) {
@@ -179,7 +170,7 @@ public class SearchSeriesActivity extends RecyclerViewActivity {
         }
 
         @Override
-        public void onSuccess(SearchResult result) {
+        public void onSuccess(SeriesSearchResultList result) {
             SearchSeriesActivity activity = activityRef.get();
             if (activity != null) {
                 activity.onSearchSuccess(result.data);

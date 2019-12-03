@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.drknotter.episodilyzer.R;
 import com.drknotter.episodilyzer.server.TheTVDBService;
 import com.drknotter.episodilyzer.server.model.BannerList;
-import com.drknotter.episodilyzer.server.model.SaveSeriesInfo;
+import com.drknotter.episodilyzer.server.model.SeriesSearchResult;
 import com.drknotter.episodilyzer.server.task.GetBannerTask;
 import com.drknotter.episodilyzer.server.task.TaskCallback;
 import com.drknotter.episodilyzer.utils.PicassoUtils;
@@ -40,7 +39,7 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
     private View downloadButton;
     private TextView overview;
 
-    public static SeriesDialogFragment newInstance(SaveSeriesInfo seriesInfo) {
+    public static SeriesDialogFragment newInstance(SeriesSearchResult seriesInfo) {
         SeriesDialogFragment fragment = new SeriesDialogFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SERIES_INFO, new Gson().toJson(seriesInfo));
@@ -66,10 +65,10 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
         downloadButton = root.findViewById(R.id.download_button);
         overview = root.findViewById(R.id.overview);
 
-        SaveSeriesInfo seriesInfo = null;
+        SeriesSearchResult seriesInfo = null;
         if (getArguments() != null) {
             try {
-                seriesInfo = new Gson().fromJson(getArguments().getString(ARG_SERIES_INFO), SaveSeriesInfo.class);
+                seriesInfo = new Gson().fromJson(getArguments().getString(ARG_SERIES_INFO), SeriesSearchResult.class);
             } catch (Throwable ignored) {
             }
         }
@@ -93,7 +92,7 @@ public class SeriesDialogFragment extends AppCompatDialogFragment {
         overview = null;
     }
 
-    private void bindSeries(final SaveSeriesInfo seriesInfo) {
+    private void bindSeries(final SeriesSearchResult seriesInfo) {
         // Bind the episode image, if present.
         new GetBannerTask(seriesInfo.id, "series", "graphical", new BannerTaskCallback(getContext(), seriesBanner)).execute();
 

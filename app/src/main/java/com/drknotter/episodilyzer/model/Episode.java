@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.drknotter.episodilyzer.server.TheTVDBService;
-import com.drknotter.episodilyzer.server.model.BaseEpisode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,29 +17,37 @@ import java.util.List;
 public class Episode extends Model {
     public Episode() {}
 
-    public Episode(BaseEpisode baseEpisode, Series series) {
+    public Episode(
+            com.drknotter.episodilyzer.server.model.Episode episode, Series series, int seasonId) {
         super();
-        id = baseEpisode.id;
+        id = episode.id;
         this.series = series;
-        director = baseEpisode.director;
-        episodeImageFlag = baseEpisode.epImgFlag;
-        episodeName = baseEpisode.episodeName;
-        episodeNumber = baseEpisode.episodeNumber;
-        firstAired = baseEpisode.firstAired;
-        guestStars = baseEpisode.guestStars;
-        overview = baseEpisode.overview;
-        rating = baseEpisode.rating;
-        ratingCount = baseEpisode.ratingCount;
-        seasonNumber = baseEpisode.seasonNumber;
-        writer = baseEpisode.writer;
-        absoluteNumber = baseEpisode.absoluteNumber;
-        filename = baseEpisode.filename;
-        lastUpdated = baseEpisode.lastUpdated;
-        seasonId = baseEpisode.seasonId;
-        thumbAdded = baseEpisode.thumbAdded;
-        thumbHeight = baseEpisode.thumbHeight;
-        thumbWidth = baseEpisode.thumbWidth;
-        selected = baseEpisode.seasonNumber > 0;
+        director = episode.director;
+        if (episode.thumbHeight > 0
+                && (float) episode.thumbWidth / episode.thumbHeight > 13.0 / 9.0) {
+            episodeImageFlag = 2;
+        } else {
+            episodeImageFlag = 1;
+        }
+        episodeName = episode.episodeName;
+        episodeNumber = episode.airedEpisodeNumber;
+        firstAired = episode.firstAired;
+        guestStars = TextUtils.join("|", episode.guestStars != null
+                ? episode.guestStars : new ArrayList());
+        overview = episode.overview;
+        rating = episode.siteRating;
+        ratingCount = episode.siteRatingCount;
+        seasonNumber = episode.airedSeason;
+        writer = episode.writers != null && episode.writers.size() > 0
+                ? episode.writers.get(0) : "";
+        absoluteNumber = episode.absoluteNumber;
+        filename = episode.filename;
+        lastUpdated = episode.lastUpdated;
+        this.seasonId = seasonId;
+        thumbAdded = episode.thumbAdded;
+        thumbHeight = episode.thumbHeight;
+        thumbWidth = episode.thumbWidth;
+        selected = episode.airedSeason > 0;
     }
 
     // An unsigned integer assigned by our site to the episode. Cannot be null.
@@ -173,7 +180,7 @@ public class Episode extends Model {
 
     public Uri imageUri() {
         if (filename != null) {
-            return Uri.parse(TheTVDBService.API_URL)
+            return Uri.parse(TheTVDBService.WEB_URL)
                     .buildUpon()
                     .appendPath("banners")
                     .appendPath(filename)
