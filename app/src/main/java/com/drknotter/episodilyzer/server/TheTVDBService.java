@@ -5,7 +5,6 @@ import com.drknotter.episodilyzer.server.model.AuthTokenRequest;
 import com.drknotter.episodilyzer.server.model.AuthTokenResponse;
 import com.drknotter.episodilyzer.server.model.BannerList;
 import com.drknotter.episodilyzer.server.model.EpisodeList;
-import com.drknotter.episodilyzer.server.model.Series;
 import com.drknotter.episodilyzer.server.model.SeriesResponse;
 import com.drknotter.episodilyzer.server.model.SeriesSearchResultList;
 
