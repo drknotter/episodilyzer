@@ -30,11 +30,6 @@ public abstract class AutheticatedRequestTask<T> extends AsyncTask<Void, Void, V
         this.service = new Retrofit.Builder()
                 .baseUrl(TheTVDBService.API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(new OkHttpClient.Builder()
-                        .addInterceptor(
-                                new HttpLoggingInterceptor()
-                                        .setLevel(HttpLoggingInterceptor.Level.BODY))
-                        .build())
                 .build()
                 .create(TheTVDBService.class);
         this.callback = callback;
@@ -114,7 +109,6 @@ public abstract class AutheticatedRequestTask<T> extends AsyncTask<Void, Void, V
     }
 
     final void setErrorMessage(String errorMessage) {
-        Log.d("FindMe", "setErrorMessage(" + errorMessage +")", new Throwable());
         this.errorMessage = errorMessage;
     }
 
